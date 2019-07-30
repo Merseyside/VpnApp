@@ -1,0 +1,11 @@
+CREATE TABLE TokenModel(
+    token TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    serviceId INTEGER NOT NULL
+);
+
+insertItem:
+INSERT INTO TokenModel(token, name, serviceId) VALUES(?, ?, ?);
+
+selectByServiceId:
+SELECT * FROM TokenModel WHERE serviceId = ?;

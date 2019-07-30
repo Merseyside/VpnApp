@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">DropletApp</string>
+
+    <string name="nav_new_token">New token</string>
+    <string name="nav_tokens">Tokens</string>
+    <string name="nav_droplets">Droplets</string>
+    <string name="nav_settings">Settings</string>
+</resources>

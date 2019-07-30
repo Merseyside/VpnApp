@@ -1,0 +1,115 @@
+<resources>
+
+    <!--Blue theme-->
+
+    <!-- Base application theme. -->
+    <style name="Theme.VpnApp.Purple.Base" parent="Theme.MaterialComponents.NoActionBar">
+
+        <item name="colorPrimary">@color/purple_primary</item>
+        <item name="colorPrimaryDark">@color/purple_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryVariant">@color/purple_primary_variant</item>
+
+        <item name="colorSecondary">@color/cyan_secondary</item>
+        <item name="colorSecondaryVariant">@color/cyan_secondary_variant</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <item name="colorError">@color/red_700_primary</item>
+        <item name="colorOnError">@color/white</item>
+
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+        <!--<item groupName="colorOnSurface">@color/primary_blue</item>-->
+
+        <item name="android:background">@color/background_blue</item>
+        <item name="colorOnBackground">@color/main_text_color_blue</item>
+
+        <item name="android:textColor">@color/main_text_color_blue</item>
+
+        <item name="materialCardViewStyle">@style/MyCardView</item>
+        <item name="buttonStyle">@style/ButtonStyle</item>
+        <item name="bottomNavigationStyle">@style/BottomNavigationStyle</item>
+
+        <item name="dividerHorizontal">@style/DividerStyle</item>
+
+        <!--<item groupName="inputLayoutStrokeColor">@color/text_input_box_stroke</item>-->
+
+    </style>
+
+    <!--Public styles-->
+    <style name="Theme.ChatApp.Blue" parent="Theme.VpnApp.Purple.Base"/>
+
+    <style name="Theme.ChatApp.Blue.OppositeStatusBar" parent="Theme.VpnApp.Blue"/>
+
+    <!--END OF Blue theme-->
+
+    <style name="ToolbarTheme">
+        <item name="android:background">?attr/colorPrimary</item>
+    </style>
+
+    <style name="TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <item name="android:textColorHint">@color/main_text_color_blue</item>
+        <item name="hintTextColor">?attr/colorPrimary</item>
+        <item name="hintTextAppearance">@style/InputLayoutHintStyle</item>
+        <item name="android:paddingBottom">@dimen/small_spacing</item>
+        <item name="boxStrokeColor">?attr/colorPrimary</item>
+        <item name="errorTextColor">?attr/colorError</item>
+
+    </style>
+
+    <style name="InputLayoutHintStyle" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="CustomCounterTextAppearance" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="TextInputEditText">
+        <item name="android:textColor">?attr/colorOnBackground</item>
+
+        <item name="colorControlNormal">?attr/colorPrimary</item>
+        <item name="colorControlActivated">?attr/colorPrimary</item>
+        <item name="colorControlHighlight">?attr/colorPrimary</item>
+    </style>
+
+    <style name="MyTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:textSize">@dimen/text_size</item>
+    </style>
+
+    <style name="MyCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="colorOnSurface">@color/white</item>
+    </style>
+
+    <style name="DividerStyle">
+        <item name="android:background">?attr/colorPrimary</item>
+    </style>
+
+    <style name="SettingsFragmentStyle">
+
+        <item name="android:textColorSecondary">?attr/colorOnBackground</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:background">@color/transparent</item>
+    </style>
+
+    <style name="TabLayoutStyle" parent="Widget.MaterialComponents.TabLayout">
+        <item name="android:background">?attr/colorPrimary</item>
+
+        <item name="tabTextColor">@color/white</item>
+        <item name="tabSelectedTextColor">@color/white</item>
+        <item name="tabIndicatorColor">@color/white</item>
+        <item name="tabTextAppearance">@style/TextAppearance.MaterialComponents.Button</item>
+
+        <item name="tabRippleColor">@color/grey_dark</item>
+
+    </style>
+
+    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+    </style>
+
+    <style name="BottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+    </style>
+
+</resources>

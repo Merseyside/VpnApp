@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Public styles-->
+    <style name="Theme.VpnApp.Blue" parent="Theme.VpnApp.Purple.Base">
+        <item name="android:navigationBarColor">@color/purple_primary_variant</item>
+    </style>
+
+    <style name="Theme.TravelApp.Blue.OppositeStatusBar" parent="Theme.ChatApp.Blue">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+</resources>
