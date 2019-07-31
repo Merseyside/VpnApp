@@ -21,4 +21,8 @@
     <dimen name="button_corner_radius">18dp</dimen>
 
     <!--End of base dimens-->
+
+    <dimen name="spinner_size">48dp</dimen>
+    <dimen name="spinner_radius">24dp</dimen>
+    <dimen name="service_icon_size">32dp</dimen>
 </resources>

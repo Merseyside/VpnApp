@@ -1,6 +1,7 @@
-package com.merseyside.dropletapp.presentation.view.activity.auth.view
+package com.merseyside.dropletapp.presentation.view.activity.main.view
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -11,9 +12,10 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.databinding.ActivityMainBinding
 import com.merseyside.dropletapp.presentation.base.BaseDropletActivity
-import com.merseyside.dropletapp.presentation.di.component.DaggerAuthComponent
-import com.merseyside.dropletapp.presentation.di.module.AuthModule
-import com.merseyside.dropletapp.presentation.view.activity.auth.model.MainViewModel
+import com.merseyside.dropletapp.presentation.di.component.DaggerMainComponent
+import com.merseyside.dropletapp.presentation.di.module.MainModule
+import com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewModel
+import com.merseyside.dropletapp.presentation.view.fragment.token.view.TokenFragment
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -32,10 +34,12 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
             supportFragmentManager.executePendingTransactions()
         }
 
-        override fun setupFragmentTransaction(command: Command?,
-                                              currentFragment: Fragment?,
-                                              nextFragment: Fragment?,
-                                              fragmentTransaction: FragmentTransaction?) {
+        override fun setupFragmentTransaction(
+            command: Command?,
+            currentFragment: Fragment?,
+            nextFragment: Fragment?,
+            fragmentTransaction: FragmentTransaction?
+        ) {
             super.setupFragmentTransaction(command, currentFragment, nextFragment, fragmentTransaction)
             fragmentTransaction!!.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         }
@@ -48,14 +52,14 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     override fun performInjection(bundle: Bundle?) {
-        DaggerAuthComponent.builder()
+        DaggerMainComponent.builder()
             .appComponent(getAppComponent())
-            .authModule(getAuthModule(bundle))
+            .mainModule(getAuthModule(bundle))
             .build().inject(this)
     }
 
-    private fun getAuthModule(bundle: Bundle?): AuthModule {
-        return AuthModule(this, bundle)
+    private fun getAuthModule(bundle: Bundle?): MainModule {
+        return MainModule(this, bundle)
     }
 
     override fun setBindingVariable(): Int {
@@ -77,11 +81,13 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     private fun init() {
-
+        viewModel.newRootScreen()
     }
 
     private fun doLayout() {
         fixBottomNavigation()
+
+        binding.bottomNavigation.setOnNavigationItemSelectedListener { onNavigationItemSelected(it) }
 
     }
 
@@ -105,6 +111,26 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
         }
     }
 
+    private fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
+        val currentFragment = getCurrentFragment()
+
+        when(menuItem.itemId) {
+            R.id.nav_tokens ->
+                if (currentFragment !is TokenFragment) {
+                    viewModel.navigateToTokenScreen()
+                }
+
+            //R.id.nav_droplets ->
+                //if (currentFragment !is )
+
+            else -> {
+
+            }
+        }
+
+        return true
+    }
+
     override fun onResumeFragments() {
         super.onResumeFragments()
         navigatorHolder.setNavigator(navigator)
@@ -113,6 +139,10 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
     override fun onPause() {
         navigatorHolder.removeNavigator()
         super.onPause()
+    }
+
+    override fun getFragmentContainer(): Int? {
+        return R.id.container
     }
 
     companion object {

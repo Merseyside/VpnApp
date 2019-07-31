@@ -7,4 +7,8 @@ import ru.terrakok.cicerone.Router
 abstract class BaseDropletViewModel(private val router: Router) : ParcelableViewModel() {
 
     override fun updateLanguage(context: Context) {}
+
+    protected fun back() {
+        router.exit()
+    }
 }

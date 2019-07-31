@@ -3,7 +3,9 @@
     <!--Blue theme-->
 
     <!-- Base application theme. -->
-    <style name="Theme.VpnApp.Purple.Base" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="Theme.VpnApp.Purple.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <item name="colorAccent">@color/purple_primary</item>
 
         <item name="colorPrimary">@color/purple_primary</item>
         <item name="colorPrimaryDark">@color/purple_dark</item>
@@ -19,7 +21,6 @@
 
         <item name="colorSurface">@color/white</item>
         <item name="colorOnSurface">@color/black</item>
-        <!--<item groupName="colorOnSurface">@color/primary_blue</item>-->
 
         <item name="android:background">@color/background_blue</item>
         <item name="colorOnBackground">@color/main_text_color_blue</item>
@@ -37,9 +38,9 @@
     </style>
 
     <!--Public styles-->
-    <style name="Theme.ChatApp.Blue" parent="Theme.VpnApp.Purple.Base"/>
+    <style name="Theme.VpnApp.Purple" parent="Theme.VpnApp.Purple.Base"/>
 
-    <style name="Theme.ChatApp.Blue.OppositeStatusBar" parent="Theme.VpnApp.Blue"/>
+    <style name="Theme.VpnApp.Purple.OppositeStatusBar" parent="Theme.VpnApp.Purple"/>
 
     <!--END OF Blue theme-->
 

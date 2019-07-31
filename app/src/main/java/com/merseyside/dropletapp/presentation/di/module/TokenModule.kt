@@ -3,6 +3,7 @@ package com.merseyside.dropletapp.presentation.di.module
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.merseyside.dropletapp.domain.interactor.GetServicesInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.token.model.TokenViewModel
 import com.upstream.basemvvmimpl.presentation.fragment.BaseFragment
 import com.upstream.basemvvmimpl.presentation.model.BundleAwareViewModelFactory
@@ -18,9 +19,10 @@ class TokenModule(
 
     @Provides
     internal fun addTokenFragmentViewModelProvider(
-        router: Router
+        router: Router,
+        getServicesUseCase: GetServicesInteractor
     ): ViewModelProvider.Factory {
-        return AddProfileFragmentViewModelProviderFactory(bundle, router)
+        return AddProfileFragmentViewModelProviderFactory(bundle, router, getServicesUseCase)
     }
 
     @Provides
@@ -30,11 +32,12 @@ class TokenModule(
 
     class AddProfileFragmentViewModelProviderFactory(
         bundle: Bundle?,
-        private val router: Router
+        private val router: Router,
+        private val getServicesUseCase: GetServicesInteractor
     ): BundleAwareViewModelFactory<TokenViewModel>(bundle) {
 
         override fun getViewModel(): TokenViewModel {
-            return TokenViewModel(router)
+            return TokenViewModel(router, getServicesUseCase)
         }
     }
 }

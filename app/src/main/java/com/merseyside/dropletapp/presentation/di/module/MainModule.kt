@@ -3,7 +3,7 @@ package com.merseyside.dropletapp.presentation.di.module
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import com.merseyside.dropletapp.presentation.view.activity.auth.model.MainViewModel
+import com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewModel
 import com.upstream.basemvvmimpl.presentation.activity.BaseActivity
 import com.upstream.basemvvmimpl.presentation.model.BundleAwareViewModelFactory
 import dagger.Module
@@ -11,24 +11,24 @@ import dagger.Provides
 import ru.terrakok.cicerone.Router
 
 @Module
-class AuthModule(
+class MainModule(
     private val activity: BaseActivity,
     private val bundle: Bundle?
 ) {
 
     @Provides
-    internal fun addAuthActivityViewModelProvider(
+    internal fun addMainActivityViewModelProvider(
         router: Router
     ): ViewModelProvider.Factory {
-        return AddAuthActivityViewModelProviderFactory(bundle, router)
+        return MainActivityViewModelProviderFactory(bundle, router)
     }
 
     @Provides
-    internal fun provideAuthActivityViewModel(factory: ViewModelProvider.Factory): MainViewModel {
+    internal fun provideMainActivityViewModel(factory: ViewModelProvider.Factory): MainViewModel {
         return ViewModelProviders.of(activity, factory).get(MainViewModel::class.java)
     }
 
-    class AddAuthActivityViewModelProviderFactory(
+    class MainActivityViewModelProviderFactory(
         bundle: Bundle?,
         private val router: Router
     ): BundleAwareViewModelFactory<MainViewModel>(bundle) {
