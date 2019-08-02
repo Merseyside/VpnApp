@@ -12,7 +12,7 @@
     </item>
 
     <item
-        android:id="@+id/nav_droplets"
+        android:id="@+id/nav_providers"
         android:orderInCategory="300"
         android:title="@string/nav_droplets"
         android:icon="@drawable/ic_cloud"
@@ -21,11 +21,11 @@
     </item>
 
     <item
-            android:id="@+id/nav_settings"
-            android:orderInCategory="300"
-            android:title="@string/nav_settings"
-            android:icon="@drawable/ic_settings"
-            app:showAsAction="ifRoom">
+        android:id="@+id/nav_settings"
+        android:orderInCategory="300"
+        android:title="@string/nav_settings"
+        android:icon="@drawable/ic_settings"
+        app:showAsAction="ifRoom">
 
     </item>
 </menu>

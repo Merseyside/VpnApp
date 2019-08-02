@@ -1,4 +1,4 @@
-package com.merseyside.dropletapp.vpnApi.base.entity.response
+package com.merseyside.dropletapp.providerApi.base.entity.response
 
 abstract class CreateDropletResponse {
 

@@ -6,21 +6,21 @@ import android.view.View
 import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
-import com.merseyside.dropletapp.data.entity.service.Service
+import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.token.model.TokenViewModel
 import com.merseyside.dropletapp.databinding.FragmentTokenBinding
 import com.merseyside.dropletapp.presentation.di.component.DaggerTokenComponent
 import com.merseyside.dropletapp.presentation.di.module.TokenModule
-import com.merseyside.dropletapp.presentation.view.activity.main.adapter.ServiceAdapter
+import com.merseyside.dropletapp.presentation.view.activity.main.adapter.ProviderAdapter
 
 class TokenFragment : BaseDropletFragment<FragmentTokenBinding, TokenViewModel>() {
 
-    private lateinit var serviceAdapter: ServiceAdapter
+    private lateinit var providerAdapter: ProviderAdapter
 
-    private val serviceObserver = Observer<List<Service>> {
-        serviceAdapter = ServiceAdapter(baseActivityView, R.layout.view_service, it)
-        binding.serviceSpinner.adapter = serviceAdapter
+    private val providerObserver = Observer<List<Provider>> {
+        providerAdapter = ProviderAdapter(baseActivityView, R.layout.view_provider, it)
+        binding.providerSpinner.adapter = providerAdapter
     }
 
     override fun getTitle(context: Context): String? {
@@ -61,20 +61,21 @@ class TokenFragment : BaseDropletFragment<FragmentTokenBinding, TokenViewModel>(
     }
 
     private fun init() {
-        viewModel.serviceLiveData.observe(this, serviceObserver)
+        viewModel.providerLiveData.observe(this, providerObserver)
 
     }
 
     private fun doLayout() {
         binding.save.setOnClickListener {
-            val selectedService = serviceAdapter.getItem(binding.serviceSpinner.selectedItemPosition)!!
+            val selectedProvider = providerAdapter.getItem(binding.providerSpinner.selectedItemPosition)!!
 
-            viewModel.saveToken(selectedService)
+            viewModel.saveToken(selectedProvider)
         }
 
     }
 
     companion object {
+        private const val TAG = "TokenFragment"
 
         fun newInstance(): TokenFragment {
             return TokenFragment()

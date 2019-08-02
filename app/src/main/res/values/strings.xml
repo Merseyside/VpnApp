@@ -10,4 +10,10 @@
     <string name="hint_token_name">Key name</string>
     <string name="save_token">Save token</string>
     <string name="hint_provider_summary">Choose hosting provider</string>
+    <string name="hint_token_summary">Choose API key</string>
+    <string name="hint_region_summary">Choose region</string>
+
+    <string name="complete_msg">Successfully completed</string>
+    <string name="fill_fields_msg">Please fill all fields correctly</string>
+    <string name="unknown_error_msg">Unknown error</string>
 </resources>

@@ -12,7 +12,7 @@ android {
 
 ext {
     stdlib = '1.3.41'
-    ktor = '1.2.3-rc'
+    ktor = '1.1.3'
     coroutines = '1.3.0-RC'
     json = '1.0.0'
     serialization = '0.11.0'
@@ -20,11 +20,7 @@ ext {
     kodein ='6.0.0'
     loggingInterceptor = '3.12.1'
     klock = "1.5.0"
-    webSocketVersion = '1.3.9'
-    klaxon = '5.0.5'
     preferences = '1.0.0'
-    socket = '1.0.0'
-    uuid = '0.0.3'
 }
 
 kotlin {
@@ -52,7 +48,6 @@ kotlin {
             implementation "com.soywiz.korlibs.klock:klock:$klock"
             implementation "com.github.florent37:multiplatform-preferences:$preferences"
 
-            implementation "com.benasher44:uuid:$uuid"
         }
 
         androidMain.dependencies {
@@ -73,12 +68,8 @@ kotlin {
             implementation "com.squareup.sqldelight:runtime-jvm:$sqldelight"
             implementation "com.squareup.sqldelight:android-driver:$sqldelight"
 
-            implementation "org.java-websocket:Java-WebSocket:$webSocketVersion"
             implementation "com.github.florent37:multiplatform-preferences-android:$preferences"
 
-            implementation ("io.socket:socket.io-client:$socket") {
-                exclude group: 'org.json', module: 'json'
-            }
         }
     }
 }

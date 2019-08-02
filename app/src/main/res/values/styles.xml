@@ -3,7 +3,39 @@
     <!--Blue theme-->
 
     <!-- Base application theme. -->
-    <style name="Theme.VpnApp.Purple.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!--<style name="Theme.VpnApp.Purple.Base" parent="Theme.MaterialComponents.NoActionBar">-->
+
+        <!--<item name="colorPrimary">@color/primary_blue</item>-->
+        <!--<item name="colorPrimaryDark">@color/primary_blue_dark</item>-->
+        <!--<item name="colorOnPrimary">@color/white</item>-->
+        <!--<item name="colorPrimaryVariant">@color/primary_blue_dark</item>-->
+
+        <!--<item name="colorSecondary">@color/secondary_blue</item>-->
+        <!--<item name="colorSecondaryVariant">@color/secondary_variant</item>-->
+        <!--<item name="colorOnSecondary">@color/white</item>-->
+
+        <!--<item name="colorError">@color/red_700_primary</item>-->
+        <!--<item name="colorOnError">@color/white</item>-->
+
+        <!--<item name="colorSurface">@color/white</item>-->
+        <!--&lt;!&ndash;<item groupName="colorOnSurface">@color/primary_blue</item>&ndash;&gt;-->
+
+        <!--<item name="colorOnBackground">@color/main_text_color_blue</item>-->
+
+        <!--<item name="android:colorBackground">@color/background_blue</item>-->
+
+        <!--<item name="android:textColor">@color/main_text_color_blue</item>-->
+
+        <!--<item name="materialCardViewStyle">@style/MyCardView</item>-->
+        <!--<item name="buttonStyle">@style/ButtonStyle</item>-->
+
+        <!--<item name="dividerHorizontal">@style/DividerStyle</item>-->
+
+        <!--&lt;!&ndash;<item groupName="inputLayoutStrokeColor">@color/text_input_box_stroke</item>&ndash;&gt;-->
+
+    <!--</style>-->
+
+    <style name="Theme.VpnApp.Purple.Base" parent="Theme.MaterialComponents.NoActionBar">
 
         <item name="colorAccent">@color/purple_primary</item>
 
@@ -22,10 +54,10 @@
         <item name="colorSurface">@color/white</item>
         <item name="colorOnSurface">@color/black</item>
 
-        <item name="android:background">@color/background_blue</item>
-        <item name="colorOnBackground">@color/main_text_color_blue</item>
+        <item name="android:colorBackground">@color/background_purple</item>
+        <item name="colorOnBackground">@color/main_text_color_purple</item>
 
-        <item name="android:textColor">@color/main_text_color_blue</item>
+        <item name="android:textColor">@color/main_text_color_purple</item>
 
         <item name="materialCardViewStyle">@style/MyCardView</item>
         <item name="buttonStyle">@style/ButtonStyle</item>
@@ -50,7 +82,7 @@
 
     <style name="TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <item name="android:textColorHint">@color/main_text_color_blue</item>
+        <item name="android:textColorHint">?attr/colorOnBackground</item>
         <item name="hintTextColor">?attr/colorPrimary</item>
         <item name="hintTextAppearance">@style/InputLayoutHintStyle</item>
         <item name="android:paddingBottom">@dimen/small_spacing</item>

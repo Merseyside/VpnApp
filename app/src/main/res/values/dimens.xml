@@ -25,4 +25,5 @@
     <dimen name="spinner_size">48dp</dimen>
     <dimen name="spinner_radius">24dp</dimen>
     <dimen name="service_icon_size">32dp</dimen>
+    <dimen name="token_view_size">32dp</dimen>
 </resources>

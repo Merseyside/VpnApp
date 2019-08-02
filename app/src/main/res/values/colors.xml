@@ -11,7 +11,7 @@
 
     <!--End of base colors-->
 
-    <!--Blue theme-->
+    <!--Purple theme-->
     <color name="purple_primary">#6200ee</color>
     <color name="purple_primary_variant">#3700B3</color>
     <color name="purple_dark">#3700B3</color>
@@ -22,10 +22,10 @@
     <color name="cyan_dark">#00a896</color>
     <color name="cyan_light">#66fff9</color>
 
-    <color name="background_blue">@color/grey</color>
+    <color name="background_purple">@color/grey</color>
 
-    <color name="pincode_solid_blue_color">#562196f3</color>
+    <color name="main_text_color_purple">@color/grey_dark</color>
+    <color name="secondary_text_color_purple">@color/white</color>
 
-    <color name="main_text_color_blue">@color/grey_dark</color>
-    <color name="secondary_text_color_blue">@color/white</color>
+    <!--End of purple theme-->
 </resources>

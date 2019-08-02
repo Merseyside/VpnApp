@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <variable
+                name="viewModel"
+                type="com.merseyside.dropletapp.presentation.view.fragment.provider.model.ProviderViewModel"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:padding="@dimen/normal_spacing">
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:text="@string/hint_provider_summary"/>
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/provider_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spinner_size"
+                        android:overlapAnchor="false"
+                        android:scrollbars="none"
+                        android:minWidth="@dimen/spinner_size"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:text="@string/hint_token_summary"/>
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/token_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spinner_size"
+                        android:overlapAnchor="false"
+                        android:scrollbars="none"
+                        android:minWidth="@dimen/spinner_size"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:text="@string/hint_region_summary"/>
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/region_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spinner_size"
+                        android:overlapAnchor="false"
+                        android:scrollbars="none"
+                        android:minWidth="@dimen/spinner_size"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTintMode="src_atop"
+                android:indeterminateTint="?attr/colorPrimary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="@{viewModel.inProgress ? View.VISIBLE : View.GONE}"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

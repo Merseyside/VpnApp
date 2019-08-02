@@ -3,7 +3,7 @@ package com.merseyside.dropletapp.data.db.token
 import com.merseyside.dropletapp.data.db.VpnDatabase
 import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.data.entity.mapper.TokenDataMapper
-import com.merseyside.dropletapp.data.entity.service.Service
+import com.merseyside.dropletapp.providerApi.Provider
 
 class TokenDao(database: VpnDatabase) {
 
@@ -13,13 +13,13 @@ class TokenDao(database: VpnDatabase) {
     internal fun insert(
         token: Token,
         name: String,
-        service: Service
+        provider: Provider
     ) {
-        db.insertItem(token, name, service.getId())
+        db.insertItem(token, name, provider.getId())
     }
 
-    internal fun selectByServiceId(serviceId: Long): List<TokenEntity> {
-        return tokenDataMapper.transform(db.selectByServiceId(serviceId).executeAsList())
+    internal fun selectByServiceId(providerId: Long): List<TokenEntity> {
+        return tokenDataMapper.transform(db.selectByServiceId(providerId).executeAsList())
     }
 
     companion object {

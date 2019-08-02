@@ -15,6 +15,7 @@ import com.merseyside.dropletapp.presentation.base.BaseDropletActivity
 import com.merseyside.dropletapp.presentation.di.component.DaggerMainComponent
 import com.merseyside.dropletapp.presentation.di.module.MainModule
 import com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewModel
+import com.merseyside.dropletapp.presentation.view.fragment.provider.view.ProviderFragment
 import com.merseyside.dropletapp.presentation.view.fragment.token.view.TokenFragment
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
@@ -120,8 +121,10 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
                     viewModel.navigateToTokenScreen()
                 }
 
-            //R.id.nav_droplets ->
-                //if (currentFragment !is )
+            R.id.nav_providers ->
+                if (currentFragment !is ProviderFragment) {
+                    viewModel.navigateToProviderScreen()
+                }
 
             else -> {
 

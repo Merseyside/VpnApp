@@ -16,7 +16,7 @@ class TokenDataMapper {
             TokenEntity(
                 token = it.token,
                 name = it.name,
-                serviceId = it.serviceId
+                providerId = it.providerId
             )
         }
     }

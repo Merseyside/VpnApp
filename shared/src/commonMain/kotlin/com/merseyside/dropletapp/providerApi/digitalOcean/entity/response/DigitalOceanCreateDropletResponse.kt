@@ -1,6 +1,6 @@
-package com.merseyside.dropletapp.vpnApi.digitalOcean.entity.response
+package com.merseyside.dropletapp.providerApi.digitalOcean.entity.response
 
-import com.merseyside.dropletapp.vpnApi.base.entity.response.CreateDropletResponse
+import com.merseyside.dropletapp.providerApi.base.entity.response.CreateDropletResponse
 import kotlinx.serialization.Serializable
 
 @Serializable

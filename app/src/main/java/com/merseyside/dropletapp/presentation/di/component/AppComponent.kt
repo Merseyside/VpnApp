@@ -3,7 +3,7 @@ package com.merseyside.dropletapp.presentation.di.component
 import android.app.Application
 import android.content.Context
 import com.merseyside.dropletapp.VpnApplication
-import com.merseyside.dropletapp.domain.interactor.GetServicesInteractor
+import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.presentation.di.module.AppModule
 import com.merseyside.dropletapp.presentation.di.module.NavigationModule
 import com.upstream.basemvvmimpl.presentation.di.qualifiers.ApplicationContext
@@ -30,5 +30,5 @@ interface AppComponent {
 
     fun router() : Router
 
-    fun getServicesInteractor(): GetServicesInteractor
+    fun getServicesInteractor(): GetProvidersInteractor
 }

@@ -2,7 +2,7 @@ package com.merseyside.dropletapp.presentation.di.module
 
 import android.app.Application
 import android.content.Context
-import com.merseyside.dropletapp.domain.interactor.GetServicesInteractor
+import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.upstream.basemvvmimpl.presentation.di.qualifiers.ApplicationContext
 import com.upstream.basemvvmimpl.presentation.utils.PreferenceManager
 import dagger.Module
@@ -36,7 +36,7 @@ class AppModule(private val application: Application) {
     }
 
     @Provides
-    fun provideGetServicesInteractor(): GetServicesInteractor {
-        return GetServicesInteractor()
+    fun provideGetServicesInteractor(): GetProvidersInteractor {
+        return GetProvidersInteractor()
     }
 }
