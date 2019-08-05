@@ -1,0 +1,15 @@
+import com.merseyside.dropletapp.data.db.server.NetworkEntity;
+
+CREATE TABLE ServerModel(
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    status TEXT NOT NULL,
+    createdAt TEXT NOT NULL,
+    networks TEXT as NetworkEntity NOT NULL
+);
+
+insert:
+INSERT OR REPLACE INTO ServerModel(id, name, status, createdAt, networks) VALUES(?, ?, ?, ?, ?);
+
+selectAll:
+SELECT * FROM ServerModel;

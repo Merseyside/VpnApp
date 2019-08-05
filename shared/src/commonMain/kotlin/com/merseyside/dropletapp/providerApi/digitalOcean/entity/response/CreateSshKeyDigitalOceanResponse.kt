@@ -4,14 +4,17 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DigitalOceanCreateDropletResponse(
+data class CreateSshKeyDigitalOceanResponse(
 
     @SerialName("id")
     val id: Long,
 
-    @SerialName("name")
-    val name: String,
+    @SerialName("fingerprint")
+    val fingerprint: String,
 
-    @SerialName("created_at")
-    val createDate: String
+    @SerialName("public_key")
+    val publicKey: String,
+
+    @SerialName("name")
+    val name: String
 )

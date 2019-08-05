@@ -3,6 +3,7 @@ package com.merseyside.dropletapp.presentation.di.module
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
 import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.domain.interactor.GetRegionsByTokenInteractor
 import com.merseyside.dropletapp.domain.interactor.GetTokensByProviderIdInteractor
@@ -20,6 +21,11 @@ class ProviderModule(
 ) {
 
     @Provides
+    internal fun provideCreateServerInteractor(): CreateServerInteractor {
+        return CreateServerInteractor()
+    }
+
+    @Provides
     internal fun provideGetTokensByIdInteractor(): GetTokensByProviderIdInteractor {
         return GetTokensByProviderIdInteractor()
     }
@@ -34,14 +40,16 @@ class ProviderModule(
         router: Router,
         getProvidersUseCase: GetProvidersInteractor,
         getTokensByProviderIdUseCase: GetTokensByProviderIdInteractor,
-        getRegionsByTokenUseCase: GetRegionsByTokenInteractor
+        getRegionsByTokenUseCase: GetRegionsByTokenInteractor,
+        createServerUseCase: CreateServerInteractor
     ): ViewModelProvider.Factory {
         return ProviderFragmentViewModelProviderFactory(
             bundle,
             router,
             getProvidersUseCase,
             getTokensByProviderIdUseCase,
-            getRegionsByTokenUseCase
+            getRegionsByTokenUseCase,
+            createServerUseCase
         )
     }
 
@@ -55,11 +63,17 @@ class ProviderModule(
         private val router: Router,
         private val getProvidersUseCase: GetProvidersInteractor,
         private val getTokensByProviderIdUseCase: GetTokensByProviderIdInteractor,
-        private val getRegionsByTokenUseCase: GetRegionsByTokenInteractor
+        private val getRegionsByTokenUseCase: GetRegionsByTokenInteractor,
+        private val createServerUseCase: CreateServerInteractor
     ): BundleAwareViewModelFactory<ProviderViewModel>(bundle) {
 
         override fun getViewModel(): ProviderViewModel {
-            return ProviderViewModel(router, getProvidersUseCase, getTokensByProviderIdUseCase, getRegionsByTokenUseCase)
+            return ProviderViewModel(
+                router,
+                getProvidersUseCase,
+                getTokensByProviderIdUseCase,
+                getRegionsByTokenUseCase,
+                createServerUseCase)
         }
     }
 }

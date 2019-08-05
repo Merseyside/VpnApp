@@ -1,10 +1,11 @@
 package com.merseyside.dropletapp.providerApi.digitalOcean.entity.response
 
+import com.merseyside.dropletapp.providerApi.digitalOcean.entity.point.NetworkPoint
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DigitalOceanCreateDropletResponse(
+data class DigitalOceanDropletInfoResponse(
 
     @SerialName("id")
     val id: Long,
@@ -12,6 +13,12 @@ data class DigitalOceanCreateDropletResponse(
     @SerialName("name")
     val name: String,
 
+    @SerialName("status")
+    val status: String,
+
     @SerialName("created_at")
-    val createDate: String
+    val createdTime: String,
+
+    @SerialName("networks")
+    val networkList: List<NetworkPoint>
 )

@@ -1,0 +1,13 @@
+CREATE TABLE KeyModel(
+    sshKeyId INTEGER NOT NULL PRIMARY KEY,
+    publicKey TEXT NOT NULL,
+    privateKey TEXT NOT NULL,
+    token TEXT NOT NULL,
+        FOREIGN KEY (token) REFERENCES TokenModel(token)
+);
+
+insert:
+INSERT INTO KeyModel(sshKeyId, publicKey, privateKey, token) VALUES (?, ?, ?, ?);
+
+selectByToken:
+SELECT * FROM KeyModel WHERE token = ?;

@@ -83,6 +83,29 @@
 
             </LinearLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/server_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextInputLayout"
+                    android:hint="@string/hint_server_name_summary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionGo"
+                        android:text="@={viewModel.serverNameObservableField}"
+                        style="@style/TextInputEditText"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                    android:id="@+id/apply"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_server"/>
+
         </LinearLayout>
 
         <ProgressBar

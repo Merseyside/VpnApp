@@ -1,9 +1,8 @@
 package com.merseyside.dropletapp.providerApi.digitalOcean
 
 import com.merseyside.dropletapp.data.entity.Token
-import com.merseyside.dropletapp.providerApi.AUTHORIZATION_KEY
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.IsTokenValidResponse
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionResponse
+import com.merseyside.dropletapp.providerApi.*
+import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.*
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.features.defaultRequest
@@ -12,19 +11,17 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
-import io.ktor.http.HttpMethod
 import io.ktor.http.takeFrom
 import kotlinx.serialization.ImplicitReflectionSerializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.parse
 
 class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
     private val json = Json.nonstrict
-
-    companion object {
-        private const val TAG = "DigitalOceanResponseCreator"
-    }
 
     private val baseUrl = "https://api.digitalocean.com/v2/"
 
@@ -78,5 +75,74 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
 
     private fun getAuthHeader(token: Token): String {
         return "Bearer $token"
+    }
+
+    @UseExperimental(ImplicitReflectionSerializer::class)
+    suspend fun createKey(token: String, name: String, publicKey: String): CreateSshKeyDigitalOceanResponse {
+        val apiMethod = "account/keys"
+
+        val call = client.post<String> {
+            url.takeFrom(getRoute(apiMethod))
+
+            header(AUTHORIZATION_KEY, getAuthHeader(token))
+
+            val obj = JsonObject(mapOf(
+                NAME_KEY to JsonPrimitive(name),
+                PUBLIC_KEY to JsonPrimitive(publicKey)
+            ))
+
+            body = serializer.write(obj)
+        }
+
+        return json.parse(call)
+    }
+
+    @UseExperimental(ImplicitReflectionSerializer::class)
+    suspend fun createDroplet(
+        token: String,
+        name: String,
+        regionSlut: String,
+        sshKeyId: Long,
+        tag: String
+    ): DigitalOceanCreateDropletResponse {
+        val apiMethod = "droplets"
+
+        val call = client.post<String> {
+            url.takeFrom(getRoute(apiMethod))
+
+            header(AUTHORIZATION_KEY, getAuthHeader(token))
+
+            val obj = JsonObject(mapOf(
+                NAME_KEY to JsonPrimitive(name),
+                REGION_KEY to JsonPrimitive(regionSlut),
+                SSH_KEY to JsonArray(listOf(
+                    JsonPrimitive(sshKeyId)
+                )),
+                TAG_KEY to JsonArray(listOf(
+                    JsonPrimitive(tag)
+                ))
+            ))
+
+            body = serializer.write(obj)
+        }
+
+        return json.parse(call)
+    }
+
+    @UseExperimental(ImplicitReflectionSerializer::class)
+    suspend fun getDropletInfo(token: String, dropletId: Long): DigitalOceanDropletInfoResponse {
+        val apiMethod = "droplets/$dropletId"
+
+        val call = client.get<String> {
+            url.takeFrom(getRoute(apiMethod))
+
+            header(AUTHORIZATION_KEY, getAuthHeader(token))
+        }
+
+        return json.parse(call)
+    }
+
+    companion object {
+        private const val TAG = "DigitalOceanResponseCreator"
     }
 }

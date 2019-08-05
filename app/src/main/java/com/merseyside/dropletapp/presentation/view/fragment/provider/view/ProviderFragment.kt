@@ -87,7 +87,7 @@ class ProviderFragment : BaseDropletFragment<FragmentProviderBinding, ProviderVi
     }
 
     private fun doLayout() {
-        binding.providerSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+        binding.providerSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 viewModel.getTokens(providerAdapter.getItem(position)!!.getId())
             }
@@ -96,7 +96,7 @@ class ProviderFragment : BaseDropletFragment<FragmentProviderBinding, ProviderVi
 
         }
 
-        binding.tokenSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+        binding.tokenSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 viewModel.getRegions(tokenAdapter.getItem(position)!!.token)
             }
@@ -104,9 +104,24 @@ class ProviderFragment : BaseDropletFragment<FragmentProviderBinding, ProviderVi
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
         }
+
+        binding.regionSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                viewModel.setRegion(regionAdapter.getItem(position)!!)
+            }
+
+        }
+
+        binding.apply.setOnClickListener {
+            viewModel.createServer()
+        }
     }
 
     companion object {
+
+        private const val TAG = "ProviderFragment"
 
         fun newInstance(): ProviderFragment {
             return ProviderFragment()

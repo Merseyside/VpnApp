@@ -1,15 +1,22 @@
 package com.merseyside.dropletapp.data.repository
 
+import com.merseyside.dropletapp.cipher.RsaManager
+import com.merseyside.dropletapp.data.db.key.KeyDao
+import com.merseyside.dropletapp.data.db.server.ServerDao
 import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
 import com.merseyside.dropletapp.providerApi.ProviderApiFactory
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.utils.DROPLET_TAG
+import com.merseyside.dropletapp.utils.isIdValid
 
 class ProviderRepositoryImpl(
-    private val providerApiFactory: ProviderApiFactory
+    private val providerApiFactory: ProviderApiFactory,
+    private val rsaManager: RsaManager,
+    private val keyDao: KeyDao,
+    private val serverDao: ServerDao
 ) : ProviderRepository {
-
 
     override suspend fun getServices(): List<Provider> {
         return providers
@@ -19,6 +26,54 @@ class ProviderRepositoryImpl(
         val provider = providerApiFactory.getProvider(providerId)
 
         return provider.getRegions(token)
+    }
+
+    private fun createKey(): Pair<String, String> {
+        return rsaManager.createRsaKeys()
+    }
+
+    override suspend fun createServer(
+        token: Token,
+        providerId: Long,
+        regionSlug: String,
+        serverName: String
+    ): Boolean {
+        val keyPair = createKey()
+
+        val provider = providerApiFactory.getProvider(providerId)
+        val keyResponse = provider.createKey(token, "My VPN ssh key", keyPair.first)
+
+        if (isIdValid(keyResponse.id)) {
+            keyDao.insert(keyResponse.id, keyPair.first, keyPair.second, token)
+        }
+
+        val createDropletResponse = provider.createDroplet(
+            token = token,
+            name = serverName,
+            regionSlug = regionSlug,
+            sshKeyId = keyResponse.id,
+            tag = DROPLET_TAG
+        )
+
+        if (createDropletResponse.id <= 0L) throw IllegalStateException("Error while creating droplet")
+
+        val infoResponse = provider.getDropletInfo(token, createDropletResponse.id)
+
+        if (isIdValid(infoResponse.id)) {
+            infoResponse.let {
+                serverDao.insert(
+                    id = it.id,
+                    name = it.name,
+                    status = it.status,
+                    createdAt = it.createdAt,
+                    networks = it.networks
+                )
+            }
+
+            return true
+        }
+
+        return false
     }
 
     companion object {

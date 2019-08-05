@@ -1,9 +1,12 @@
 package com.merseyside.dropletapp.presentation.view.fragment.provider.model
 
 import android.os.Bundle
+import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.data.entity.Token
+import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.domain.interactor.GetRegionsByTokenInteractor
@@ -12,12 +15,14 @@ import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
 import kotlinx.coroutines.cancel
 import ru.terrakok.cicerone.Router
+import java.lang.IllegalArgumentException
 
 class ProviderViewModel(
     private val router: Router,
     private val getProvidersUseCase: GetProvidersInteractor,
     private val getTokensByProviderIdUseCase: GetTokensByProviderIdInteractor,
-    private val getRegionsByTokenUseCase: GetRegionsByTokenInteractor
+    private val getRegionsByTokenUseCase: GetRegionsByTokenInteractor,
+    private val createServerUseCase: CreateServerInteractor
 ) : BaseDropletViewModel(router) {
 
     val providerLiveData = MutableLiveData<List<Provider>>()
@@ -27,6 +32,8 @@ class ProviderViewModel(
     private var currentProvider: Long = 0
     private var currentToken: Token = ""
     private var currentRegion: RegionPoint? = null
+
+    val serverNameObservableField = ObservableField<String>()
 
     init {
         getProviders()
@@ -42,6 +49,7 @@ class ProviderViewModel(
         getProvidersUseCase.cancel()
         getTokensByProviderIdUseCase.cancel()
         getRegionsByTokenUseCase.cancel()
+        createServerUseCase.cancel()
     }
 
     private fun getProviders() {
@@ -87,5 +95,30 @@ class ProviderViewModel(
 
     fun setRegion(region: RegionPoint) {
         currentRegion = region
+    }
+
+    fun createServer() {
+
+        try {
+            createServerUseCase.execute(
+                params = CreateServerInteractor.Params(
+                    token = currentToken,
+                    providerId = currentProvider,
+                    regionSlug = currentRegion?.slug ?: throw IllegalArgumentException(),
+                    serverName = serverNameObservableField.get()
+                        ?: throw IllegalArgumentException().also { showErrorMsg("Server name can not be empty") }
+                ),
+                onComplete = {
+                    showMsg(getString(R.string.complete_msg))
+                },
+                onError = {throwable ->
+                    showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
+                },
+                showProgress = { showProgress() },
+                hideProgress = { hideProgress() }
+            )
+        } catch(e: Exception) {
+
+        }
     }
 }
