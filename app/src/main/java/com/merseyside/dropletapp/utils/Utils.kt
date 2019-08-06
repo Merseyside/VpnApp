@@ -4,7 +4,9 @@ import com.merseyside.dropletapp.data.entity.Token
 
 fun isNameValid(name: String?): Boolean {
     return name?.let {
-        name.length > 2
+        val regex = "^[A-Za-z0-9]+$".toRegex()
+
+        name.length > 2 && regex.matches(name)
     } ?: false
 }
 

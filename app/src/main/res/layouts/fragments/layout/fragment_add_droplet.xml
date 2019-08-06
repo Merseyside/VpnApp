@@ -5,7 +5,7 @@
         <import type="android.view.View"/>
         <variable
                 name="viewModel"
-                type="com.merseyside.dropletapp.presentation.view.fragment.provider.model.ProviderViewModel"/>
+                type="com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout android:orientation="vertical"

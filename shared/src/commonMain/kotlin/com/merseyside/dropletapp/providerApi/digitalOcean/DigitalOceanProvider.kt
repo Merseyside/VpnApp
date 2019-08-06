@@ -7,7 +7,6 @@ import com.merseyside.dropletapp.providerApi.base.entity.response.CreateDropletR
 import com.merseyside.dropletapp.providerApi.base.entity.response.CreateSshKeyResponse
 import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoResponse
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionResponse
 import io.ktor.client.engine.HttpClientEngine
 import kotlin.jvm.Synchronized
 
@@ -26,14 +25,14 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
     override suspend fun createDroplet(
         token: String,
         name: String,
-        regionSlut: String,
+        regionSlug: String,
         sshKeyId: Long,
         tag: String
     ): CreateDropletResponse {
 
-        val response = responseCreator.createDroplet(token, name, regionSlut, sshKeyId, tag)
+        val response = responseCreator.createDroplet(token, name, regionSlug, sshKeyId, tag)
 
-        return response.let {
+        return response.dropletPoint.let {
             CreateDropletResponse(
                 id = it.id,
                 name = it.name,
@@ -48,7 +47,7 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
     }
 
     override suspend fun createKey(token: String, name: String, publicKey: String): CreateSshKeyResponse {
-        return responseCreator.createKey(token, name, publicKey).let {
+        return responseCreator.createKey(token, name, publicKey).sshKeyPoint.let {
             CreateSshKeyResponse(
                 id = it.id,
                 fingerprint = it.fingerprint
@@ -59,18 +58,24 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
     override suspend fun getDropletInfo(token: String, dropletId: Long): DropletInfoResponse {
         val response = responseCreator.getDropletInfo(token, dropletId)
 
-        return response.let {
+        return response.dropletInfoPoint.let {
             DropletInfoResponse(
                 id = it.id,
                 name = it.name,
                 status = it.status,
                 createdAt = it.createdTime,
-                networks = it.networkList.map { networkPoint ->
-                    NetworkPoint(
-                        ipAddress = networkPoint.ipAsddress,
-                        netmask = networkPoint.netmask,
-                        gateway = networkPoint.gateway
-                    )
+                networks = it.networkList.values.flatMap { networkPoints ->
+                    val networkList = ArrayList<NetworkPoint>()
+
+                    networkPoints.forEach { networkPoint ->
+                        networkList.add(NetworkPoint(
+                            ipAddress = networkPoint.ipAsddress,
+                            netmask = networkPoint.netmask,
+                            gateway = networkPoint.gateway
+                        ))
+                    }
+
+                    networkList
                 }
             )
         }

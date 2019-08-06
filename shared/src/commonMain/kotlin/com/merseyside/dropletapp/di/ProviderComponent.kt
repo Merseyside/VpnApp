@@ -1,6 +1,6 @@
 package com.merseyside.dropletapp.di
 
-import com.merseyside.dropletapp.cipher.RsaManager
+import com.merseyside.dropletapp.cipher.SshManager
 import com.merseyside.dropletapp.data.db.key.KeyDao
 import com.merseyside.dropletapp.data.db.server.ServerDao
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
@@ -14,7 +14,7 @@ private val providerModule = Kodein.Module("provider") {
 
     bind<ProviderRepository>() with singleton { ProviderRepositoryImpl( instance(), instance(), instance(), instance() ) }
 
-    bind<RsaManager>() with singleton { RsaManager() }
+    bind<SshManager>() with singleton { SshManager() }
 
     bind<KeyDao>() with singleton { KeyDao( instance() ) }
 

@@ -1,25 +1,28 @@
-package com.merseyside.dropletapp.presentation.view.fragment.provider.view
+package com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.view
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import androidx.lifecycle.Observer
+import com.merseyside.admin.merseylibrary.system.PermissionsManager
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
-import com.merseyside.dropletapp.presentation.view.fragment.provider.model.ProviderViewModel
-import com.merseyside.dropletapp.databinding.FragmentProviderBinding
-import com.merseyside.dropletapp.presentation.di.component.DaggerProviderComponent
-import com.merseyside.dropletapp.presentation.di.module.ProviderModule
+import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel
+import com.merseyside.dropletapp.databinding.FragmentAddDropletBinding
+import com.merseyside.dropletapp.presentation.di.component.DaggerAddDropletComponent
+import com.merseyside.dropletapp.presentation.di.module.AddDropletModule
 import com.merseyside.dropletapp.presentation.view.activity.main.adapter.ProviderAdapter
-import com.merseyside.dropletapp.presentation.view.fragment.provider.adapter.RegionAdapter
-import com.merseyside.dropletapp.presentation.view.fragment.provider.adapter.TokenAdapter
+import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter.RegionAdapter
+import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter.TokenAdapter
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
 
-class ProviderFragment : BaseDropletFragment<FragmentProviderBinding, ProviderViewModel>() {
+class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDropletViewModel>() {
 
     private lateinit var providerAdapter: ProviderAdapter
     private lateinit var tokenAdapter: TokenAdapter
@@ -45,18 +48,18 @@ class ProviderFragment : BaseDropletFragment<FragmentProviderBinding, ProviderVi
     }
 
     override fun performInjection(bundle: Bundle?) {
-        DaggerProviderComponent.builder()
+        DaggerAddDropletComponent.builder()
             .appComponent(getAppComponent())
-            .providerModule(getProviderModule(bundle))
+            .addDropletModule(getDropletModule(bundle))
             .build().inject(this)
     }
 
-    private fun getProviderModule(bundle: Bundle?): ProviderModule {
-        return ProviderModule(this, bundle)
+    private fun getDropletModule(bundle: Bundle?): AddDropletModule {
+        return AddDropletModule(this, bundle)
     }
 
     override fun setLayoutId(): Int {
-        return R.layout.fragment_provider
+        return R.layout.fragment_add_droplet
     }
 
     override fun loadingObserver(isLoading: Boolean) {
@@ -102,7 +105,6 @@ class ProviderFragment : BaseDropletFragment<FragmentProviderBinding, ProviderVi
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
-
         }
 
         binding.regionSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
@@ -111,20 +113,41 @@ class ProviderFragment : BaseDropletFragment<FragmentProviderBinding, ProviderVi
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 viewModel.setRegion(regionAdapter.getItem(position)!!)
             }
-
         }
 
         binding.apply.setOnClickListener {
-            viewModel.createServer()
+            val permission = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+            if (PermissionsManager.isPermissionsGranted(baseActivityView, permission)) {
+                viewModel.createServer()
+            } else {
+                PermissionsManager.verifyStoragePermissions(this, permission, PERMISSION_ACCESS_CODE)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            PERMISSION_ACCESS_CODE -> {
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    viewModel.createServer()
+                } else {
+                    showErrorMsg(getString(R.string.grant_permissions))
+                }
+            }
         }
     }
 
     companion object {
 
         private const val TAG = "ProviderFragment"
+        private const val PERMISSION_ACCESS_CODE = 15
 
-        fun newInstance(): ProviderFragment {
-            return ProviderFragment()
+        fun newInstance(): AddDropletFragment {
+            return AddDropletFragment()
         }
     }
 }

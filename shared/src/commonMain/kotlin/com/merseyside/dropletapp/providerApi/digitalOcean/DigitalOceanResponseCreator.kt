@@ -23,7 +23,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
 
     private val json = Json.nonstrict
 
-    private val baseUrl = "https://api.digitalocean.com/v2/"
+    private val baseUrl = "https://api.digitalocean.com/v2"
 
     private val serializer = io.ktor.client.features.json.defaultSerializer()
 
@@ -118,6 +118,9 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
                 SSH_KEY to JsonArray(listOf(
                     JsonPrimitive(sshKeyId)
                 )),
+                IMAGE_KEY to JsonPrimitive("debian-9-x64"),
+                SIZE_KEY to JsonPrimitive("1gb"),
+                BACKUPS_KEY to JsonPrimitive(false),
                 TAG_KEY to JsonArray(listOf(
                     JsonPrimitive(tag)
                 ))

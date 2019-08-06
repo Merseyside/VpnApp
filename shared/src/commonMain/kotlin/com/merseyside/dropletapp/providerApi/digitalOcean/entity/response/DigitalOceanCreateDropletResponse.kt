@@ -1,17 +1,12 @@
 package com.merseyside.dropletapp.providerApi.digitalOcean.entity.response
 
+import com.merseyside.dropletapp.providerApi.digitalOcean.entity.point.DropletPoint
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class DigitalOceanCreateDropletResponse(
 
-    @SerialName("id")
-    val id: Long,
-
-    @SerialName("name")
-    val name: String,
-
-    @SerialName("created_at")
-    val createDate: String
+    @SerialName("droplet")
+    val dropletPoint: DropletPoint
 )

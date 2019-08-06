@@ -1,4 +1,4 @@
-package com.merseyside.dropletapp.presentation.view.fragment.provider.model
+package com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model
 
 import android.os.Bundle
 import androidx.databinding.ObservableField
@@ -13,11 +13,12 @@ import com.merseyside.dropletapp.domain.interactor.GetRegionsByTokenInteractor
 import com.merseyside.dropletapp.domain.interactor.GetTokensByProviderIdInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.utils.isNameValid
 import kotlinx.coroutines.cancel
 import ru.terrakok.cicerone.Router
 import java.lang.IllegalArgumentException
 
-class ProviderViewModel(
+class AddDropletViewModel(
     private val router: Router,
     private val getProvidersUseCase: GetProvidersInteractor,
     private val getTokensByProviderIdUseCase: GetTokensByProviderIdInteractor,
@@ -106,7 +107,15 @@ class ProviderViewModel(
                     providerId = currentProvider,
                     regionSlug = currentRegion?.slug ?: throw IllegalArgumentException(),
                     serverName = serverNameObservableField.get()
-                        ?: throw IllegalArgumentException().also { showErrorMsg("Server name can not be empty") }
+                        .also { if (!isNameValid(serverNameObservableField.get())) throw IllegalArgumentException()
+                            .also {
+                                showErrorMsg("Wrong server name")
+                            }
+                        }
+                        ?: throw IllegalArgumentException()
+                            .also {
+                                showErrorMsg("Server name can not be empty")
+                            }
                 ),
                 onComplete = {
                     showMsg(getString(R.string.complete_msg))

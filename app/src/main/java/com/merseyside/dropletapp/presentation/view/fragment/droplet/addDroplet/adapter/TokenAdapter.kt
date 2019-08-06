@@ -1,4 +1,4 @@
-package com.merseyside.dropletapp.presentation.view.fragment.provider.adapter
+package com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter
 
 import android.app.Activity
 import android.content.Context

@@ -51,6 +51,12 @@ kotlin {
         }
 
         androidMain.dependencies {
+            implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+            implementation files('libs/jsch-0.1.55.jar')
+
+            implementation project(':merseylibrary')
+
             implementation "org.jetbrains.kotlin:kotlin-stdlib:$stdlib"
 
             //It is actual platform implementations

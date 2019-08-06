@@ -17,5 +17,7 @@
     <string name="complete_msg">Successfully completed</string>
     <string name="fill_fields_msg">Please fill all fields correctly</string>
     <string name="unknown_error_msg">Unknown error</string>
+    <string name="grant_permissions">You have to access thi permission in order to you app</string>
+
     <string name="create_server">Create server and get vpn access</string>
 </resources>

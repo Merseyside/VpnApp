@@ -1,6 +1,6 @@
 package com.merseyside.dropletapp.data.repository
 
-import com.merseyside.dropletapp.cipher.RsaManager
+import com.merseyside.dropletapp.cipher.SshManager
 import com.merseyside.dropletapp.data.db.key.KeyDao
 import com.merseyside.dropletapp.data.db.server.ServerDao
 import com.merseyside.dropletapp.data.entity.Token
@@ -13,7 +13,7 @@ import com.merseyside.dropletapp.utils.isIdValid
 
 class ProviderRepositoryImpl(
     private val providerApiFactory: ProviderApiFactory,
-    private val rsaManager: RsaManager,
+    private val sshManager: SshManager,
     private val keyDao: KeyDao,
     private val serverDao: ServerDao
 ) : ProviderRepository {
@@ -29,7 +29,7 @@ class ProviderRepositoryImpl(
     }
 
     private fun createKey(): Pair<String, String> {
-        return rsaManager.createRsaKeys()
+        return sshManager.createRsaKeys() ?: throw IllegalArgumentException()
     }
 
     override suspend fun createServer(
