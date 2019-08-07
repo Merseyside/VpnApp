@@ -53,7 +53,6 @@ class TokenViewModel(
     }
 
     fun saveToken(provider: Provider) {
-        Log.d(TAG, "here")
 
         if (isTokenValid(tokenObservableField.get()) && isNameValid(tokenNameObservableField.get())) {
             saveTokenUseCase.execute(

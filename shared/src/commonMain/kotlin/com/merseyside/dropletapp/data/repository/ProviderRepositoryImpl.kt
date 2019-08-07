@@ -1,15 +1,17 @@
 package com.merseyside.dropletapp.data.repository
 
-import com.merseyside.dropletapp.cipher.SshManager
+import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.dropletapp.data.db.key.KeyDao
 import com.merseyside.dropletapp.data.db.server.ServerDao
+import com.merseyside.dropletapp.data.entity.PrivateKey
+import com.merseyside.dropletapp.data.entity.PublicKey
 import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
 import com.merseyside.dropletapp.providerApi.ProviderApiFactory
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
 import com.merseyside.dropletapp.utils.DROPLET_TAG
-import com.merseyside.dropletapp.utils.isIdValid
+import com.merseyside.dropletapp.utils.isDropletValid
 
 class ProviderRepositoryImpl(
     private val providerApiFactory: ProviderApiFactory,
@@ -28,7 +30,7 @@ class ProviderRepositoryImpl(
         return provider.getRegions(token)
     }
 
-    private fun createKey(): Pair<String, String> {
+    private fun createKey(): Pair<PublicKey, PrivateKey> {
         return sshManager.createRsaKeys() ?: throw IllegalArgumentException()
     }
 
@@ -41,11 +43,9 @@ class ProviderRepositoryImpl(
         val keyPair = createKey()
 
         val provider = providerApiFactory.getProvider(providerId)
-        val keyResponse = provider.createKey(token, "My VPN ssh key", keyPair.first)
+        val keyResponse = provider.createKey(token, "My VPN ssh key", keyPair.first.key)
 
-        if (isIdValid(keyResponse.id)) {
-            keyDao.insert(keyResponse.id, keyPair.first, keyPair.second, token)
-        }
+        keyDao.insert(keyResponse.id, keyPair.first.keyPath, keyPair.second.keyPath, token)
 
         val createDropletResponse = provider.createDroplet(
             token = token,
@@ -59,7 +59,7 @@ class ProviderRepositoryImpl(
 
         val infoResponse = provider.getDropletInfo(token, createDropletResponse.id)
 
-        if (isIdValid(infoResponse.id)) {
+        if (isDropletValid(infoResponse)) {
             infoResponse.let {
                 serverDao.insert(
                     id = it.id,
@@ -70,10 +70,13 @@ class ProviderRepositoryImpl(
                 )
             }
 
-            return true
-        }
+            return sshManager.openSshConnection(
+                "root",
+                infoResponse.networks.first().ipAddress,
+                keyPair.second.keyPath
+            )
+        } else throw IllegalArgumentException("Droplet is not valid")
 
-        return false
     }
 
     companion object {

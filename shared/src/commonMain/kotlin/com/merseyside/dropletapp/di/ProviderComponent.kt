@@ -1,6 +1,6 @@
 package com.merseyside.dropletapp.di
 
-import com.merseyside.dropletapp.cipher.SshManager
+import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.dropletapp.data.db.key.KeyDao
 import com.merseyside.dropletapp.data.db.server.ServerDao
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl

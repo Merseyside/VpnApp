@@ -1,6 +1,7 @@
 package com.merseyside.dropletapp.data.db.key
 
 import com.merseyside.dropletapp.data.db.VpnDatabase
+import com.merseyside.dropletapp.db.model.KeyModel
 
 class KeyDao(database: VpnDatabase) {
 
@@ -8,10 +9,18 @@ class KeyDao(database: VpnDatabase) {
 
     internal fun insert(
         sshKeyId: Long,
-        publicKey: String,
-        privateKey: String,
+        publicKeyPath: String,
+        privateKeyPath: String,
         token: String
     ) {
-        db.insert(sshKeyId, publicKey, privateKey, token)
+        db.insert(sshKeyId, publicKeyPath, privateKeyPath, token)
+    }
+
+    internal fun selectById(sshKeyId: Long): KeyModel? {
+        return db.selectById(sshKeyId).executeAsOneOrNull()
+    }
+
+    companion object {
+        private const val TAG = "KeyDao"
     }
 }
