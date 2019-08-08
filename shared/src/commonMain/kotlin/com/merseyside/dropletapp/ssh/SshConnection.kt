@@ -11,4 +11,6 @@ expect class SshConnection(
     fun isConnected(): Boolean
 
     fun closeConnection()
+
+    fun setTimeout(timeout: Int)
 }

@@ -65,6 +65,8 @@
 
         <item name="dividerHorizontal">@style/DividerStyle</item>
 
+        <item name="pendingColor">@color/purple_pending_color</item>
+
         <!--<item groupName="inputLayoutStrokeColor">@color/text_input_box_stroke</item>-->
 
     </style>

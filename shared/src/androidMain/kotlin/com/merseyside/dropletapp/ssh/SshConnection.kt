@@ -13,6 +13,8 @@ actual class SshConnection actual constructor(
     private var session: Session? = null
     private var channel: Channel? = null
 
+    private var timeout = 0
+
     interface SshConnectionListener {
 
     }
@@ -21,12 +23,17 @@ actual class SshConnection actual constructor(
         try {
             val jsch = JSch()
 
-            jsch.addIdentity(filePath)
+            jsch.addIdentity(filePath, passphrase)
 
             session = jsch.getSession(username, host, 22)
 
             val userInfo = MyUserInfo()
             session!!.userInfo = userInfo
+
+            if (timeout != 0) {
+                session!!.timeout = timeout
+            }
+
             session!!.connect()
 
             channel = session!!.openChannel("shell")
@@ -48,6 +55,12 @@ actual class SshConnection actual constructor(
 
     actual fun closeConnection() {
         session?.disconnect()
+    }
+
+    actual fun setTimeout(timeout: Int) {
+        if (timeout > 0) {
+            this.timeout = timeout
+        }
     }
 
     inner class MyUserInfo : UserInfo {
@@ -80,4 +93,6 @@ actual class SshConnection actual constructor(
     companion object {
         private const val TAG = "SshConnection"
     }
+
+
 }

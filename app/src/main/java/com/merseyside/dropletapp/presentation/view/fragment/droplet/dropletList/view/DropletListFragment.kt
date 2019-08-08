@@ -9,7 +9,7 @@ import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletListViewModel
 import com.merseyside.dropletapp.databinding.FragmentDropletListBinding
-import com.merseyside.dropletapp.db.model.ServerModel
+import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.presentation.di.component.DaggerDropletListComponent
 import com.merseyside.dropletapp.presentation.di.module.DropletListModule
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.adapter.DropletAdapter
@@ -18,7 +18,7 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
 
     private lateinit var adapter: DropletAdapter
 
-    private val dropletObserver = Observer<List<ServerModel>> {
+    private val dropletObserver = Observer<List<Server>> {
         adapter.removeAll()
         adapter.add(it)
     }
@@ -73,6 +73,8 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
         binding.fab.setOnClickListener {
             viewModel.navigateToAddDropletScreen()
         }
+
+        viewModel.loadServers()
 
     }
 

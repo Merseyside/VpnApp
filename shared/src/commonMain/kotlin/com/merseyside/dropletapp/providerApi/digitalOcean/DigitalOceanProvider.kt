@@ -64,6 +64,7 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
                 name = it.name,
                 status = it.status,
                 createdAt = it.createdTime,
+                regionName = it.regionPoint.name,
                 networks = it.networkList.values.flatMap { networkPoints ->
                     val networkList = ArrayList<NetworkPoint>()
 

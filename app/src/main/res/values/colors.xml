@@ -27,5 +27,7 @@
     <color name="main_text_color_purple">@color/grey_dark</color>
     <color name="secondary_text_color_purple">@color/white</color>
 
+    <color name="purple_pending_color">#E49100</color>
+
     <!--End of purple theme-->
 </resources>

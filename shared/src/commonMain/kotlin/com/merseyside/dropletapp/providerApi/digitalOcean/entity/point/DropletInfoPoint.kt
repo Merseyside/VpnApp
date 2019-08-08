@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.providerApi.digitalOcean.entity.point
 
+import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -17,6 +18,9 @@ data class DropletInfoPoint(
 
     @SerialName("created_at")
     val createdTime: String,
+
+    @SerialName("region")
+    val regionPoint: RegionPoint,
 
     @SerialName("networks")
     val networkList: Map<String, List<NetworkPoint>>

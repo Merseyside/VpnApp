@@ -3,6 +3,7 @@ package com.merseyside.dropletapp.presentation.view.activity.main.view
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -18,6 +19,7 @@ import com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewM
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.view.AddDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view.DropletListFragment
 import com.merseyside.dropletapp.presentation.view.fragment.token.view.TokenFragment
+import com.upstream.basemvvmimpl.presentation.utils.getColorFromAttr
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -75,6 +77,8 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
     override fun onCreate(savedInstance: Bundle?) {
         super.onCreate(savedInstance)
 
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+
         doLayout()
 
         if (savedInstance == null) {
@@ -84,6 +88,7 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
 
     private fun init() {
         viewModel.newRootScreen()
+        getMsgTextColor()
     }
 
     private fun doLayout() {

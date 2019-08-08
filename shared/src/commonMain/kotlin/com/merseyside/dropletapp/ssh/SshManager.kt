@@ -3,7 +3,15 @@ package com.merseyside.dropletapp.ssh
 import com.merseyside.dropletapp.data.entity.PrivateKey
 import com.merseyside.dropletapp.data.entity.PublicKey
 
-expect class SshManager constructor() {
+expect class SshManager(timeoutMillis: Int) {
+
+    enum class Status{
+        PENDING, IN_PROCESS, READY;
+
+        companion object {
+            fun getStatusByString(status: String): Status?
+        }
+    }
 
     fun createRsaKeys(): Pair<PublicKey, PrivateKey>?
 

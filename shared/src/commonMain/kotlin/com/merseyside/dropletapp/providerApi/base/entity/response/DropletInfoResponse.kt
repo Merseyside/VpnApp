@@ -7,5 +7,6 @@ data class DropletInfoResponse(
     val name: String,
     val status: String,
     val createdAt: String,
+    val regionName: String,
     val networks: List<NetworkPoint>
 )

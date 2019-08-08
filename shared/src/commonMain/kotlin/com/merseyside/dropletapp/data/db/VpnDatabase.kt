@@ -2,7 +2,7 @@ package com.merseyside.dropletapp.data.db
 
 import com.merseyside.dropletapp.data.db.server.NetworkEntity
 import com.merseyside.dropletapp.data.db.server.ServerDataMapper
-import com.merseyside.dropletapp.db.model.ServerModel
+import com.merseyside.dropletapp.db.model.Server
 import com.squareup.sqldelight.ColumnAdapter
 import com.squareup.sqldelight.db.SqlDriver
 
@@ -24,7 +24,7 @@ fun createDatabase(driver: SqlDriver): VpnDatabase {
 
     }
 
-    return VpnDatabase(driver, ServerModelAdapter = ServerModel.Adapter(
+    return VpnDatabase(driver, ServerAdapter = Server.Adapter(
         networksAdapter = networkAdapter
     ))
 }

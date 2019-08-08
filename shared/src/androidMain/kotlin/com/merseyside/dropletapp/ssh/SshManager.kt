@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.ssh
 
+import android.util.Log
 import com.github.florent37.preferences.application
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.KeyPair
@@ -7,9 +8,31 @@ import com.jcraft.jsch.Logger
 import com.merseyside.admin.merseylibrary.data.filemanager.FileManager
 import com.merseyside.dropletapp.data.entity.PrivateKey
 import com.merseyside.dropletapp.data.entity.PublicKey
+import kotlinx.coroutines.withTimeout
 import java.io.File
 
-actual class SshManager {
+actual class SshManager actual constructor(private val timeoutMillis: Int) {
+
+    actual enum class Status(val status: String) {
+        PENDING("Pending"), IN_PROCESS("In Process"), READY("Ready");
+
+        override fun toString(): String {
+            return status
+        }
+
+        actual companion object {
+            actual fun getStatusByString(status: String): Status? {
+                values().forEach {
+                    if (it.status == status) {
+                        return it
+                    }
+                }
+
+                return null
+            }
+        }
+
+    }
 
     private val jsch = JSch().also { JSch.setLogger(MyLogger()) }
 
@@ -37,14 +60,21 @@ actual class SshManager {
     }
 
     actual fun openSshConnection(username: String, host: String, filePath: String): Boolean {
-        val connection = SshConnection(username, host, filePath, passphrase)
+        Log.d(TAG, "Connecting to $username@$host")
 
-        return connection.openSshConnection()
-            .also {
-                if (it) {
+        val connection = SshConnection(username, host, filePath, passphrase)
+        connection.setTimeout(timeoutMillis)
+
+        repeat(5) {
+
+            if (connection.openSshConnection()) {
+                return true.also {
                     activeConnections.add(connection)
                 }
             }
+        }
+
+        return false
     }
 
     actual fun closeConnection(connection: SshConnection) {

@@ -6,12 +6,16 @@ import com.merseyside.dropletapp.data.db.server.ServerDao
 import com.merseyside.dropletapp.data.entity.PrivateKey
 import com.merseyside.dropletapp.data.entity.PublicKey
 import com.merseyside.dropletapp.data.entity.Token
+import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
 import com.merseyside.dropletapp.providerApi.ProviderApiFactory
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
 import com.merseyside.dropletapp.utils.DROPLET_TAG
+import com.merseyside.dropletapp.utils.Logger
 import com.merseyside.dropletapp.utils.isDropletValid
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeout
 
 class ProviderRepositoryImpl(
     private val providerApiFactory: ProviderApiFactory,
@@ -20,7 +24,7 @@ class ProviderRepositoryImpl(
     private val serverDao: ServerDao
 ) : ProviderRepository {
 
-    override suspend fun getServices(): List<Provider> {
+    override suspend fun getProviders(): List<Provider> {
         return providers
     }
 
@@ -45,11 +49,9 @@ class ProviderRepositoryImpl(
         val provider = providerApiFactory.getProvider(providerId)
         val keyResponse = provider.createKey(token, "My VPN ssh key", keyPair.first.key)
 
-        keyDao.insert(keyResponse.id, keyPair.first.keyPath, keyPair.second.keyPath, token)
-
         val createDropletResponse = provider.createDroplet(
             token = token,
-            name = serverName,
+            name = "vpn-$serverName",
             regionSlug = regionSlug,
             sshKeyId = keyResponse.id,
             tag = DROPLET_TAG
@@ -59,29 +61,86 @@ class ProviderRepositoryImpl(
 
         val infoResponse = provider.getDropletInfo(token, createDropletResponse.id)
 
-        if (isDropletValid(infoResponse)) {
-            infoResponse.let {
-                serverDao.insert(
-                    id = it.id,
-                    name = it.name,
-                    status = it.status,
-                    createdAt = it.createdAt,
-                    networks = it.networks
-                )
+        val result: Boolean = withTimeout(TIMEOUT_MILLIS) {
+
+            repeat(REPEAT_COUNT) {
+                Logger.logMsg(TAG, "Trying $it...")
+
+                if (isDropletValid(infoResponse)) {
+                    keyDao.insert(keyResponse.id, keyPair.first.keyPath, keyPair.second.keyPath, token)
+
+                    val isConnected = openSshConnection(
+                        "root",
+                        infoResponse.networks.first().ipAddress,
+                        keyPair.second.keyPath
+                    )
+
+                    infoResponse.let { info ->
+                        serverDao.insert(
+                            id = info.id,
+                            providerId = providerId,
+                            name = info.name,
+                            serverStatus = info.status,
+                            environmentStatus = when(isConnected) {
+                                true -> SshManager.Status.IN_PROCESS.toString()
+                                false -> SshManager.Status.PENDING.toString()
+                            },
+                            createdAt = info.createdAt,
+                            regionName = info.regionName,
+                            networks = info.networks
+                        )
+                    }
+
+                    return@withTimeout true
+                } else {
+                    if (it != REPEAT_COUNT - 1) {
+                        delay(DELAY_MILLIS)
+                    }
+                }
             }
 
-            return sshManager.openSshConnection(
-                "root",
-                infoResponse.networks.first().ipAddress,
-                keyPair.second.keyPath
-            )
-        } else throw IllegalArgumentException("Droplet is not valid")
+            false
+        }
 
+        if (!result) throw IllegalArgumentException("Droplet is not valid")
+        else return result
+    }
+
+    private fun openSshConnection(
+        hostName: String = "root",
+        ipAddress: String,
+        keyPath: String): Boolean {
+
+        return sshManager.openSshConnection(
+            hostName,
+            ipAddress,
+            keyPath
+        )
+    }
+
+    override suspend fun getServers(): List<Server> {
+        return serverDao.getAllServers().map {
+            Server(
+                id = it.id,
+                name = it.name,
+                createdAt = it.createdAt,
+                regionName = it.regionName,
+                providerName = Provider.getProviderById(it.providerId)?.getName() ?: throw IllegalArgumentException("No providerName found with this id"),
+                serverStatus = it.serverStatus,
+                environmentStatus = SshManager.Status.getStatusByString(it.environmentStatus) ?: throw IllegalArgumentException("Wrong status name")
+            )
+        }
     }
 
     companion object {
 
-        private var providers: List<Provider> = Provider.getAllServices()
+        private const val REPEAT_COUNT = 8
+        private const val DELAY_MILLIS = 7000L
+        private const val TIMEOUT_MILLIS = 60 * 1000L
+
+        private const val TAG = "ProviderRepository"
+
+        private val providers: List<Provider> = Provider.getAllServices()
 
     }
 }

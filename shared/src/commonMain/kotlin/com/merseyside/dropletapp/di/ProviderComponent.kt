@@ -9,16 +9,19 @@ import org.kodein.di.Kodein
 import org.kodein.di.erased.bind
 import org.kodein.di.erased.instance
 import org.kodein.di.erased.singleton
+import org.kodein.di.erased.with
 
-private val providerModule = Kodein.Module("provider") {
+private val providerModule = Kodein.Module("providerName") {
 
     bind<ProviderRepository>() with singleton { ProviderRepositoryImpl( instance(), instance(), instance(), instance() ) }
 
-    bind<SshManager>() with singleton { SshManager() }
+    bind<SshManager>() with singleton { SshManager( instance("sshTimeout")) }
 
     bind<KeyDao>() with singleton { KeyDao( instance() ) }
 
-    bind<ServerDao>() with singleton { ServerDao( instance() )}
+    bind<ServerDao>() with singleton { ServerDao( instance() ) }
+
+    constant("sshTimeout") with 20000
 }
 
 internal val providerComponent = Kodein {
