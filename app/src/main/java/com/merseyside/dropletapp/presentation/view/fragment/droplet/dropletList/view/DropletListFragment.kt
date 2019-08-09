@@ -19,8 +19,11 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
     private lateinit var adapter: DropletAdapter
 
     private val dropletObserver = Observer<List<Server>> {
-        adapter.removeAll()
-        adapter.add(it)
+        if (!adapter.hasItems()) {
+            adapter.add(it)
+        } else {
+            adapter.update(it)
+        }
     }
 
     override fun setBindingVariable(): Int {
@@ -52,8 +55,6 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        adapter = DropletAdapter()
-
         init()
     }
 
@@ -64,6 +65,18 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
     }
 
     private fun init() {
+        adapter = DropletAdapter()
+        adapter.setOnItemOptionClickListener(object: DropletAdapter.OnItemOptionsClickListener {
+            override fun onConnect(server: Server) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onDelete(server: Server) {
+                viewModel.deleteServer(server)
+            }
+
+        })
+
         viewModel.dropletLiveData.observe(this, dropletObserver)
     }
 

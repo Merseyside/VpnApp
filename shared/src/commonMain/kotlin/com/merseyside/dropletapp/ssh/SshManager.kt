@@ -15,10 +15,11 @@ expect class SshManager(timeoutMillis: Int) {
 
     fun createRsaKeys(): Pair<PublicKey, PrivateKey>?
 
-    fun openSshConnection(
+    suspend fun openSshConnection(
         username: String,
         host: String,
-        filePath: String
+        filePathPrivate: String,
+        filePathPublic: String
     ): Boolean
 
     fun closeConnection(connection: SshConnection)

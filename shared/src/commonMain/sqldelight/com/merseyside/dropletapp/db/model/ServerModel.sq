@@ -1,7 +1,8 @@
 import com.merseyside.dropletapp.data.db.server.NetworkEntity;
 
-CREATE TABLE Server(
+CREATE TABLE ServerModel(
     id INTEGER NOT NULL PRIMARY KEY,
+    token TEXT NOT NULL,
     providerId INTEGER NOT NULL,
     name TEXT NOT NULL,
     serverStatus TEXT NOT NULL,
@@ -12,7 +13,9 @@ CREATE TABLE Server(
 );
 
 insert:
-INSERT OR REPLACE INTO Server(id, providerId, name, serverStatus, environmentStatus, createdAt, regionName, networks) VALUES(?, ?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO ServerModel(
+    id, token, providerId, name, serverStatus, environmentStatus, createdAt, regionName, networks
+    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 selectAll:
-SELECT * FROM Server;
+SELECT * FROM ServerModel;

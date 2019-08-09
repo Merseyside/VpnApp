@@ -1,6 +1,5 @@
 package com.merseyside.dropletapp.providerApi
 
-import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.providerApi.base.entity.response.CreateDropletResponse
 import com.merseyside.dropletapp.providerApi.base.entity.response.CreateSshKeyResponse
 import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoResponse
@@ -20,7 +19,9 @@ interface ProviderApi {
 
     suspend fun getDropletInfo(token: String, dropletId: Long): DropletInfoResponse
 
-    suspend fun getRegions(token: Token): List<RegionPoint>
+    suspend fun getRegions(token: String): List<RegionPoint>
 
     suspend fun createKey(token: String, name: String, publicKey: String): CreateSshKeyResponse
+
+    suspend fun deleteDroplet(token: String, dropletId: Long)
 }

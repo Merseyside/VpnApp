@@ -8,6 +8,7 @@ import com.jcraft.jsch.Logger
 import com.merseyside.admin.merseylibrary.data.filemanager.FileManager
 import com.merseyside.dropletapp.data.entity.PrivateKey
 import com.merseyside.dropletapp.data.entity.PublicKey
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
 import java.io.File
 
@@ -49,7 +50,7 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
         val priFile = File(outputDir, "rsa-${System.currentTimeMillis()}")
 
         keyPair.writePublicKey(pubFile.absolutePath, passphrase)
-        keyPair.writePrivateKey(priFile.absolutePath, passphrase.toByteArray())
+        keyPair.writePrivateKey(priFile.absolutePath)
 
         val privateKey = PrivateKey(FileManager.getStringFromFile(priFile.absolutePath), priFile.absolutePath)
         val publicKey = PublicKey(FileManager.getStringFromFile(pubFile.absolutePath), pubFile.absolutePath)
@@ -59,19 +60,26 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
         return publicKey to privateKey
     }
 
-    actual fun openSshConnection(username: String, host: String, filePath: String): Boolean {
+    actual suspend fun openSshConnection(
+        username: String,
+        host: String,
+        filePathPrivate: String,
+        filePathPublic: String
+    ): Boolean {
         Log.d(TAG, "Connecting to $username@$host")
 
-        val connection = SshConnection(username, host, filePath, passphrase)
+        val connection = SshConnection(username, host, filePathPrivate, filePathPublic, passphrase)
         connection.setTimeout(timeoutMillis)
 
-        repeat(5) {
+        repeat(12) {
 
             if (connection.openSshConnection()) {
                 return true.also {
                     activeConnections.add(connection)
                 }
             }
+
+            delay(5000)
         }
 
         return false

@@ -3,6 +3,7 @@ package com.merseyside.dropletapp.presentation.di.module
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetServersInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletListViewModel
 import com.upstream.basemvvmimpl.presentation.fragment.BaseFragment
@@ -18,6 +19,11 @@ class DropletListModule(
 ) {
 
     @Provides
+    internal fun provideDeleteDropletInteractor(): DeleteDropletInteractor {
+        return DeleteDropletInteractor()
+    }
+
+    @Provides
     internal fun provideGetServersInteractor(): GetServersInteractor {
         return GetServersInteractor()
     }
@@ -25,9 +31,10 @@ class DropletListModule(
     @Provides
     internal fun provideDropletListViewModelProvider(
         router: Router,
-        getServersUseCase: GetServersInteractor
+        getServersUseCase: GetServersInteractor,
+        deleteDropletUseCase: DeleteDropletInteractor
     ): ViewModelProvider.Factory {
-        return DropletListViewModelProviderFactory(bundle, router, getServersUseCase)
+        return DropletListViewModelProviderFactory(bundle, router, getServersUseCase, deleteDropletUseCase)
     }
 
     @Provides
@@ -38,11 +45,12 @@ class DropletListModule(
     class DropletListViewModelProviderFactory(
         bundle: Bundle?,
         private val router: Router,
-        private val getServersUseCase: GetServersInteractor
+        private val getServersUseCase: GetServersInteractor,
+        private val deleteDropletUseCase: DeleteDropletInteractor
     ): BundleAwareViewModelFactory<DropletListViewModel>(bundle) {
 
         override fun getViewModel(): DropletListViewModel {
-            return DropletListViewModel(router, getServersUseCase)
+            return DropletListViewModel(router, getServersUseCase, deleteDropletUseCase)
         }
     }
 }

@@ -26,7 +26,7 @@ abstract class CoroutineUseCase<T, Params> : CoroutineScope by CoroutineScope(Di
                 hideProgress()
             } catch (e: CancellationException) {
                 hideProgress()
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 onError(e)
                 hideProgress()
             }

@@ -1,12 +1,19 @@
 package com.merseyside.dropletapp.ssh
 
 import android.util.Log
-import com.jcraft.jsch.*
+import com.github.florent37.preferences.application
+import com.jcraft.jsch.Channel
+import com.jcraft.jsch.JSch
+import com.jcraft.jsch.Session
+import com.jcraft.jsch.UserInfo
+import com.merseyside.dropletapp.utils.readAssetFile
+import java.util.*
 
 actual class SshConnection actual constructor(
     private val username: String,
     private val host: String,
-    private val filePath: String,
+    private val filePathPrivate: String,
+    private val filePathPublic: String,
     private val passphrase: String
 ) {
 
@@ -23,7 +30,9 @@ actual class SshConnection actual constructor(
         try {
             val jsch = JSch()
 
-            jsch.addIdentity(filePath, passphrase)
+            Log.d(TAG, filePathPrivate)
+
+            jsch.addIdentity(filePathPrivate, filePathPublic)
 
             session = jsch.getSession(username, host, 22)
 
@@ -34,10 +43,17 @@ actual class SshConnection actual constructor(
                 session!!.timeout = timeout
             }
 
+            val prop = Properties()
+            prop["StrictHostKeyChecking"] = "no"
+
+            session!!.setConfig(prop)
+
             session!!.connect()
 
             channel = session!!.openChannel("shell")
             channel!!.inputStream
+
+            channel!!.outputStream.write(getScript().toByteArray())
 
             channel!!.connect()
 
@@ -65,7 +81,7 @@ actual class SshConnection actual constructor(
 
     inner class MyUserInfo : UserInfo {
         override fun promptPassphrase(p0: String?): Boolean {
-            return true
+            return false
         }
 
         override fun getPassphrase(): String {
@@ -88,6 +104,14 @@ actual class SshConnection actual constructor(
             return false
         }
 
+    }
+
+    private fun getScript(): String {
+        return "`export CLIENT=$username" +
+                " && bash -c " +
+                "\"\$(wget https://gist.githubusercontent.com/myvpn-run/ab573e451a7b44991fb3a45" +
+                "66496d0f0/raw/4b9aa9f10049f1350fd81e1d1e4350b5bb227c7e/openvpn.sh -O -)\"" +
+                " && cat /root/$username.ovpn`"
     }
 
     companion object {

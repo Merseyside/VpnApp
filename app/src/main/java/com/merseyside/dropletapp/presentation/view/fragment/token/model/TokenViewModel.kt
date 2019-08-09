@@ -62,7 +62,11 @@ class TokenViewModel(
                     providerId = provider.getId()
                 ),
                 onComplete = {
-                    showMsg(getString(R.string.complete_msg))
+                    if (it) {
+                        showMsg(getString(R.string.complete_msg))
+                    } else {
+                        //showErrorMsg(getString(R.string.unknown_error_msg))
+                    }
                 },
                 onError = {throwable ->
                     showErrorMsg(errorMsgCreator.createErrorMsg(throwable))

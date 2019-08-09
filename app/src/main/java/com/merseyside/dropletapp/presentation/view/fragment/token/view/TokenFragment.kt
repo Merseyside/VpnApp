@@ -1,6 +1,7 @@
 package com.merseyside.dropletapp.presentation.view.fragment.token.view
 
 import android.content.Context
+import android.content.res.AssetManager
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer

@@ -6,10 +6,7 @@ import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.*
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.features.defaultRequest
-import io.ktor.client.request.accept
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.client.request.post
+import io.ktor.client.request.*
 import io.ktor.http.ContentType
 import io.ktor.http.takeFrom
 import kotlinx.serialization.ImplicitReflectionSerializer
@@ -143,6 +140,16 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
         }
 
         return json.parse(call)
+    }
+
+    suspend fun deleteDroplet(token: String, dropletId: Long) {
+        val apiMethod = "droplets/$dropletId"
+
+        client.delete<Any> {
+            url.takeFrom(getRoute(apiMethod))
+
+            header(AUTHORIZATION_KEY, getAuthHeader(token))
+        }
     }
 
     companion object {

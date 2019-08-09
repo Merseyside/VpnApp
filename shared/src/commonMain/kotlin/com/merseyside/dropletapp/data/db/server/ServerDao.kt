@@ -1,7 +1,8 @@
 package com.merseyside.dropletapp.data.db.server
 
 import com.merseyside.dropletapp.data.db.VpnDatabase
-import com.merseyside.dropletapp.db.model.Server
+import com.merseyside.dropletapp.data.entity.Token
+import com.merseyside.dropletapp.db.model.ServerModel
 import com.merseyside.dropletapp.providerApi.base.entity.point.NetworkPoint
 
 class ServerDao(database: VpnDatabase) {
@@ -10,6 +11,7 @@ class ServerDao(database: VpnDatabase) {
 
     internal fun insert(
         id: Long,
+        token: Token,
         providerId: Long,
         name: String,
         serverStatus: String,
@@ -20,6 +22,7 @@ class ServerDao(database: VpnDatabase) {
     ) {
         db.insert(
             id = id,
+            token = token,
             providerId = providerId,
             name = name,
             serverStatus = serverStatus,
@@ -30,7 +33,7 @@ class ServerDao(database: VpnDatabase) {
         )
     }
 
-    internal fun getAllServers(): List<Server> {
+    internal fun getAllServers(): List<ServerModel> {
         return db.selectAll().executeAsList()
     }
 }

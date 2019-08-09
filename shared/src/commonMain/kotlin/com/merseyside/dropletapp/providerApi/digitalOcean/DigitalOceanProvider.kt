@@ -7,6 +7,7 @@ import com.merseyside.dropletapp.providerApi.base.entity.response.CreateDropletR
 import com.merseyside.dropletapp.providerApi.base.entity.response.CreateSshKeyResponse
 import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoResponse
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.providerApi.exception.InvalidTokenException
 import io.ktor.client.engine.HttpClientEngine
 import kotlin.jvm.Synchronized
 
@@ -17,9 +18,11 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
     override suspend fun isTokenValid(token: String): Boolean {
         val response = responseCreator.isTokenValid(token)
 
-        return response.accountDataPoint?.let {
-            it.email != null && it.status == "active"
-        } ?: false
+        if (response.accountDataPoint?.email != null && response.accountDataPoint.status == "active") {
+            return true
+        }
+
+        throw InvalidTokenException(response.accountDataPoint?.message ?: "Unknown error")
     }
 
     override suspend fun createDroplet(
@@ -80,6 +83,10 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
                 }
             )
         }
+    }
+
+    override suspend fun deleteDroplet(token: String, dropletId: Long) {
+        responseCreator.deleteDroplet(token, dropletId)
     }
 
     companion object {

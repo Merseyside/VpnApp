@@ -7,16 +7,15 @@ import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
-import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.domain.interactor.GetRegionsByTokenInteractor
 import com.merseyside.dropletapp.domain.interactor.GetTokensByProviderIdInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
+import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
-import com.merseyside.dropletapp.utils.isNameValid
+import com.merseyside.dropletapp.utils.isServerNameValid
 import kotlinx.coroutines.cancel
 import ru.terrakok.cicerone.Router
-import java.lang.IllegalArgumentException
 
 class AddDropletViewModel(
     private val router: Router,
@@ -107,7 +106,7 @@ class AddDropletViewModel(
                     providerId = currentProvider,
                     regionSlug = currentRegion?.slug ?: throw IllegalArgumentException(),
                     serverName = serverNameObservableField.get()
-                        .also { if (!isNameValid(serverNameObservableField.get())) throw IllegalArgumentException()
+                        .also { if (!isServerNameValid(serverNameObservableField.get())) throw IllegalArgumentException()
                             .also {
                                 showErrorMsg("Wrong server name")
                             }

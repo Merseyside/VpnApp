@@ -8,6 +8,9 @@ data class AccountDataPoint(
     @SerialName("status")
     val status: String? = null,
 
+    @SerialName("status_message")
+    val message: String? = null,
+
     @SerialName("email")
     val email: String? = null
 )
