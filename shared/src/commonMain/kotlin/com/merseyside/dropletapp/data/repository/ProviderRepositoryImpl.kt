@@ -6,17 +6,17 @@ import com.merseyside.dropletapp.data.db.server.ServerDao
 import com.merseyside.dropletapp.data.entity.PrivateKey
 import com.merseyside.dropletapp.data.entity.PublicKey
 import com.merseyside.dropletapp.data.entity.Token
+import com.merseyside.dropletapp.data.exception.NoDataException
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
-import com.merseyside.dropletapp.providerApi.ProviderApi
 import com.merseyside.dropletapp.providerApi.ProviderApiFactory
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.ssh.SshConnection
 import com.merseyside.dropletapp.utils.DROPLET_TAG
 import com.merseyside.dropletapp.utils.Logger
 import com.merseyside.dropletapp.utils.isDropletValid
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withTimeout
 
 class ProviderRepositoryImpl(
     private val providerApiFactory: ProviderApiFactory,
@@ -67,9 +67,8 @@ class ProviderRepositoryImpl(
             val infoResponse = provider.getDropletInfo(token, createDropletResponse.id)
 
             if (isDropletValid(infoResponse)) {
-                keyDao.insert(keyResponse.id, keyPair.first.keyPath, keyPair.second.keyPath, token)
 
-                val isConnected = openSshConnection(
+                val sshConnection = setupServer(
                     "root",
                     infoResponse.networks.first().ipAddress,
                     keyPair.second.keyPath,
@@ -82,16 +81,16 @@ class ProviderRepositoryImpl(
                         token = token,
                         providerId = providerId,
                         name = info.name,
+                        sshKeyId = keyResponse.id,
                         serverStatus = info.status,
-                        environmentStatus = when(isConnected) {
-                            true -> SshManager.Status.IN_PROCESS.toString()
-                            false -> SshManager.Status.PENDING.toString()
-                        },
+                        environmentStatus = sshConnection?.let {SshManager.Status.IN_PROCESS.toString()} ?: return@repeat,
                         createdAt = info.createdAt,
                         regionName = info.regionName,
                         networks = info.networks
                     )
                 }
+
+                keyDao.insert(keyResponse.id, keyPair.first.keyPath, keyPair.second.keyPath, token)
 
                 return true
             } else {
@@ -106,13 +105,13 @@ class ProviderRepositoryImpl(
 
     }
 
-    private suspend fun openSshConnection(
-        hostName: String = "root1",
+    private suspend fun setupServer(
+        hostName: String = "root",
         ipAddress: String,
         keyPathPrivate: String,
-        keyPathPublic: String): Boolean {
+        keyPathPublic: String): SshConnection? {
 
-        return sshManager.openSshConnection(
+        return sshManager.setupServer(
             hostName,
             ipAddress,
             keyPathPrivate,
@@ -121,7 +120,7 @@ class ProviderRepositoryImpl(
     }
 
     override suspend fun getServers(): List<Server> {
-        return serverDao.getAllServers().map {
+        return serverDao.getAllDroplets().map {
             Server(
                 id = it.id,
                 token = it.token,
@@ -138,11 +137,30 @@ class ProviderRepositoryImpl(
 
 
     override suspend fun deleteDroplet(token: Token, providerId: Long, dropletId: Long): Boolean {
+        Logger.logMsg(TAG, "Delete droplet")
         val provider = providerApiFactory.getProvider(providerId)
 
         provider.deleteDroplet(token, dropletId)
 
+        serverDao.deleteDroplet(dropletId, providerId)
+
         return true
+    }
+
+    override suspend fun getOvpnFile(dropletId: Long, providerId: Long): String {
+        val server = serverDao.getDropletByIds(dropletId, providerId)
+
+        if (server != null) {
+            val keys = keyDao.selectById(server.sshKeyId)
+
+            return sshManager.getOvpnFile(
+                "root",
+                server.networks.networkList.first().ipAddress,
+                keys?.privateKeyPath ?: throw NoDataException(),
+                keys.publicKeyPath)
+
+
+        } else throw NoDataException("No droplet with passed id")
     }
 
     companion object {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
+import com.merseyside.dropletapp.domain.interactor.GetOvpnFileInteractor
 import com.merseyside.dropletapp.domain.interactor.GetServersInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletListViewModel
 import com.upstream.basemvvmimpl.presentation.fragment.BaseFragment
@@ -19,6 +20,11 @@ class DropletListModule(
 ) {
 
     @Provides
+    internal fun provideOvpnFileInteractor(): GetOvpnFileInteractor {
+        return GetOvpnFileInteractor()
+    }
+
+    @Provides
     internal fun provideDeleteDropletInteractor(): DeleteDropletInteractor {
         return DeleteDropletInteractor()
     }
@@ -32,9 +38,16 @@ class DropletListModule(
     internal fun provideDropletListViewModelProvider(
         router: Router,
         getServersUseCase: GetServersInteractor,
-        deleteDropletUseCase: DeleteDropletInteractor
+        deleteDropletUseCase: DeleteDropletInteractor,
+        getOvpnFileUseCase: GetOvpnFileInteractor
     ): ViewModelProvider.Factory {
-        return DropletListViewModelProviderFactory(bundle, router, getServersUseCase, deleteDropletUseCase)
+        return DropletListViewModelProviderFactory(
+            bundle,
+            router,
+            getServersUseCase,
+            deleteDropletUseCase,
+            getOvpnFileUseCase
+        )
     }
 
     @Provides
@@ -46,11 +59,12 @@ class DropletListModule(
         bundle: Bundle?,
         private val router: Router,
         private val getServersUseCase: GetServersInteractor,
-        private val deleteDropletUseCase: DeleteDropletInteractor
+        private val deleteDropletUseCase: DeleteDropletInteractor,
+        private val getOvpnFileUseCase: GetOvpnFileInteractor
     ): BundleAwareViewModelFactory<DropletListViewModel>(bundle) {
 
         override fun getViewModel(): DropletListViewModel {
-            return DropletListViewModel(router, getServersUseCase, deleteDropletUseCase)
+            return DropletListViewModel(router, getServersUseCase, deleteDropletUseCase, getOvpnFileUseCase)
         }
     }
 }

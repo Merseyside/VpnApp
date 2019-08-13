@@ -34,7 +34,7 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
         super.onBindViewHolder(holder, position)
 
         holder.itemView.rootView.setOnLongClickListener {
-            val popup = PopupMenu(holder.itemView.context, holder.itemView.findViewById(R.id.time))
+            val popup = PopupMenu(holder.itemView.context, holder.itemView.findViewById(R.id.status))
             popup.inflate(R.menu.menu_droplet_options)
             popup.setOnMenuItemClickListener { item ->
                 when (item.itemId) {

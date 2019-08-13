@@ -3,8 +3,10 @@ package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList
 import android.os.Bundle
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
+import com.merseyside.dropletapp.domain.interactor.GetOvpnFileInteractor
 import com.merseyside.dropletapp.domain.interactor.GetServersInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
@@ -14,7 +16,8 @@ import ru.terrakok.cicerone.Router
 class DropletListViewModel(
     private val router: Router,
     private val getServersUseCase: GetServersInteractor,
-    private val deleteDropletUseCase: DeleteDropletInteractor
+    private val deleteDropletUseCase: DeleteDropletInteractor,
+    private val getOvpnFileUseCase: GetOvpnFileInteractor
 ) : BaseDropletViewModel(router) {
 
     val dropletsVisibility = ObservableField<Boolean>(true)
@@ -31,6 +34,7 @@ class DropletListViewModel(
     override fun dispose() {
         getServersUseCase.cancel()
         deleteDropletUseCase.cancel()
+        getOvpnFileUseCase.cancel()
     }
 
     fun loadServers() {
@@ -56,9 +60,24 @@ class DropletListViewModel(
         deleteDropletUseCase.execute(
             params = DeleteDropletInteractor.Params(server.token, server.providerId, server.id),
             onComplete = {
+                showMsg(getString(R.string.complete_msg))
                 loadServers()
             },
             onError = { throwable ->
+                showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
+            },
+            showProgress = { showProgress() },
+            hideProgress = { hideProgress() }
+        )
+    }
+
+    fun getOvpnFile(dropletId: Long, providerId: Long) {
+        getOvpnFileUseCase.execute(
+            params = GetOvpnFileInteractor.Params(dropletId, providerId),
+            onComplete = {
+                showMsg(it)
+            },
+            onError = {throwable ->
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
             },
             showProgress = { showProgress() },

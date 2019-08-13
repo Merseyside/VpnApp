@@ -5,6 +5,7 @@ CREATE TABLE ServerModel(
     token TEXT NOT NULL,
     providerId INTEGER NOT NULL,
     name TEXT NOT NULL,
+    sshKeyId INTEGER NOT NULL,
     serverStatus TEXT NOT NULL,
     environmentStatus TEXT NOT NULL,
     createdAt TEXT NOT NULL,
@@ -14,8 +15,14 @@ CREATE TABLE ServerModel(
 
 insert:
 INSERT OR REPLACE INTO ServerModel(
-    id, token, providerId, name, serverStatus, environmentStatus, createdAt, regionName, networks
-    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);
+    id, token, providerId, name, sshKeyId, serverStatus, environmentStatus, createdAt, regionName, networks
+    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 selectAll:
 SELECT * FROM ServerModel;
+
+delete:
+DELETE FROM ServerModel WHERE id = ? AND providerId = ?;
+
+selectByIds:
+SELECT * FROM ServerModel WHERE id = ? AND providerId = ?;

@@ -15,9 +15,6 @@
     <dimen name="large_text_size">28sp</dimen>
     <dimen name="very_large_text_size">36sp</dimen>
 
-    <dimen name="circle_size">56dp</dimen>
-    <dimen name="unread_msg_size">24dp</dimen>
-    <dimen name="chat_button_size">32dp</dimen>
     <dimen name="button_corner_radius">18dp</dimen>
 
     <!--End of base dimens-->
@@ -26,4 +23,5 @@
     <dimen name="spinner_radius">24dp</dimen>
     <dimen name="service_icon_size">32dp</dimen>
     <dimen name="token_view_size">32dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
 </resources>

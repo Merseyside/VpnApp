@@ -68,7 +68,7 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
         adapter = DropletAdapter()
         adapter.setOnItemOptionClickListener(object: DropletAdapter.OnItemOptionsClickListener {
             override fun onConnect(server: Server) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                viewModel.getOvpnFile(server.id, server.providerId)
             }
 
             override fun onDelete(server: Server) {

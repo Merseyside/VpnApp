@@ -1,24 +1,27 @@
 package com.merseyside.dropletapp.ssh
 
 import android.util.Log
-import com.github.florent37.preferences.application
-import com.jcraft.jsch.Channel
-import com.jcraft.jsch.JSch
-import com.jcraft.jsch.Session
-import com.jcraft.jsch.UserInfo
-import com.merseyside.dropletapp.utils.readAssetFile
+import com.jcraft.jsch.*
+import com.merseyside.admin.merseylibrary.data.filemanager.FileManager
+import java.lang.IllegalStateException
+import com.jcraft.jsch.ChannelExec
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.util.*
 
+
 actual class SshConnection actual constructor(
-    private val username: String,
-    private val host: String,
-    private val filePathPrivate: String,
-    private val filePathPublic: String,
-    private val passphrase: String
+    val username: String,
+    val host: String,
+    val filePathPrivate: String,
+    val filePathPublic: String,
+    val passphrase: String
 ) {
 
     private var session: Session? = null
-    private var channel: Channel? = null
+    private var channel: ChannelExec? = null
+
+    private val randomUsername by lazy { generateRandomString() }
 
     private var timeout = 0
 
@@ -28,6 +31,8 @@ actual class SshConnection actual constructor(
 
     actual fun openSshConnection(): Boolean {
         try {
+            if (isConnected()) return true
+
             val jsch = JSch()
 
             Log.d(TAG, filePathPrivate)
@@ -36,8 +41,8 @@ actual class SshConnection actual constructor(
 
             session = jsch.getSession(username, host, 22)
 
-            val userInfo = MyUserInfo()
-            session!!.userInfo = userInfo
+//            val userInfo = MyUserInfo()
+//            session!!.userInfo = userInfo
 
             if (timeout != 0) {
                 session!!.timeout = timeout
@@ -47,15 +52,7 @@ actual class SshConnection actual constructor(
             prop["StrictHostKeyChecking"] = "no"
 
             session!!.setConfig(prop)
-
             session!!.connect()
-
-            channel = session!!.openChannel("shell")
-            channel!!.inputStream
-
-            channel!!.outputStream.write(getScript().toByteArray())
-
-            channel!!.connect()
 
             return true
         } catch (e: Exception) {
@@ -65,18 +62,92 @@ actual class SshConnection actual constructor(
         }
     }
 
+    actual fun setupServer(): Boolean {
+        if (isConnected()) {
+
+            if (channel == null) {
+                channel = session!!.openChannel("exec") as ChannelExec
+                channel!!.connect()
+            }
+
+            (channel as ChannelExec).setCommand(getSetupScript())
+
+            val str = FileManager.convertStreamToString(channel!!.inputStream)
+
+            return true
+
+        } else throw IllegalStateException("Server is not connected")
+    }
+
     actual fun isConnected(): Boolean {
         return session?.isConnected ?: false
     }
 
     actual fun closeConnection() {
+        channel?.disconnect()
         session?.disconnect()
+
+        channel = null
+        session = null
     }
 
     actual fun setTimeout(timeout: Int) {
         if (timeout > 0) {
             this.timeout = timeout
         }
+    }
+
+    actual fun getOvpnFile(): String {
+        channel = session!!.openChannel("exec") as ChannelExec
+
+        channel!!.setCommand(getOvpnFileScript())
+
+        channel!!.setPty(true)
+//        channel!!.setCommand(getOvpnFileScript())
+//        channel!!.setCommand(getOvpnFileScript())
+//        channel!!.setCommand(getOvpnFileScript())
+//
+//
+//        val tmp = ByteArray(1024)
+//        val inputStream = ByteArrayInputStream(tmp, 0, 1024)
+//        channel!!.inputStream = inputStream
+//
+        channel!!.connect()
+//
+        Thread.sleep(7_000)
+//
+//        channel!!.disconnect()
+//        session!!.disconnect()
+
+        //return FileManager.convertStreamToString(inputStream)
+
+        //channel!!.outputStream.write(getOvpnFileScript().toByteArray())
+
+        val tmp = ByteArray(1024)
+        while (true) {
+            while (channel!!.inputStream.available() > 0) {
+                Log.d(TAG, "here")
+                val i = channel!!.inputStream.read(tmp, 0, 1024)
+                if (i < 0) break
+                Log.d("Output", String(tmp, 0, i))
+            }
+            if (channel!!.isClosed) {
+                if (channel!!.inputStream.available() > 0) continue
+                Log.d("Output", "exit-status: " + channel!!.exitStatus)
+                break
+            }
+            try {
+                Thread.sleep(1000)
+            } catch (ee: Exception) {
+            }
+
+        }
+
+        return "kek"
+
+        //channel!!.outputStream.write(getOvpnFileScript().toByteArray())
+
+        //val str = FileManager.convertStreamToString(channel!!.inputStream)
     }
 
     inner class MyUserInfo : UserInfo {
@@ -106,12 +177,28 @@ actual class SshConnection actual constructor(
 
     }
 
-    private fun getScript(): String {
-        return "`export CLIENT=$username" +
-                " && bash -c " +
-                "\"\$(wget https://gist.githubusercontent.com/myvpn-run/ab573e451a7b44991fb3a45" +
-                "66496d0f0/raw/4b9aa9f10049f1350fd81e1d1e4350b5bb227c7e/openvpn.sh -O -)\"" +
-                " && cat /root/$username.ovpn`"
+    private fun getSetupScript(): String {
+        return "pwd"
+
+//        return "`export CLIENT=$randomUsername" +
+//                " && bash -c " +
+//                "\"\$(wget https://gist.githubusercontent.com/myvpn-run/ab573e451a7b44991fb3a45" +
+//                "66496d0f0/raw/4b9aa9f10049f1350fd81e1d1e4350b5bb227c7e/openvpn.sh -O -)\"" +
+//                " && cat /root/$randomUsername.ovpn`"
+    }
+
+    private fun getOvpnFileScript(): String {
+        //return "cat /root/$randomUsername.ovpn"
+        return "ls"
+    }
+
+    private fun generateRandomString(): String {
+        val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+
+        return (1..10)
+            .map { kotlin.random.Random.nextInt(0, charPool.size) }
+            .map(charPool::get)
+            .joinToString("")
     }
 
     companion object {

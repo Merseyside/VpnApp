@@ -21,7 +21,7 @@ private val providerModule = Kodein.Module("providerName") {
 
     bind<ServerDao>() with singleton { ServerDao( instance() ) }
 
-    constant("sshTimeout") with 20000
+    constant("sshTimeout") with 10000
 }
 
 internal val providerComponent = Kodein {

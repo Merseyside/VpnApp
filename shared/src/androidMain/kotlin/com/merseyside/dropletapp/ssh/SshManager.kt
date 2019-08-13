@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.ssh
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.github.florent37.preferences.application
 import com.jcraft.jsch.JSch
@@ -9,8 +10,8 @@ import com.merseyside.admin.merseylibrary.data.filemanager.FileManager
 import com.merseyside.dropletapp.data.entity.PrivateKey
 import com.merseyside.dropletapp.data.entity.PublicKey
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withTimeout
 import java.io.File
+import java.net.ConnectException
 
 actual class SshManager actual constructor(private val timeoutMillis: Int) {
 
@@ -39,6 +40,7 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
 
     private val activeConnections = ArrayList<SshConnection>()
 
+
     actual fun createRsaKeys(): Pair<PublicKey, PrivateKey>? {
         val type = KeyPair.RSA
 
@@ -63,26 +65,58 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
     actual suspend fun openSshConnection(
         username: String,
         host: String,
-        filePathPrivate: String,
-        filePathPublic: String
-    ): Boolean {
+        keyPathPrivate: String,
+        keyPathPublic: String
+    ): SshConnection? {
         Log.d(TAG, "Connecting to $username@$host")
 
-        val connection = SshConnection(username, host, filePathPrivate, filePathPublic, passphrase)
-        connection.setTimeout(timeoutMillis)
+        val connection = activeConnections.firstOrNull {
+            it.host == host
+        } ?: SshConnection(username, host, keyPathPrivate, keyPathPublic, passphrase).also { it.setTimeout(timeoutMillis) }
+
+        if (connection.isConnected()) {
+            Log.d(TAG, "already connected")
+            return connection
+        }
 
         repeat(12) {
 
             if (connection.openSshConnection()) {
-                return true.also {
+                return connection.also {
                     activeConnections.add(connection)
                 }
             }
 
-            delay(5000)
+            delay(3000)
         }
 
-        return false
+        return null
+    }
+
+    actual suspend fun setupServer(
+        username: String,
+        host: String,
+        keyPathPrivate: String,
+        keyPathPublic: String
+    ): SshConnection? {
+        val connection = openSshConnection(username, host, keyPathPrivate, keyPathPublic) ?: return null
+
+        return if (connection.setupServer()) {
+            connection
+        } else {
+            null
+        }
+    }
+
+    actual suspend fun getOvpnFile(
+        username: String,
+        host: String,
+        keyPathPrivate: String,
+        keyPathPublic: String
+    ): String {
+        val connection = openSshConnection(username, host, keyPathPrivate, keyPathPublic) ?: throw ConnectException("Can not connect to server")
+
+        return connection.getOvpnFile()
     }
 
     actual fun closeConnection(connection: SshConnection) {
@@ -101,14 +135,15 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
         }
 
         companion object {
+            @SuppressLint("UseSparseArrays")
             internal var name = HashMap<Int, String>()
 
             init {
-                name.put(Logger.DEBUG, "DEBUG: ")
-                name.put(Logger.INFO, "INFO: ")
-                name.put(Logger.WARN, "WARN: ")
-                name.put(Logger.ERROR, "ERROR: ")
-                name.put(Logger.FATAL, "FATAL: ")
+                name[Logger.DEBUG] = "DEBUG: "
+                name[Logger.INFO] = "INFO: "
+                name[Logger.WARN] = "WARN: "
+                name[Logger.ERROR] = "ERROR: "
+                name[Logger.FATAL] = "FATAL: "
             }
         }
     }

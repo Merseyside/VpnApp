@@ -9,6 +9,10 @@ expect class SshConnection(
 
     fun openSshConnection(): Boolean
 
+    fun setupServer(): Boolean
+
+    fun getOvpnFile(): String
+
     fun isConnected(): Boolean
 
     fun closeConnection()

@@ -14,6 +14,7 @@ class ServerDao(database: VpnDatabase) {
         token: Token,
         providerId: Long,
         name: String,
+        sshKeyId: Long,
         serverStatus: String,
         environmentStatus: String,
         createdAt: String,
@@ -25,6 +26,7 @@ class ServerDao(database: VpnDatabase) {
             token = token,
             providerId = providerId,
             name = name,
+            sshKeyId = sshKeyId,
             serverStatus = serverStatus,
             environmentStatus = environmentStatus,
             createdAt = createdAt,
@@ -33,7 +35,15 @@ class ServerDao(database: VpnDatabase) {
         )
     }
 
-    internal fun getAllServers(): List<ServerModel> {
+    internal fun getAllDroplets(): List<ServerModel> {
         return db.selectAll().executeAsList()
+    }
+
+    internal fun deleteDroplet(dropletId: Long, providerId: Long) {
+        db.delete(dropletId, providerId)
+    }
+
+    internal fun getDropletByIds(dropletId: Long, providerId: Long): ServerModel? {
+        return db.selectByIds(dropletId, providerId).executeAsOneOrNull()
     }
 }

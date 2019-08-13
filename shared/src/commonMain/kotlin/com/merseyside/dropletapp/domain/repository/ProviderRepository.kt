@@ -21,4 +21,6 @@ interface ProviderRepository {
     suspend fun getServers(): List<Server>
 
     suspend fun deleteDroplet(token: Token, providerId: Long, dropletId: Long): Boolean
+
+    suspend fun getOvpnFile(dropletId: Long, providerId: Long): String
 }
