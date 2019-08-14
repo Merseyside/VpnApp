@@ -5,6 +5,7 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletItemViewModel
+import com.merseyside.dropletapp.ssh.SshManager
 import com.upstream.basemvvmimpl.presentation.adapter.BaseSortedAdapter
 import com.upstream.basemvvmimpl.presentation.view.BaseViewHolder
 
@@ -14,6 +15,8 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
         fun onConnect(server: Server)
 
         fun onDelete(server: Server)
+
+        fun onPrepare(server: Server)
     }
 
     private var onItemOptionsClickListener: OnItemOptionsClickListener? = null
@@ -33,17 +36,30 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
 
+        val item = getObjForPosition(position).getItem()
+
         holder.itemView.rootView.setOnLongClickListener {
             val popup = PopupMenu(holder.itemView.context, holder.itemView.findViewById(R.id.status))
             popup.inflate(R.menu.menu_droplet_options)
-            popup.setOnMenuItemClickListener { item ->
-                when (item.itemId) {
+
+            if (item.environmentStatus == SshManager.Status.PENDING) {
+                popup.menu.findItem(R.id.connect_action).isVisible = false
+            } else {
+                popup.menu.findItem(R.id.prepare_action).isVisible = false
+            }
+
+            popup.setOnMenuItemClickListener {
+                when (it.itemId) {
                     R.id.delete_action -> {
-                        onItemOptionsClickListener?.onDelete(getObjForPosition(position).getItem())
+                        onItemOptionsClickListener?.onDelete(item)
                     }
 
                     R.id.connect_action -> {
-                        onItemOptionsClickListener?.onConnect(getObjForPosition(position).getItem())
+                        onItemOptionsClickListener?.onConnect(item)
+                    }
+
+                    R.id.prepare_action -> {
+                        onItemOptionsClickListener?.onPrepare(item)
                     }
 
                     else -> {

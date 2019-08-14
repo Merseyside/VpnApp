@@ -1,195 +1,111 @@
 package com.merseyside.dropletapp.ssh
 
 import android.util.Log
-import com.jcraft.jsch.*
 import com.merseyside.admin.merseylibrary.data.filemanager.FileManager
-import java.lang.IllegalStateException
-import com.jcraft.jsch.ChannelExec
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.util.*
+import net.schmizz.sshj.AndroidConfig
+import net.schmizz.sshj.SSHClient
+import net.schmizz.sshj.common.IOUtils
+import net.schmizz.sshj.connection.channel.direct.Session
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier
+import java.net.ConnectException
+import java.security.Security.insertProviderAt
+import java.security.Security.removeProvider
+import java.util.concurrent.TimeUnit
 
 
 actual class SshConnection actual constructor(
     val username: String,
     val host: String,
-    val filePathPrivate: String,
-    val filePathPublic: String,
-    val passphrase: String
+    val filePathPrivate: String
 ) {
 
-    private var session: Session? = null
-    private var channel: ChannelExec? = null
+    private val randomUsername = generateRandomString()
 
-    private val randomUsername by lazy { generateRandomString() }
-
-    private var timeout = 0
-
-    interface SshConnectionListener {
-
+    init {
+        removeProvider("BC")
+        insertProviderAt(org.spongycastle.jce.provider.BouncyCastleProvider(), 1)
     }
 
+    private val ssh = SSHClient(AndroidConfig())
+    private var session: Session? = null
+
     actual fun openSshConnection(): Boolean {
-        try {
-            if (isConnected()) return true
 
-            val jsch = JSch()
+        if (isConnected()) return true
 
-            Log.d(TAG, filePathPrivate)
+        this.ssh.addHostKeyVerifier(PromiscuousVerifier())
 
-            jsch.addIdentity(filePathPrivate, filePathPublic)
+        ssh.connect(host, 22)
 
-            session = jsch.getSession(username, host, 22)
+        ssh.authPublickey(username, filePathPrivate)
 
-//            val userInfo = MyUserInfo()
-//            session!!.userInfo = userInfo
+        session = ssh.startSession()
 
-            if (timeout != 0) {
-                session!!.timeout = timeout
-            }
+        return true
+    }
 
-            val prop = Properties()
-            prop["StrictHostKeyChecking"] = "no"
+    private fun execCommand(command: String): Pair<Int, String> {
+        if (isConnected()) {
 
-            session!!.setConfig(prop)
-            session!!.connect()
+            val cmd = session!!.exec(command)
 
-            return true
-        } catch (e: Exception) {
-            e.printStackTrace()
+            cmd.join(5, TimeUnit.SECONDS)
+            Log.d(TAG, "exit = ${cmd.exitStatus}")
 
-            return false
+            val output = IOUtils.readFully(cmd.inputStream).toString()
+
+            Log.d(TAG, output)
+
+            return cmd.exitStatus to output
         }
+
+        throw ConnectException("Can not connect to server")
     }
 
     actual fun setupServer(): Boolean {
-        if (isConnected()) {
+        Log.d(TAG, "setupServer")
 
-            if (channel == null) {
-                channel = session!!.openChannel("exec") as ChannelExec
-                channel!!.connect()
-            }
+        val pair = execCommand(getSetupScript())
 
-            (channel as ChannelExec).setCommand(getSetupScript())
+        return pair.first == OK
+    }
 
-            val str = FileManager.convertStreamToString(channel!!.inputStream)
+    actual fun getOvpnFile(): String? {
+        Log.d(TAG, "getOvpnFile")
 
-            return true
+        val pair = execCommand(getOvpnFileScript())
 
-        } else throw IllegalStateException("Server is not connected")
+        return if (pair.first == OK) {
+            pair.second
+        } else {
+            null
+        }
     }
 
     actual fun isConnected(): Boolean {
-        return session?.isConnected ?: false
+        return session?.isOpen ?: false
     }
 
     actual fun closeConnection() {
-        channel?.disconnect()
-        session?.disconnect()
-
-        channel = null
-        session = null
+        if (isConnected()) {
+            session?.close()
+            ssh.disconnect()
+        }
     }
 
     actual fun setTimeout(timeout: Int) {
-        if (timeout > 0) {
-            this.timeout = timeout
-        }
-    }
-
-    actual fun getOvpnFile(): String {
-        channel = session!!.openChannel("exec") as ChannelExec
-
-        channel!!.setCommand(getOvpnFileScript())
-
-        channel!!.setPty(true)
-//        channel!!.setCommand(getOvpnFileScript())
-//        channel!!.setCommand(getOvpnFileScript())
-//        channel!!.setCommand(getOvpnFileScript())
-//
-//
-//        val tmp = ByteArray(1024)
-//        val inputStream = ByteArrayInputStream(tmp, 0, 1024)
-//        channel!!.inputStream = inputStream
-//
-        channel!!.connect()
-//
-        Thread.sleep(7_000)
-//
-//        channel!!.disconnect()
-//        session!!.disconnect()
-
-        //return FileManager.convertStreamToString(inputStream)
-
-        //channel!!.outputStream.write(getOvpnFileScript().toByteArray())
-
-        val tmp = ByteArray(1024)
-        while (true) {
-            while (channel!!.inputStream.available() > 0) {
-                Log.d(TAG, "here")
-                val i = channel!!.inputStream.read(tmp, 0, 1024)
-                if (i < 0) break
-                Log.d("Output", String(tmp, 0, i))
-            }
-            if (channel!!.isClosed) {
-                if (channel!!.inputStream.available() > 0) continue
-                Log.d("Output", "exit-status: " + channel!!.exitStatus)
-                break
-            }
-            try {
-                Thread.sleep(1000)
-            } catch (ee: Exception) {
-            }
-
-        }
-
-        return "kek"
-
-        //channel!!.outputStream.write(getOvpnFileScript().toByteArray())
-
-        //val str = FileManager.convertStreamToString(channel!!.inputStream)
-    }
-
-    inner class MyUserInfo : UserInfo {
-        override fun promptPassphrase(p0: String?): Boolean {
-            return false
-        }
-
-        override fun getPassphrase(): String {
-            return this@SshConnection.passphrase
-        }
-
-        override fun getPassword(): String? {
-            return null
-        }
-
-        override fun promptYesNo(p0: String?): Boolean {
-            return false
-        }
-
-        override fun showMessage(message: String?) {
-            Log.d(TAG, message)
-        }
-
-        override fun promptPassword(p0: String?): Boolean {
-            return false
-        }
-
+        ssh.timeout = timeout
     }
 
     private fun getSetupScript(): String {
-        return "pwd"
-
-//        return "`export CLIENT=$randomUsername" +
-//                " && bash -c " +
-//                "\"\$(wget https://gist.githubusercontent.com/myvpn-run/ab573e451a7b44991fb3a45" +
-//                "66496d0f0/raw/4b9aa9f10049f1350fd81e1d1e4350b5bb227c7e/openvpn.sh -O -)\"" +
-//                " && cat /root/$randomUsername.ovpn`"
+        return "`export CLIENT=$randomUsername" +
+                " && bash -c " +
+                "\"\$(wget https://gist.githubusercontent.com/myvpn-run/ab573e451a7b44991fb3a45" +
+                "66496d0f0/raw/4b9aa9f10049f1350fd81e1d1e4350b5bb227c7e/openvpn.sh -O -)\""
     }
 
     private fun getOvpnFileScript(): String {
-        //return "cat /root/$randomUsername.ovpn"
-        return "ls"
+        return "cat /root/$randomUsername.ovpn"
     }
 
     private fun generateRandomString(): String {
@@ -203,7 +119,8 @@ actual class SshConnection actual constructor(
 
     companion object {
         private const val TAG = "SshConnection"
-    }
 
+        private const val OK = 0
+    }
 
 }

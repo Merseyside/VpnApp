@@ -22,6 +22,7 @@
 
     <string name="delete_action">Delete</string>
     <string name="connect_to_vpn_action">Connect to VPN</string>
+    <string name="prepare_vpn_action">Prepare VPN server</string>
 
     <string name="create_server">Create server and get vpn access</string>
 </resources>

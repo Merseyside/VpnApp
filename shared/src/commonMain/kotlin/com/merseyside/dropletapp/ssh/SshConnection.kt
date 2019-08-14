@@ -3,15 +3,13 @@ package com.merseyside.dropletapp.ssh
 expect class SshConnection(
     username: String,
     host: String,
-    filePathPrivate: String,
-    filePathPublic: String,
-    passphrase: String) {
+    filePathPrivate: String) {
 
     fun openSshConnection(): Boolean
 
     fun setupServer(): Boolean
 
-    fun getOvpnFile(): String
+    fun getOvpnFile(): String?
 
     fun isConnected(): Boolean
 

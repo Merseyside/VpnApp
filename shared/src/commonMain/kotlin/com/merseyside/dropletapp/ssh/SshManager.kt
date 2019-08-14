@@ -18,23 +18,20 @@ expect class SshManager(timeoutMillis: Int) {
     suspend fun openSshConnection(
         username: String,
         host: String,
-        keyPathPrivate: String,
-        keyPathPublic: String
+        keyPathPrivate: String
     ): SshConnection?
 
     suspend fun setupServer(
         username: String,
         host: String,
-        keyPathPrivate: String,
-        keyPathPublic: String
-    ): SshConnection?
+        keyPathPrivate: String
+    ): Boolean
 
     suspend fun getOvpnFile(
         username: String,
         host: String,
-        keyPathPrivate: String,
-        keyPathPublic: String
-    ): String
+        keyPathPrivate: String
+    ): String?
 
     fun closeConnection(connection: SshConnection)
 }

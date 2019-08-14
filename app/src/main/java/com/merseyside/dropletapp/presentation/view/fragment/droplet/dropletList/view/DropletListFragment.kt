@@ -67,6 +67,10 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
     private fun init() {
         adapter = DropletAdapter()
         adapter.setOnItemOptionClickListener(object: DropletAdapter.OnItemOptionsClickListener {
+            override fun onPrepare(server: Server) {
+                viewModel.prepareServer(server.id, server.providerId)
+            }
+
             override fun onConnect(server: Server) {
                 viewModel.getOvpnFile(server.id, server.providerId)
             }

@@ -26,3 +26,6 @@ DELETE FROM ServerModel WHERE id = ? AND providerId = ?;
 
 selectByIds:
 SELECT * FROM ServerModel WHERE id = ? AND providerId = ?;
+
+updateStatus:
+UPDATE ServerModel SET environmentStatus = ? WHERE id = ? AND providerId = ?;

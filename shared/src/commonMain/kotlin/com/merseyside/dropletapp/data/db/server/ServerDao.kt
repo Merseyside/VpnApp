@@ -46,4 +46,8 @@ class ServerDao(database: VpnDatabase) {
     internal fun getDropletByIds(dropletId: Long, providerId: Long): ServerModel? {
         return db.selectByIds(dropletId, providerId).executeAsOneOrNull()
     }
+
+    internal fun updateStatus(dropletId: Long, providerId: Long, status: String) {
+        db.updateStatus(status, dropletId, providerId)
+    }
 }

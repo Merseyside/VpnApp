@@ -11,13 +11,18 @@ class CreateServerInteractor : CoroutineUseCase<Boolean, CreateServerInteractor.
     private val repository: ProviderRepository by providerComponent.instance()
 
     override suspend fun executeOnBackground(params: Params?): Boolean {
-        return repository.createServer(params!!.token, params.providerId, params.regionSlug, params.serverName)
+        return if (params!!.dropletId != null) {
+            repository.createServer(params.dropletId!!, params.providerId)
+        } else {
+            repository.createServer(params.token!!, params.providerId, params.regionSlug!!, params.serverName!!)
+        }
     }
 
     data class Params(
-        val token: Token,
+        val token: Token? = null,
+        val dropletId: Long? = null,
         val providerId: Long,
-        val regionSlug: String,
-        val serverName: String
+        val regionSlug: String? = null,
+        val serverName: String? = null
     )
 }

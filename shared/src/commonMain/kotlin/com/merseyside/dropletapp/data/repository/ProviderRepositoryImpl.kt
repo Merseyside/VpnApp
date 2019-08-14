@@ -68,13 +68,6 @@ class ProviderRepositoryImpl(
 
             if (isDropletValid(infoResponse)) {
 
-                val sshConnection = setupServer(
-                    "root",
-                    infoResponse.networks.first().ipAddress,
-                    keyPair.second.keyPath,
-                    keyPair.first.keyPath
-                )
-
                 infoResponse.let { info ->
                     serverDao.insert(
                         id = info.id,
@@ -83,7 +76,7 @@ class ProviderRepositoryImpl(
                         name = info.name,
                         sshKeyId = keyResponse.id,
                         serverStatus = info.status,
-                        environmentStatus = sshConnection?.let {SshManager.Status.IN_PROCESS.toString()} ?: return@repeat,
+                        environmentStatus = SshManager.Status.PENDING.toString(),
                         createdAt = info.createdAt,
                         regionName = info.regionName,
                         networks = info.networks
@@ -91,6 +84,15 @@ class ProviderRepositoryImpl(
                 }
 
                 keyDao.insert(keyResponse.id, keyPair.first.keyPath, keyPair.second.keyPath, token)
+
+                val sshConnection = setupServer(
+                    ipAddress = infoResponse.networks.first().ipAddress,
+                    keyPathPrivate = keyPair.second.keyPath
+                )
+
+                if (sshConnection) {
+                    serverDao.updateStatus(infoResponse.id, providerId, SshManager.Status.IN_PROCESS.toString())
+                }
 
                 return true
             } else {
@@ -106,16 +108,14 @@ class ProviderRepositoryImpl(
     }
 
     private suspend fun setupServer(
-        hostName: String = "root",
+        hostName: String = USER,
         ipAddress: String,
-        keyPathPrivate: String,
-        keyPathPublic: String): SshConnection? {
+        keyPathPrivate: String): Boolean {
 
         return sshManager.setupServer(
             hostName,
             ipAddress,
-            keyPathPrivate,
-            keyPathPublic
+            keyPathPrivate
         )
     }
 
@@ -147,18 +147,43 @@ class ProviderRepositoryImpl(
         return true
     }
 
+    override suspend fun createServer(dropletId: Long, providerId: Long): Boolean {
+        val server = serverDao.getDropletByIds(dropletId, providerId)
+
+        if (server != null) {
+            val keys = keyDao.selectById(server.sshKeyId)
+
+            val isInProgress = setupServer(
+                ipAddress = server.networks.networkList.first().ipAddress,
+                keyPathPrivate = keys?.privateKeyPath ?: throw NoDataException()
+            )
+
+            if (isInProgress) {
+                serverDao.updateStatus(dropletId, providerId, SshManager.Status.IN_PROCESS.toString())
+            }
+
+            return isInProgress
+        }
+
+        return false
+    }
+
     override suspend fun getOvpnFile(dropletId: Long, providerId: Long): String {
         val server = serverDao.getDropletByIds(dropletId, providerId)
 
         if (server != null) {
             val keys = keyDao.selectById(server.sshKeyId)
 
-            return sshManager.getOvpnFile(
-                "root",
+            val ovpnFile =  sshManager.getOvpnFile(
+                USER,
                 server.networks.networkList.first().ipAddress,
-                keys?.privateKeyPath ?: throw NoDataException(),
-                keys.publicKeyPath)
+                keys?.privateKeyPath ?: throw NoDataException())
 
+            if (ovpnFile != null) {
+                serverDao.updateStatus(dropletId, providerId, SshManager.Status.READY.toString())
+
+                return ovpnFile
+            } else throw NoDataException("No ovpn file found")
 
         } else throw NoDataException("No droplet with passed id")
     }
@@ -169,6 +194,8 @@ class ProviderRepositoryImpl(
         private const val DELAY_MILLIS = 2000L
 
         private const val TAG = "ProviderRepository"
+
+        private const val USER = "root"
 
         private val providers: List<Provider> = Provider.getAllServices()
 

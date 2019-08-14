@@ -5,6 +5,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.Server
+import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
 import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetOvpnFileInteractor
 import com.merseyside.dropletapp.domain.interactor.GetServersInteractor
@@ -17,7 +18,8 @@ class DropletListViewModel(
     private val router: Router,
     private val getServersUseCase: GetServersInteractor,
     private val deleteDropletUseCase: DeleteDropletInteractor,
-    private val getOvpnFileUseCase: GetOvpnFileInteractor
+    private val getOvpnFileUseCase: GetOvpnFileInteractor,
+    private val createServerUseCase: CreateServerInteractor
 ) : BaseDropletViewModel(router) {
 
     val dropletsVisibility = ObservableField<Boolean>(true)
@@ -78,6 +80,20 @@ class DropletListViewModel(
                 showMsg(it)
             },
             onError = {throwable ->
+                showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
+            },
+            showProgress = { showProgress() },
+            hideProgress = { hideProgress() }
+        )
+    }
+
+    fun prepareServer(dropletId: Long, providerId: Long) {
+        createServerUseCase.execute(
+            params = CreateServerInteractor.Params(dropletId = dropletId, providerId = providerId),
+            onComplete = {
+                loadServers()
+            },
+            onError = { throwable ->
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
             },
             showProgress = { showProgress() },

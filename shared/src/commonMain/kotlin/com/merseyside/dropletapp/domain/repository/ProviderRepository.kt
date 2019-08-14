@@ -18,6 +18,11 @@ interface ProviderRepository {
         serverName: String
     ): Boolean
 
+    suspend fun createServer(
+        dropletId: Long,
+        providerId: Long
+    ): Boolean
+
     suspend fun getServers(): List<Server>
 
     suspend fun deleteDroplet(token: Token, providerId: Long, dropletId: Long): Boolean

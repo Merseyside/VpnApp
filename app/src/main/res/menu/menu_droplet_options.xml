@@ -7,6 +7,12 @@
             app:showAsAction="ifRoom"/>
 
     <item
+            android:id="@+id/prepare_action"
+            android:orderInCategory="300"
+            android:title="@string/prepare_vpn_action"
+            app:showAsAction="ifRoom"/>
+
+    <item
             android:id="@+id/delete_action"
             android:orderInCategory="300"
             android:title="@string/delete_action"

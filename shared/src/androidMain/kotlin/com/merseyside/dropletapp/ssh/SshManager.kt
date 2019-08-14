@@ -65,14 +65,13 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
     actual suspend fun openSshConnection(
         username: String,
         host: String,
-        keyPathPrivate: String,
-        keyPathPublic: String
+        keyPathPrivate: String
     ): SshConnection? {
         Log.d(TAG, "Connecting to $username@$host")
 
         val connection = activeConnections.firstOrNull {
             it.host == host
-        } ?: SshConnection(username, host, keyPathPrivate, keyPathPublic, passphrase).also { it.setTimeout(timeoutMillis) }
+        } ?: SshConnection(username, host, keyPathPrivate).also { it.setTimeout(timeoutMillis) }
 
         if (connection.isConnected()) {
             Log.d(TAG, "already connected")
@@ -96,25 +95,19 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
     actual suspend fun setupServer(
         username: String,
         host: String,
-        keyPathPrivate: String,
-        keyPathPublic: String
-    ): SshConnection? {
-        val connection = openSshConnection(username, host, keyPathPrivate, keyPathPublic) ?: return null
+        keyPathPrivate: String
+    ): Boolean {
+        val connection = openSshConnection(username, host, keyPathPrivate) ?: return false
 
-        return if (connection.setupServer()) {
-            connection
-        } else {
-            null
-        }
+        return connection.setupServer()
     }
 
     actual suspend fun getOvpnFile(
         username: String,
         host: String,
-        keyPathPrivate: String,
-        keyPathPublic: String
-    ): String {
-        val connection = openSshConnection(username, host, keyPathPrivate, keyPathPublic) ?: throw ConnectException("Can not connect to server")
+        keyPathPrivate: String
+    ): String? {
+        val connection = openSshConnection(username, host, keyPathPrivate) ?: throw ConnectException("Can not connect to server")
 
         return connection.getOvpnFile()
     }
