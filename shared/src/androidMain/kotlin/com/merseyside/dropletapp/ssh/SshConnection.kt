@@ -11,6 +11,7 @@ import java.net.ConnectException
 import java.security.Security.insertProviderAt
 import java.security.Security.removeProvider
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 
 actual class SshConnection actual constructor(
@@ -21,42 +22,59 @@ actual class SshConnection actual constructor(
 
     private val randomUsername = generateRandomString()
 
+    private val ssh = SSHClient(AndroidConfig())
+
     init {
         removeProvider("BC")
         insertProviderAt(org.spongycastle.jce.provider.BouncyCastleProvider(), 1)
-    }
 
-    private val ssh = SSHClient(AndroidConfig())
-    private var session: Session? = null
+        this.ssh.addHostKeyVerifier(PromiscuousVerifier())
+    }
 
     actual fun openSshConnection(): Boolean {
 
+        Log.d(TAG, "Setting up connection")
+
         if (isConnected()) return true
 
-        this.ssh.addHostKeyVerifier(PromiscuousVerifier())
+        try {
 
-        ssh.connect(host, 22)
+            ssh.connect(host, 22)
 
-        ssh.authPublickey(username, filePathPrivate)
+            ssh.authPublickey(username, filePathPrivate)
 
-        session = ssh.startSession()
-
-        return true
+            return true
+        } catch (e: ConnectException) {
+            return false
+        }
     }
 
     private fun execCommand(command: String): Pair<Int, String> {
         if (isConnected()) {
 
+            val session = ssh.startSession()
+
             val cmd = session!!.exec(command)
 
-            cmd.join(5, TimeUnit.SECONDS)
-            Log.d(TAG, "exit = ${cmd.exitStatus}")
+            try {
+                //cmd.join(5, TimeUnit.SECONDS)
 
-            val output = IOUtils.readFully(cmd.inputStream).toString()
+                cmd.join(400, TimeUnit.SECONDS)
+                Log.d(TAG, "exit = ${cmd.exitStatus}")
 
-            Log.d(TAG, output)
+                val output = IOUtils.readFully(cmd.inputStream).toString()
 
-            return cmd.exitStatus to output
+                Log.d(TAG, output)
+
+                return cmd.exitStatus to output
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d(TAG, IOUtils.readFully(cmd.inputStream).toString())
+
+                return 1 to ""
+            } finally {
+                session.close()
+            }
         }
 
         throw ConnectException("Can not connect to server")
@@ -83,12 +101,11 @@ actual class SshConnection actual constructor(
     }
 
     actual fun isConnected(): Boolean {
-        return session?.isOpen ?: false
+        return ssh.isConnected
     }
 
     actual fun closeConnection() {
         if (isConnected()) {
-            session?.close()
             ssh.disconnect()
         }
     }
@@ -98,9 +115,9 @@ actual class SshConnection actual constructor(
     }
 
     private fun getSetupScript(): String {
-        return "`export CLIENT=$randomUsername" +
+        return "export CLIENT=$randomUsername" +
                 " && bash -c " +
-                "\"\$(wget https://gist.githubusercontent.com/myvpn-run/ab573e451a7b44991fb3a45" +
+                "\"$(wget https://gist.githubusercontent.com/myvpn-run/ab573e451a7b44991fb3a45" +
                 "66496d0f0/raw/4b9aa9f10049f1350fd81e1d1e4350b5bb227c7e/openvpn.sh -O -)\""
     }
 

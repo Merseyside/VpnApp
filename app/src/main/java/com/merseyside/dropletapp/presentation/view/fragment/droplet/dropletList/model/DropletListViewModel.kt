@@ -81,6 +81,8 @@ class DropletListViewModel(
             },
             onError = {throwable ->
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
+
+                prepareServer(dropletId, providerId)
             },
             showProgress = { showProgress() },
             hideProgress = { hideProgress() }
