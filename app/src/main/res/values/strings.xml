@@ -1,4 +1,5 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools"
+           tools:ignore="MissingTranslation">
     <string name="app_name">DropletApp</string>
 
     <string name="nav_new_token">New token</string>
@@ -24,5 +25,8 @@
     <string name="connect_to_vpn_action">Connect to VPN</string>
     <string name="prepare_vpn_action">Prepare VPN server</string>
 
-    <string name="create_server">Create server and get vpn access</string>
+    <string name="create_server" >Create server and get vpn access</string>
+    <string name="setup_server_msg">Setting up your server, it may takes 2&#8211;5 minutes</string>
+    <string name="receiving_access_msg">Receiving vpn access, please wait…</string>
+    <string name="loading_regions_msg">Loading regions, please wait…</string>
 </resources>

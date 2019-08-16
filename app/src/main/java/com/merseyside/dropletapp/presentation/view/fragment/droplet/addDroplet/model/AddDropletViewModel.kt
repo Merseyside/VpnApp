@@ -88,7 +88,7 @@ class AddDropletViewModel(
             }, onError = {throwable ->
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
             },
-            showProgress = { showProgress() },
+            showProgress = { showProgress(getString(R.string.loading_regions_msg)) },
             hideProgress = { hideProgress() }
         )
     }
@@ -122,7 +122,7 @@ class AddDropletViewModel(
                 onError = {throwable ->
                     showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
                 },
-                showProgress = { showProgress() },
+                showProgress = { showProgress(getString(R.string.setup_server_msg)) },
                 hideProgress = { hideProgress() }
             )
         } catch(e: Exception) {

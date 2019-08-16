@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
-        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:bind="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View"/>
         <variable
@@ -36,17 +37,6 @@
                     android:text="@string/no_servers"
                     android:visibility="@{viewModel.dropletsVisibility ? View.GONE : View.VISIBLE}"/>
 
-            <ProgressBar
-                    android:id="@+id/progress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:indeterminateTintMode="src_atop"
-                    android:indeterminateTint="?attr/colorPrimary"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:visibility="@{viewModel.inProgress ? View.VISIBLE : View.GONE}"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -56,7 +46,18 @@
                 android:layout_gravity="end|bottom"
                 app:srcCompat="@drawable/ic_plus"
                 android:layout_margin="@dimen/normal_spacing"
+                android:backgroundTint="?attr/colorPrimary"
+                app:tint="@null"
                 style="@style/Widget.MaterialComponents.FloatingActionButton"/>
+
+        <com.upstream.basemvvmimpl.presentation.view.progressBar.TextProgressBar
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:indeterminateTintMode="src_atop"
+                android:indeterminateTint="?attr/colorPrimary"
+                bind:visibility="@{viewModel.inProgress ? View.VISIBLE : View.GONE}"
+                bind:text="@{viewModel.progressText}"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

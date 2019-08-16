@@ -1,7 +1,11 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view
 
-import android.content.Context
+import android.app.Activity
+import android.content.*
+import android.net.VpnService
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.BR
@@ -13,10 +17,40 @@ import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.presentation.di.component.DaggerDropletListComponent
 import com.merseyside.dropletapp.presentation.di.module.DropletListModule
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.adapter.DropletAdapter
+import com.merseyside.dropletapp.ssh.SshManager
+import com.upstream.basemvvmimpl.presentation.adapter.BaseAdapter
+import de.blinkt.openvpn.VpnProfile
+import de.blinkt.openvpn.core.OpenVPNService
+import de.blinkt.openvpn.core.VPNLaunchHelper
+import de.blinkt.openvpn.core.VpnStatus
 
 class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, DropletListViewModel>() {
 
     private lateinit var adapter: DropletAdapter
+
+    private var isServiceBind = false
+    private var vpnService: OpenVPNService? = null
+
+    private val vpnProfileObserver = Observer<VpnProfile> {
+        connectToVpn()
+    }
+
+    private fun connectToVpn() {
+        val intent = VpnService.prepare(baseActivityView)
+
+        if (intent != null) {
+            VpnStatus.updateStateString("USER_VPN_PERMISSION", "", R.string.state_user_vpn_permission,
+                VpnStatus.ConnectionStatus.LEVEL_WAITING_FOR_USER_INPUT)
+
+            try {
+                startActivityForResult(intent, START_VPN_PROFILE)
+            } catch (e: ActivityNotFoundException) {
+                VpnStatus.logError(R.string.no_vpn_support_image)
+            }
+        } else {
+            onActivityResult(START_VPN_PROFILE, Activity.RESULT_OK, null)
+        }
+    }
 
     private val dropletObserver = Observer<List<Server>> {
         if (!adapter.hasItems()) {
@@ -81,7 +115,21 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
 
         })
 
+        adapter.setOnItemClickListener(object: BaseAdapter.AdapterClickListener {
+            override fun onItemClicked(obj: Any) {
+                if (obj is Server) {
+                    if (obj.environmentStatus == SshManager.Status.PENDING) {
+                        viewModel.prepareServer(obj.id, obj.providerId)
+                    } else {
+                        viewModel.getOvpnFile(obj.id, obj.providerId)
+                    }
+                }
+            }
+
+        })
+
         viewModel.dropletLiveData.observe(this, dropletObserver)
+        viewModel.vpnProfileLiveData.observe(this, vpnProfileObserver)
     }
 
     private fun doLayout() {
@@ -95,7 +143,67 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        bindService()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unbindService()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Log.d(TAG, "onActivityResult $requestCode $resultCode")
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                START_VPN_PROFILE -> {
+                    VPNLaunchHelper.startOpenVpn(viewModel.vpnProfileLiveData.value, context)
+                }
+                ADBLOCK_REQUEST -> {
+                    Log.d(TAG, "onActivityResult($requestCode,$resultCode,$data")
+                }
+            }
+        }
+    }
+
+    private fun bindService() {
+        val intent = Intent(baseActivityView, OpenVPNService::class.java)
+        intent.action = OpenVPNService.START_SERVICE
+        isServiceBind = baseActivityView.bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun unbindService() {
+        if (isServiceBind) {
+            isServiceBind = false
+            baseActivityView.unbindService(mConnection)
+        }
+    }
+
+    private val mConnection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName,
+                                        service: IBinder
+        ) {
+            val binder = service as OpenVPNService.LocalBinder
+            vpnService = binder.service
+
+//            if (VpnStatus.isVPNActive() && vpnService!!.currentServer != null) {
+//                viewModel.showConnectedServer(vpnService!!.currentServer as Server, vpnService!!.connectTime)
+//            }
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            vpnService = null
+        }
+    }
+
     companion object {
+        private const val START_VPN_PROFILE = 70
+        private const val ADBLOCK_REQUEST = 10001
+
+        private const val TAG = "DropletListFragment"
+
         fun newInstance(): DropletListFragment {
             return DropletListFragment()
         }

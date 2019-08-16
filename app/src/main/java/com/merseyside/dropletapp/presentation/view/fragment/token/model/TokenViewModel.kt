@@ -71,12 +71,8 @@ class TokenViewModel(
                 onError = {throwable ->
                     showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
                 },
-                showProgress = {
-                    showProgress()
-                },
-                hideProgress = {
-                    hideProgress()
-                }
+                showProgress = { showProgress("Checking the correctness of the token") },
+                hideProgress = { hideProgress() }
             )
         } else {
             showErrorMsg(getString(R.string.fill_fields_msg))

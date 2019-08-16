@@ -3,6 +3,7 @@ import com.merseyside.dropletapp.data.db.server.NetworkEntity;
 CREATE TABLE ServerModel(
     id INTEGER NOT NULL PRIMARY KEY,
     token TEXT NOT NULL,
+    username TEXT NOT NULL,
     providerId INTEGER NOT NULL,
     name TEXT NOT NULL,
     sshKeyId INTEGER NOT NULL,
@@ -10,13 +11,14 @@ CREATE TABLE ServerModel(
     environmentStatus TEXT NOT NULL,
     createdAt TEXT NOT NULL,
     regionName TEXT NOT NULL,
-    networks TEXT as NetworkEntity NOT NULL
+    address TEXT NOT NULL,
+    ovpnFile TEXT
 );
 
 insert:
 INSERT OR REPLACE INTO ServerModel(
-    id, token, providerId, name, sshKeyId, serverStatus, environmentStatus, createdAt, regionName, networks
-    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    id, token, username, providerId, name, sshKeyId, serverStatus, environmentStatus, createdAt, regionName, address
+    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 selectAll:
 SELECT * FROM ServerModel;
@@ -29,3 +31,9 @@ SELECT * FROM ServerModel WHERE id = ? AND providerId = ?;
 
 updateStatus:
 UPDATE ServerModel SET environmentStatus = ? WHERE id = ? AND providerId = ?;
+
+selectByEnvironmentStatus:
+SELECT * FROM ServerModel WHERE environmentStatus = ?;
+
+addOvpnFile:
+UPDATE ServerModel SET ovpnFile = ? WHERE id = ? AND providerId = ?;

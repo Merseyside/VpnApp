@@ -7,6 +7,7 @@ import net.schmizz.sshj.SSHClient
 import net.schmizz.sshj.common.IOUtils
 import net.schmizz.sshj.connection.channel.direct.Session
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.net.ConnectException
 import java.security.Security.insertProviderAt
 import java.security.Security.removeProvider
@@ -17,16 +18,14 @@ import java.util.concurrent.TimeoutException
 actual class SshConnection actual constructor(
     val username: String,
     val host: String,
-    val filePathPrivate: String
+    private val filePathPrivate: String
 ) {
-
-    private val randomUsername = generateRandomString()
 
     private val ssh = SSHClient(AndroidConfig())
 
     init {
         removeProvider("BC")
-        insertProviderAt(org.spongycastle.jce.provider.BouncyCastleProvider(), 1)
+        insertProviderAt(BouncyCastleProvider(), 1)
 
         this.ssh.addHostKeyVerifier(PromiscuousVerifier())
     }
@@ -37,15 +36,17 @@ actual class SshConnection actual constructor(
 
         if (isConnected()) return true
 
-        try {
+        return try {
 
             ssh.connect(host, 22)
 
-            ssh.authPublickey(username, filePathPrivate)
+            ssh.authPublickey("root", filePathPrivate)
 
-            return true
-        } catch (e: ConnectException) {
-            return false
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+
+            false
         }
     }
 
@@ -89,7 +90,7 @@ actual class SshConnection actual constructor(
     }
 
     actual fun getOvpnFile(): String? {
-        Log.d(TAG, "getOvpnFile")
+        Log.d(TAG, "getOvpnFile ${getOvpnFileScript()}")
 
         val pair = execCommand(getOvpnFileScript())
 
@@ -111,27 +112,18 @@ actual class SshConnection actual constructor(
     }
 
     actual fun setTimeout(timeout: Int) {
-        ssh.timeout = timeout
+        ssh.connectTimeout = timeout
     }
 
     private fun getSetupScript(): String {
-        return "export CLIENT=$randomUsername" +
+        return "export CLIENT=$username" +
                 " && bash -c " +
                 "\"$(wget https://gist.githubusercontent.com/myvpn-run/ab573e451a7b44991fb3a45" +
                 "66496d0f0/raw/4b9aa9f10049f1350fd81e1d1e4350b5bb227c7e/openvpn.sh -O -)\""
     }
 
     private fun getOvpnFileScript(): String {
-        return "cat /root/$randomUsername.ovpn"
-    }
-
-    private fun generateRandomString(): String {
-        val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-
-        return (1..10)
-            .map { kotlin.random.Random.nextInt(0, charPool.size) }
-            .map(charPool::get)
-            .joinToString("")
+        return "cat /root/$username.ovpn"
     }
 
     companion object {

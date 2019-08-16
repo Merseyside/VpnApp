@@ -67,7 +67,7 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
         host: String,
         keyPathPrivate: String
     ): SshConnection? {
-        Log.d(TAG, "Connecting to $username@$host")
+        Log.d(TAG, "Connecting to root@$host")
 
         val connection = activeConnections.firstOrNull {
             it.host == host

@@ -56,7 +56,7 @@ kotlin {
             implementation fileTree(include: ['*.jar'], dir: 'libs')
 
             implementation "com.hierynomus:sshj:$sshj"
-            implementation "com.madgag.spongycastle:bctls-jdk15on:$spongycastle"
+            //implementation "com.madgag.spongycastle:bctls-jdk15on:$spongycastle"
 
             implementation project(':merseylibrary')
 

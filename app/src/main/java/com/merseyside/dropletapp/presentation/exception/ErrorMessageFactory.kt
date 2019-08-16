@@ -1,6 +1,7 @@
 package com.merseyside.dropletapp.presentation.exception
 
 import android.content.Context
+import android.database.sqlite.SQLiteConstraintException
 import com.merseyside.dropletapp.BuildConfig
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.exception.NoDataException
@@ -20,6 +21,8 @@ class ErrorMessageFactory(private val context: Context) {
             "No data"
         } else if (throwable is InvalidTokenException) {
             throwable.message ?: getString(R.string.unknown_error_msg)
+        } else if (throwable is SQLiteConstraintException) {
+            "Already added"
         } else {
             throwable.message ?: getString(R.string.unknown_error_msg)
         }

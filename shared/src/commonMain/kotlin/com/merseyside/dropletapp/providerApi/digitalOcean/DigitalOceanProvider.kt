@@ -89,6 +89,10 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
         responseCreator.deleteDroplet(token, dropletId)
     }
 
+    override suspend fun addFloatingAddress(token: String, dropletId: Long): String? {
+        return responseCreator.addFloatingAddress(token, dropletId).point.address
+    }
+
     companion object {
 
         private var instance: DigitalOceanProvider? = null

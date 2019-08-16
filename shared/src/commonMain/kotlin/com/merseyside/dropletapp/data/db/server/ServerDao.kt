@@ -3,7 +3,10 @@ package com.merseyside.dropletapp.data.db.server
 import com.merseyside.dropletapp.data.db.VpnDatabase
 import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.db.model.ServerModel
-import com.merseyside.dropletapp.providerApi.base.entity.point.NetworkPoint
+import com.merseyside.dropletapp.ssh.SshManager
+import com.merseyside.dropletapp.utils.asFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class ServerDao(database: VpnDatabase) {
 
@@ -12,6 +15,7 @@ class ServerDao(database: VpnDatabase) {
     internal fun insert(
         id: Long,
         token: Token,
+        username: String,
         providerId: Long,
         name: String,
         sshKeyId: Long,
@@ -19,11 +23,12 @@ class ServerDao(database: VpnDatabase) {
         environmentStatus: String,
         createdAt: String,
         regionName: String,
-        networks: List<NetworkPoint>
+        address: String
     ) {
         db.insert(
             id = id,
             token = token,
+            username = username,
             providerId = providerId,
             name = name,
             sshKeyId = sshKeyId,
@@ -31,12 +36,14 @@ class ServerDao(database: VpnDatabase) {
             environmentStatus = environmentStatus,
             createdAt = createdAt,
             regionName = regionName,
-            networks = NetworkEntity(networks)
+            address = address
         )
     }
 
-    internal fun getAllDroplets(): List<ServerModel> {
-        return db.selectAll().executeAsList()
+    internal fun getAllDroplets(): Flow<List<ServerModel>> {
+        return db.selectAll().asFlow().map {
+            it.executeAsList()
+        }
     }
 
     internal fun deleteDroplet(dropletId: Long, providerId: Long) {
@@ -49,5 +56,13 @@ class ServerDao(database: VpnDatabase) {
 
     internal fun updateStatus(dropletId: Long, providerId: Long, status: String) {
         db.updateStatus(status, dropletId, providerId)
+    }
+
+    internal fun getByStatus(status: SshManager.Status): List<ServerModel> {
+        return db.selectByEnvironmentStatus(status.toString()).executeAsList()
+    }
+
+    internal fun addOvpnFile(dropletId: Long, providerId: Long, ovpnFile: String) {
+        db.addOvpnFile(ovpnFile, dropletId, providerId)
     }
 }

@@ -152,6 +152,25 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
         }
     }
 
+    @UseExperimental(ImplicitReflectionSerializer::class)
+    suspend fun addFloatingAddress(token: String, dropletId: Long): FloatingAddressResponse {
+        val apiMethod = "floating_ips"
+
+        val call = client.post<String> {
+            url.takeFrom(getRoute(apiMethod))
+
+            header(AUTHORIZATION_KEY, getAuthHeader(token))
+
+            val obj = JsonObject(mapOf(
+                DROPLET_KEY to JsonPrimitive(dropletId)
+            ))
+
+            body = serializer.write(obj)
+        }
+
+        return json.parse(call)
+    }
+
     companion object {
         private const val TAG = "DigitalOceanResponseCreator"
     }

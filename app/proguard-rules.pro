@@ -19,3 +19,29 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class org.apache.http.** {
+    *;
+}
+#-keep class !com.lazycat.**
+
+-keep class com.crashlytics.** { *; }
+-dontwarn com.crashlytics.**
+
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
+
+-keepattributes InnerClasses
+-optimizationpasses 5
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-verbose
+-optimizations !code/simplification/arithmetic,!field
+-ignorewarnings
+
+-keep class com.merseyside.findbyclap.presentation.view.views.stateSwitch.Arc {
+    void set*(***);
+    *** get*();
+}

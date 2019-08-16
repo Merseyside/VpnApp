@@ -24,4 +24,6 @@ interface ProviderApi {
     suspend fun createKey(token: String, name: String, publicKey: String): CreateSshKeyResponse
 
     suspend fun deleteDroplet(token: String, dropletId: Long)
+
+    suspend fun addFloatingAddress(token: String, dropletId: Long): String?
 }

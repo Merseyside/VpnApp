@@ -4,6 +4,7 @@ import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import kotlinx.coroutines.flow.Flow
 
 interface ProviderRepository {
 
@@ -23,7 +24,7 @@ interface ProviderRepository {
         providerId: Long
     ): Boolean
 
-    suspend fun getServers(): List<Server>
+    fun getDropletsFlow(): Flow<List<Server>>
 
     suspend fun deleteDroplet(token: Token, providerId: Long, dropletId: Long): Boolean
 

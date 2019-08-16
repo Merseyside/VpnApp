@@ -4,27 +4,36 @@ import android.os.Bundle
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.dropletapp.R
+import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
 import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetOvpnFileInteractor
-import com.merseyside.dropletapp.domain.interactor.GetServersInteractor
+import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
-import kotlinx.coroutines.cancel
+import de.blinkt.openvpn.VpnProfile
+import de.blinkt.openvpn.core.UpstreamConfigParser
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.FlowCollector
 import ru.terrakok.cicerone.Router
+import kotlin.coroutines.CoroutineContext
 
 class DropletListViewModel(
     private val router: Router,
-    private val getServersUseCase: GetServersInteractor,
+    private val getDropletsUseCase: GetDropletsInteractor,
     private val deleteDropletUseCase: DeleteDropletInteractor,
     private val getOvpnFileUseCase: GetOvpnFileInteractor,
     private val createServerUseCase: CreateServerInteractor
-) : BaseDropletViewModel(router) {
+) : BaseDropletViewModel(router), CoroutineScope {
+
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { context, throwable -> }
+    private val job = Job()
+    override val coroutineContext: CoroutineContext = Dispatchers.Main + coroutineExceptionHandler + job
 
     val dropletsVisibility = ObservableField<Boolean>(true)
-
     val dropletLiveData = MutableLiveData<List<Server>>()
+    val vpnProfileLiveData = MutableLiveData<VpnProfile>()
 
 
     override fun readFrom(bundle: Bundle) {
@@ -34,28 +43,42 @@ class DropletListViewModel(
     }
 
     override fun dispose() {
-        getServersUseCase.cancel()
+        getDropletsUseCase.cancel()
         deleteDropletUseCase.cancel()
         getOvpnFileUseCase.cancel()
     }
 
+    @UseExperimental(InternalCoroutinesApi::class)
     fun loadServers() {
-        getServersUseCase.execute(
-            onComplete = {
-                if (it.isEmpty()) {
-                    dropletsVisibility.set(false)
-                }
+        launch {
+            getDropletsUseCase.observe().collect(dropletObserver)
+        }
+    }
 
-                dropletLiveData.value = it
-            },
-            onError = {throwable ->
-                showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
+    private val dropletObserver = object : FlowCollector<List<Server>> {
+        override suspend fun emit(value: List<Server>) {
+            if (value.isEmpty()) {
+                dropletsVisibility.set(false)
             }
-        )
+
+            dropletLiveData.value = value
+        }
+
     }
 
     fun navigateToAddDropletScreen() {
         router.navigateTo(Screens.AddDropletScreen())
+    }
+
+    private fun loadVpnProfile(body: String): VpnProfile? {
+        return UpstreamConfigParser.parseConfig(VpnApplication.getInstance(), body)
+    }
+
+    private fun prepareVpn(body: String) {
+        val vpnProfile: VpnProfile? = loadVpnProfile(body)
+        if (vpnProfile != null) {
+            vpnProfileLiveData.value = vpnProfile
+        }
     }
 
     fun deleteServer(server: Server) {
@@ -77,14 +100,14 @@ class DropletListViewModel(
         getOvpnFileUseCase.execute(
             params = GetOvpnFileInteractor.Params(dropletId, providerId),
             onComplete = {
-                showMsg(it)
+                loadServers()
+
+                prepareVpn(it)
             },
             onError = {throwable ->
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
-
-                prepareServer(dropletId, providerId)
             },
-            showProgress = { showProgress() },
+            showProgress = { showProgress(getString(R.string.receiving_access_msg)) },
             hideProgress = { hideProgress() }
         )
     }
@@ -98,7 +121,7 @@ class DropletListViewModel(
             onError = { throwable ->
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
             },
-            showProgress = { showProgress() },
+            showProgress = { showProgress(getString(R.string.setup_server_msg)) },
             hideProgress = { hideProgress() }
         )
     }
