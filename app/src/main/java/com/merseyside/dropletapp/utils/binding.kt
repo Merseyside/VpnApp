@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.databinding.BindingAdapter
-import com.upstream.basemvvmimpl.presentation.utils.getColorFromAttr
+import com.upstream.basemvvmimpl.utils.getColorFromAttr
 
 
 @BindingAdapter("bind:imageBitmap")

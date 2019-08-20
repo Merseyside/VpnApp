@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools"
            tools:ignore="MissingTranslation">
-    <string name="app_name">DropletApp</string>
+    <string name="app_name" translatable="false">MyVPN.run</string>
 
     <string name="nav_new_token">New token</string>
     <string name="nav_tokens">Tokens</string>
@@ -29,4 +29,21 @@
     <string name="setup_server_msg">Setting up your server, it may takes 2&#8211;5 minutes</string>
     <string name="receiving_access_msg">Receiving vpn access, please wait…</string>
     <string name="loading_regions_msg">Loading regions, please wait…</string>
+
+    <string name="connected">Connected</string>
+    <string name="connect">Connect</string>
+    <string name="server_prefix">Server:</string>
+    <string name="provider_prefix">Provider:</string>
+    <string name="region_prefix">Region:</string>
+    <string name="language">Language</string>
+
+    <string-array name="language_entries">
+        <item>ic_english</item>
+        <item>ic_russian</item>
+    </string-array>
+
+    <string-array name="language_entry_values">
+        <item>en</item>
+        <item>ru</item>
+    </string-array>
 </resources>

@@ -1,15 +1,16 @@
 package com.merseyside.dropletapp.presentation.view.fragment.token.model
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import com.merseyside.dropletapp.BuildConfig
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.entity.Token
-import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.domain.interactor.SaveTokenInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
+import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.utils.isNameValid
 import com.merseyside.dropletapp.utils.isTokenValid
 import kotlinx.coroutines.cancel
@@ -21,13 +22,30 @@ class TokenViewModel(
     private val saveTokenUseCase: SaveTokenInteractor
 ) : BaseDropletViewModel(router) {
 
-    val tokenObservableField = ObservableField<Token>("12b95eab5d9c089185068cd22cff4a59af1d3195c5e3390c212192c4bb802630")
+    val tokenObservableField = ObservableField<Token>()
     val tokenNameObservableField = ObservableField<String>("Test token")
+
+    val tokenHintObservableField = ObservableField<String>()
+    val tokenNameHintObservableField = ObservableField<String>()
+    val providerHintObservableField = ObservableField<String>()
+    val saveButtonObservableField = ObservableField<String>()
+
 
     val providerLiveData = MutableLiveData<List<Provider>>()
 
     init {
+        if (BuildConfig.DEBUG) {
+            tokenObservableField.set("12b95eab5d9c089185068cd22cff4a59af1d3195c5e3390c212192c4bb802630")
+        }
+
         getServices()
+    }
+
+    override fun updateLanguage(context: Context) {
+        tokenHintObservableField.set(context.getString(R.string.hint_token))
+        tokenNameHintObservableField.set(context.getString(R.string.hint_token_name))
+        providerHintObservableField.set(context.getString(R.string.hint_provider_summary))
+        saveButtonObservableField.set(context.getString(R.string.save_token))
     }
 
     override fun dispose() {

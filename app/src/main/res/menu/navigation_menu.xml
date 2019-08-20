@@ -12,7 +12,7 @@
     </item>
 
     <item
-        android:id="@+id/nav_providers"
+        android:id="@+id/nav_droplets"
         android:orderInCategory="300"
         android:title="@string/nav_droplets"
         android:icon="@drawable/ic_cloud"

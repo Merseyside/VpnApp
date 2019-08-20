@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.activity.main.view
 
+import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -16,10 +17,9 @@ import com.merseyside.dropletapp.presentation.base.BaseDropletActivity
 import com.merseyside.dropletapp.presentation.di.component.DaggerMainComponent
 import com.merseyside.dropletapp.presentation.di.module.MainModule
 import com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewModel
-import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.view.AddDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view.DropletListFragment
+import com.merseyside.dropletapp.presentation.view.fragment.settings.view.SettingsFragment
 import com.merseyside.dropletapp.presentation.view.fragment.token.view.TokenFragment
-import com.upstream.basemvvmimpl.presentation.utils.getColorFromAttr
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -98,6 +98,21 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
 
     }
 
+    override fun updateLanguage(context: Context) {
+        super.updateLanguage(context)
+
+        (0 until binding.bottomNavigation.menu.size()).forEach {
+            val menuItem = binding.bottomNavigation.menu.getItem(it)
+
+            when(menuItem.itemId) {
+                R.id.nav_tokens -> menuItem.title = context.getString(R.string.nav_tokens)
+                R.id.nav_droplets -> menuItem.title = context.getString(R.string.nav_droplets)
+                R.id.nav_settings -> menuItem.title = context.getString(R.string.nav_settings)
+            }
+
+        }
+    }
+
     private fun fixBottomNavigation() {
         val menu = (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView)
 
@@ -127,13 +142,15 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
                     viewModel.navigateToTokenScreen()
                 }
 
-            R.id.nav_providers ->
+            R.id.nav_droplets ->
                 if (currentFragment !is DropletListFragment) {
                     viewModel.navigateToDropletListScreen()
                 }
 
-            else -> {
-
+            R.id.nav_settings -> {
+                if (currentFragment !is SettingsFragment) {
+                    viewModel.navigateToSettings()
+                }
             }
         }
 

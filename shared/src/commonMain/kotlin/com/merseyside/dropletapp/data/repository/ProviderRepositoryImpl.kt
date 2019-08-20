@@ -173,7 +173,8 @@ class ProviderRepositoryImpl(
                     ),
                     serverStatus = server.serverStatus,
                     environmentStatus = SshManager.Status.getStatusByString(server.environmentStatus)
-                        ?: throw IllegalArgumentException("Wrong status name")
+                        ?: throw IllegalArgumentException("Wrong status name"),
+                    connectStatus = false
                 )
             }
         }

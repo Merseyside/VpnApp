@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language">Язык</string>
+
+    <string name="nav_new_token">Новый ключ</string>
+    <string name="nav_tokens">Ключи</string>
+    <string name="nav_droplets">Серверы</string>
+    <string name="nav_settings">Настройки</string>
+
+    <string name="hint_token">API ключ</string>
+    <string name="hint_token_name">Имя ключа</string>
+    <string name="save_token">Сохранить ключ</string>
+    <string name="hint_provider_summary">Выберите хостинг-провайдера</string>
+    <string name="hint_token_summary">Выберите API ключ</string>
+    <string name="hint_region_summary">Выберите регион</string>
+    <string name="hint_server_name_summary">Имя сервера</string>
+
+    <string name="complete_msg">Удачно выполнено</string>
+    <string name="fill_fields_msg">Пожалуйста, заполните все поля правильно</string>
+    <string name="unknown_error_msg">Неизвестная ошибка</string>
+    <string name="grant_permissions">необходимо получить данное разрешение чтобы пользоваться приложением</string>
+    <string name="no_servers">Серверы не добавлены\nНажмите + чтобы добавить</string>
+
+    <string name="delete_action">Удалить</string>
+    <string name="connect_to_vpn_action">Подключить по VPN</string>
+    <string name="prepare_vpn_action">Подготовка VPN сервера</string>
+
+    <string name="create_server" >Создание сервера и получение VPN доступа</string>
+    <string name="setup_server_msg">Настройка вашего сервера, это может занять 2&#8211;5 минут</string>
+    <string name="receiving_access_msg">Получение VPN доступа, пожалуйста, подождите…</string>
+    <string name="loading_regions_msg">Загрузка регионов, пожалуйста, подождите…</string>
+
+    <string name="connected">Подключено</string>
+    <string name="connect">Соединиться</string>
+    <string name="server_prefix">Сервер:</string>
+    <string name="provider_prefix">Провайдер:</string>
+    <string name="region_prefix">Регион:</string>
+</resources>

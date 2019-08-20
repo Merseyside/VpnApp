@@ -1,6 +1,8 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.dropletapp.R
@@ -12,8 +14,10 @@ import com.merseyside.dropletapp.domain.interactor.GetOvpnFileInteractor
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
+import com.merseyside.dropletapp.ssh.SshManager
 import de.blinkt.openvpn.VpnProfile
 import de.blinkt.openvpn.core.UpstreamConfigParser
+import de.blinkt.openvpn.core.VpnStatus
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.FlowCollector
 import ru.terrakok.cicerone.Router
@@ -26,6 +30,9 @@ class DropletListViewModel(
     private val getOvpnFileUseCase: GetOvpnFileInteractor,
     private val createServerUseCase: CreateServerInteractor
 ) : BaseDropletViewModel(router), CoroutineScope {
+    override fun updateLanguage(context: Context) {
+
+    }
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { context, throwable -> }
     private val job = Job()
@@ -34,6 +41,8 @@ class DropletListViewModel(
     val dropletsVisibility = ObservableField<Boolean>(true)
     val dropletLiveData = MutableLiveData<List<Server>>()
     val vpnProfileLiveData = MutableLiveData<VpnProfile>()
+
+    var currentServer: Server? = null
 
 
     override fun readFrom(bundle: Bundle) {
@@ -96,25 +105,41 @@ class DropletListViewModel(
         )
     }
 
-    fun getOvpnFile(dropletId: Long, providerId: Long) {
-        getOvpnFileUseCase.execute(
-            params = GetOvpnFileInteractor.Params(dropletId, providerId),
-            onComplete = {
-                loadServers()
+    fun getOvpnFile(server: Server) {
 
-                prepareVpn(it)
-            },
-            onError = {throwable ->
-                showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
-            },
-            showProgress = { showProgress(getString(R.string.receiving_access_msg)) },
-            hideProgress = { hideProgress() }
-        )
+        if (currentServer != null) {
+            val copiedServer = currentServer!!.copy()
+            copiedServer.connectStatus = false
+            dropletLiveData.value = listOf(copiedServer)
+        }
+
+        if (currentServer != server) {
+            currentServer = server.copy()
+
+            getOvpnFileUseCase.execute(
+                params = GetOvpnFileInteractor.Params(server.id, server.providerId),
+                onComplete = {
+                    loadServers()
+
+                    prepareVpn(it)
+                },
+                onError = { throwable ->
+                    showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
+                },
+                showProgress = {
+                    if (server.environmentStatus == SshManager.Status.IN_PROCESS) {
+                        showProgress(getString(R.string.receiving_access_msg))
+                    }},
+                hideProgress = { hideProgress() }
+            )
+        } else {
+            currentServer = null
+        }
     }
 
-    fun prepareServer(dropletId: Long, providerId: Long) {
+    fun prepareServer(server: Server) {
         createServerUseCase.execute(
-            params = CreateServerInteractor.Params(dropletId = dropletId, providerId = providerId),
+            params = CreateServerInteractor.Params(dropletId = server.id, providerId = server.providerId),
             onComplete = {
                 loadServers()
             },
@@ -126,5 +151,31 @@ class DropletListViewModel(
         )
     }
 
+    fun setConnectionStatus(status: VpnStatus.ConnectionStatus) {
+        if (currentServer != null) {
 
+            when (status) {
+                VpnStatus.ConnectionStatus.LEVEL_CONNECTED -> {
+                    if (currentServer!!.connectStatus) return
+                    currentServer!!.connectStatus = true
+                }
+
+                else -> {
+                    if (!currentServer!!.connectStatus) return
+                    currentServer!!.connectStatus = false
+                }
+            }
+
+            dropletLiveData.value = listOf(currentServer!!)
+        }
+    }
+
+    fun isConnected(): Boolean {
+        return currentServer != null
+    }
+
+
+    companion object {
+        private const val TAG = "DropletListViewModel"
+    }
 }

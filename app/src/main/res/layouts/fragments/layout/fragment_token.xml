@@ -29,7 +29,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                        android:text="@string/hint_provider_summary"/>
+                        android:text="@{viewModel.providerHintObservableField}"/>
 
                 <androidx.appcompat.widget.AppCompatSpinner
                         android:id="@+id/provider_spinner"
@@ -43,31 +43,11 @@
             </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/token_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/TextInputLayout"
-                    android:hint="@string/hint_token_name">
-
-                <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:imeOptions="actionGo"
-                        android:text="@={viewModel.tokenNameObservableField}"
-                        style="@style/TextInputEditText"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/token"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/TextInputLayout"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="64"
-                    app:counterTextAppearance="@style/CustomCounterTextAppearance"
-                    android:hint="@string/hint_token">
+                    android:hint="@{viewModel.tokenHintObservableField}">
 
                 <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
@@ -79,11 +59,31 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/token_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextInputLayout"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="64"
+                    app:counterTextAppearance="@style/CustomCounterTextAppearance"
+                    android:hint="@{viewModel.tokenNameHintObservableField}">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionGo"
+                        android:text="@={viewModel.tokenNameObservableField}"
+                        style="@style/TextInputEditText"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <Button
                     android:id="@+id/save"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/save_token"
+                    android:text="@{viewModel.saveButtonObservableField}"
                     android:layout_marginTop="@dimen/large_spacing"/>
 
         </LinearLayout>

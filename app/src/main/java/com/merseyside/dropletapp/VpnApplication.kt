@@ -1,6 +1,5 @@
 package com.merseyside.dropletapp
 
-import android.app.Application
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
@@ -10,9 +9,10 @@ import com.merseyside.dropletapp.presentation.di.component.AppComponent
 import com.merseyside.dropletapp.presentation.di.component.DaggerAppComponent
 import com.merseyside.dropletapp.presentation.di.module.AppModule
 import com.squareup.sqldelight.android.AndroidSqliteDriver
+import com.upstream.basemvvmimpl.BaseApplication
 import javax.inject.Inject
 
-class VpnApplication : Application() {
+class VpnApplication : BaseApplication() {
 
     lateinit var appComponent : AppComponent
         private set

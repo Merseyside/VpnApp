@@ -7,7 +7,7 @@ import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.presentation.di.module.AppModule
 import com.merseyside.dropletapp.presentation.di.module.NavigationModule
 import com.upstream.basemvvmimpl.presentation.di.qualifiers.ApplicationContext
-import com.upstream.basemvvmimpl.presentation.utils.PreferenceManager
+import com.upstream.basemvvmimpl.utils.PreferenceManager
 import dagger.Component
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router

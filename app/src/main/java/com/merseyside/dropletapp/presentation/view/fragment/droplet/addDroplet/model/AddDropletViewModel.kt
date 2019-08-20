@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model
 
+import android.content.Context
 import android.os.Bundle
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
@@ -24,6 +25,9 @@ class AddDropletViewModel(
     private val getRegionsByTokenUseCase: GetRegionsByTokenInteractor,
     private val createServerUseCase: CreateServerInteractor
 ) : BaseDropletViewModel(router) {
+    override fun updateLanguage(context: Context) {
+
+    }
 
     val providerLiveData = MutableLiveData<List<Provider>>()
     val tokenLiveData = MutableLiveData<List<TokenEntity>>()

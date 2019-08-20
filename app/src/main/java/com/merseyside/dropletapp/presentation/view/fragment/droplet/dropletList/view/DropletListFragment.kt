@@ -21,6 +21,7 @@ import com.merseyside.dropletapp.ssh.SshManager
 import com.upstream.basemvvmimpl.presentation.adapter.BaseAdapter
 import de.blinkt.openvpn.VpnProfile
 import de.blinkt.openvpn.core.OpenVPNService
+import de.blinkt.openvpn.core.ProfileManager
 import de.blinkt.openvpn.core.VPNLaunchHelper
 import de.blinkt.openvpn.core.VpnStatus
 
@@ -53,6 +54,8 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
     }
 
     private val dropletObserver = Observer<List<Server>> {
+        Log.d(TAG, "here")
+
         if (!adapter.hasItems()) {
             adapter.add(it)
         } else {
@@ -95,18 +98,20 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        registerReceivers()
         doLayout()
     }
 
     private fun init() {
+
         adapter = DropletAdapter()
         adapter.setOnItemOptionClickListener(object: DropletAdapter.OnItemOptionsClickListener {
             override fun onPrepare(server: Server) {
-                viewModel.prepareServer(server.id, server.providerId)
+                viewModel.prepareServer(server)
             }
 
             override fun onConnect(server: Server) {
-                viewModel.getOvpnFile(server.id, server.providerId)
+                connectToVpn(server)
             }
 
             override fun onDelete(server: Server) {
@@ -119,9 +124,9 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
             override fun onItemClicked(obj: Any) {
                 if (obj is Server) {
                     if (obj.environmentStatus == SshManager.Status.PENDING) {
-                        viewModel.prepareServer(obj.id, obj.providerId)
+                        viewModel.prepareServer(obj)
                     } else {
-                        viewModel.getOvpnFile(obj.id, obj.providerId)
+                        connectToVpn(obj)
                     }
                 }
             }
@@ -130,6 +135,20 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
 
         viewModel.dropletLiveData.observe(this, dropletObserver)
         viewModel.vpnProfileLiveData.observe(this, vpnProfileObserver)
+    }
+
+    private fun connectToVpn(server: Server) {
+
+        if (viewModel.isConnected()) {
+            ProfileManager.setConntectedVpnProfileDisconnected(baseActivityView)
+            if (vpnService != null) {
+                if (vpnService!!.management != null)
+                    vpnService!!.management.stopVPN(false)
+                vpnService!!.currentServer = null
+            }
+        }
+
+        viewModel.getOvpnFile(server)
     }
 
     private fun doLayout() {
@@ -151,6 +170,12 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
     override fun onPause() {
         super.onPause()
         unbindService()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        unregisterReceivers()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -198,9 +223,29 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
         }
     }
 
+    private var br: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            receiveStatus(intent)
+        }
+    }
+
+    private fun registerReceivers() {
+        baseActivityView.registerReceiver(br, IntentFilter(BROADCAST_ACTION))
+    }
+
+    private fun unregisterReceivers() {
+        baseActivityView.unregisterReceiver(br)
+    }
+
+    private fun receiveStatus(intent: Intent) {
+        viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.valueOf(intent.getStringExtra("status")))
+    }
+
     companion object {
         private const val START_VPN_PROFILE = 70
         private const val ADBLOCK_REQUEST = 10001
+
+        private const val BROADCAST_ACTION = "de.blinkt.openvpn.VPN_STATUS"
 
         private const val TAG = "DropletListFragment"
 
