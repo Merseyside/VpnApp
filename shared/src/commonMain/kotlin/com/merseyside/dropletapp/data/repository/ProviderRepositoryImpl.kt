@@ -33,7 +33,6 @@ class ProviderRepositoryImpl(
         Logger.logError(TAG, throwable)
     }
 
-
     override val coroutineContext: CoroutineContext
         get() = networkContext + coroutineExceptionHandler
 
@@ -80,7 +79,7 @@ class ProviderRepositoryImpl(
         val keyPair = createKey()
 
         val provider = providerApiFactory.getProvider(providerId)
-        val keyResponse = provider.createKey(token, "My VPN ssh key", keyPair.first.key)
+        val keyResponse = provider.importKey(token, "My VPN ssh key", keyPair.first.key)
 
         val createDropletResponse = provider.createDroplet(
             token = token,

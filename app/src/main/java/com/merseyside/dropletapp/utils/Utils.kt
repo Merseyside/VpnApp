@@ -26,3 +26,9 @@ fun isTokenValid(token: Token?): Boolean {
     } ?: false
 
 }
+
+fun isKeyValid(key: String?): Boolean {
+    return key?.let {
+        true
+    } ?: false
+}

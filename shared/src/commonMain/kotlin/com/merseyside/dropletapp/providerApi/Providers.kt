@@ -6,19 +6,33 @@ sealed class Provider {
 
     abstract fun getId(): Long
 
-
-
     class DigitalOcean : Provider() {
         override fun getName(): String {
             return "Digital Ocean"
         }
 
+
+
+        override fun equals(other: Any?): Boolean {
+            return this === other
+        }
+
         override fun getId(): Long {
             return 0
+        }
+    }
+
+    class Amazon : Provider() {
+        override fun getName(): String {
+            return "Amazon"
         }
 
         override fun equals(other: Any?): Boolean {
             return this === other
+        }
+
+        override fun getId(): Long {
+            return 1
         }
     }
 
@@ -27,11 +41,12 @@ sealed class Provider {
 
         fun getAllServices(): List<Provider> {
             if (providers == null) {
-                val services = ArrayList<Provider>()
+                val providers = ArrayList<Provider>()
 
-                services.add(DigitalOcean())
+                providers.add(DigitalOcean())
+                providers.add(Amazon())
 
-                providers = services
+                this.providers = providers
             }
 
             return providers!!

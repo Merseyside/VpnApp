@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
 import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
@@ -67,6 +68,15 @@ class TokenFragment : BaseDropletFragment<FragmentTokenBinding, TokenViewModel>(
     }
 
     private fun doLayout() {
+        binding.providerSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                viewModel.setProviderId(providerAdapter.getItem(binding.providerSpinner.selectedItemPosition).getId())
+            }
+
+        }
+
         binding.save.setOnClickListener {
             val selectedProvider = providerAdapter.getItem(binding.providerSpinner.selectedItemPosition)!!
 

@@ -1,18 +1,15 @@
 package com.merseyside.dropletapp.ssh
 
 import android.util.Log
-import com.merseyside.admin.merseylibrary.data.filemanager.FileManager
 import net.schmizz.sshj.AndroidConfig
 import net.schmizz.sshj.SSHClient
 import net.schmizz.sshj.common.IOUtils
-import net.schmizz.sshj.connection.channel.direct.Session
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.net.ConnectException
 import java.security.Security.insertProviderAt
 import java.security.Security.removeProvider
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 
 
 actual class SshConnection actual constructor(

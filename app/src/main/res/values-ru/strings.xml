@@ -35,4 +35,7 @@
     <string name="server_prefix">Сервер:</string>
     <string name="provider_prefix">Провайдер:</string>
     <string name="region_prefix">Регион:</string>
+
+    <string name="access_key">Ключ доступа</string>
+    <string name="secret_key">Секретный ключ</string>
 </resources>

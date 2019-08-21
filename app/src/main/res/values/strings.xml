@@ -37,6 +37,9 @@
     <string name="region_prefix">Region:</string>
     <string name="language">Language</string>
 
+    <string name="access_key">Access key</string>
+    <string name="secret_key">Secret key</string>
+
     <string-array name="language_entries">
         <item>ic_english</item>
         <item>ic_russian</item>

@@ -33,10 +33,12 @@ class ProviderAdapter(
 
         name.text = provider.getName()
 
-        when(provider) {
-            is Provider.DigitalOcean -> icon.setImageResource(R.drawable.digital_ocean)
-            else -> {}
+        val resId = when(provider) {
+            is Provider.DigitalOcean -> R.drawable.digital_ocean
+            is Provider.Amazon -> R.drawable.ic_amazon
         }
+
+        icon.setImageResource(resId)
 
         return view
     }

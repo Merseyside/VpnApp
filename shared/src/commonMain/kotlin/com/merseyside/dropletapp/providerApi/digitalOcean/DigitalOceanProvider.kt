@@ -4,7 +4,7 @@ import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.providerApi.ProviderApi
 import com.merseyside.dropletapp.providerApi.base.entity.point.NetworkPoint
 import com.merseyside.dropletapp.providerApi.base.entity.response.CreateDropletResponse
-import com.merseyside.dropletapp.providerApi.base.entity.response.CreateSshKeyResponse
+import com.merseyside.dropletapp.providerApi.base.entity.response.ImportSshKeyResponse
 import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoResponse
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
 import com.merseyside.dropletapp.providerApi.exception.InvalidTokenException
@@ -49,9 +49,9 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
         return response.regionList.filter { it.isAvailable }
     }
 
-    override suspend fun createKey(token: String, name: String, publicKey: String): CreateSshKeyResponse {
+    override suspend fun importKey(token: String, name: String, publicKey: String): ImportSshKeyResponse {
         return responseCreator.createKey(token, name, publicKey).sshKeyPoint.let {
-            CreateSshKeyResponse(
+            ImportSshKeyResponse(
                 id = it.id,
                 fingerprint = it.fingerprint
             )

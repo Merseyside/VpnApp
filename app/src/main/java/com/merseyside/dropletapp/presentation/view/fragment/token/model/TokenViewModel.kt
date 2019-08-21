@@ -11,6 +11,7 @@ import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.domain.interactor.SaveTokenInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.providerApi.Provider
+import com.merseyside.dropletapp.utils.isKeyValid
 import com.merseyside.dropletapp.utils.isNameValid
 import com.merseyside.dropletapp.utils.isTokenValid
 import kotlinx.coroutines.cancel
@@ -29,6 +30,15 @@ class TokenViewModel(
     val tokenNameHintObservableField = ObservableField<String>()
     val providerHintObservableField = ObservableField<String>()
     val saveButtonObservableField = ObservableField<String>()
+    val accessKeyHintObservableField = ObservableField<String>()
+    val secretKeyHintObservableField = ObservableField<String>()
+
+    val accessKeyObservableField = ObservableField<String>()
+    val secretKeyObservableField = ObservableField<String>()
+
+    val providerVisibilityObservableField = ObservableField<Boolean>(true)
+
+    var currentProviderId = 0L
 
 
     val providerLiveData = MutableLiveData<List<Provider>>()
@@ -36,6 +46,8 @@ class TokenViewModel(
     init {
         if (BuildConfig.DEBUG) {
             tokenObservableField.set("12b95eab5d9c089185068cd22cff4a59af1d3195c5e3390c212192c4bb802630")
+            accessKeyObservableField.set("AKIAIXEAFD32GJSV7OVQ")
+            secretKeyObservableField.set("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")
         }
 
         getServices()
@@ -46,6 +58,8 @@ class TokenViewModel(
         tokenNameHintObservableField.set(context.getString(R.string.hint_token_name))
         providerHintObservableField.set(context.getString(R.string.hint_provider_summary))
         saveButtonObservableField.set(context.getString(R.string.save_token))
+        accessKeyHintObservableField.set(context.getString(R.string.access_key))
+        secretKeyHintObservableField.set(context.getString(R.string.secret_key))
     }
 
     override fun dispose() {
@@ -72,10 +86,23 @@ class TokenViewModel(
 
     fun saveToken(provider: Provider) {
 
-        if (isTokenValid(tokenObservableField.get()) && isNameValid(tokenNameObservableField.get())) {
+        val isValid = if (provider is Provider.DigitalOcean) {
+            isTokenValid(tokenObservableField.get())
+        } else {
+            isKeyValid(accessKeyObservableField.get()) && isKeyValid(secretKeyObservableField.get())
+        }
+
+        if (isValid && isNameValid(tokenNameObservableField.get())) {
+
+            val token = if (provider is Provider.DigitalOcean) {
+                tokenObservableField.get()
+            } else {
+                "${accessKeyObservableField.get()} ${secretKeyObservableField.get()}"
+            }
+
             saveTokenUseCase.execute(
                 params = SaveTokenInteractor.Params(
-                    token = tokenObservableField.get()!!,
+                    token = token!!,
                     name = tokenNameObservableField.get()!!,
                     providerId = provider.getId()
                 ),
@@ -94,6 +121,20 @@ class TokenViewModel(
             )
         } else {
             showErrorMsg(getString(R.string.fill_fields_msg))
+        }
+    }
+
+    fun setProviderId(id: Long) {
+        currentProviderId = id
+
+        when(id) {
+            Provider.DigitalOcean().getId() -> {
+                providerVisibilityObservableField.set(true)
+            }
+
+            else -> {
+                providerVisibilityObservableField.set(false)
+            }
         }
     }
 
