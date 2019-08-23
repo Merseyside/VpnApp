@@ -15,8 +15,8 @@ include ':app', ':shared', ':openvpn-core'
 include ':library'
 project(':library').projectDir = new File(settingsDir, '../mvvm-clean-arch-library/library')
 
-include 'HorizontalSelectorView'
-project(':HorizontalSelectorView').projectDir = new File(settingsDir, '../HorizontalSelectorViewExample/HorizontalSelectorView')
+//include 'HorizontalSelectorView'
+//project(':HorizontalSelectorView').projectDir = new File(settingsDir, '../HorizontalSelectorViewExample/HorizontalSelectorView')
 
 include ':merseylibrary'
 project(':merseylibrary').projectDir = new File(settingsDir, '../merseylibrary')

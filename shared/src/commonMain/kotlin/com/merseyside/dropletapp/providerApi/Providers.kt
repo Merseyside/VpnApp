@@ -22,9 +22,9 @@ sealed class Provider {
         }
     }
 
-    class Amazon : Provider() {
+    class Linode : Provider() {
         override fun getName(): String {
-            return "Amazon"
+            return "Linode"
         }
 
         override fun equals(other: Any?): Boolean {
@@ -44,7 +44,7 @@ sealed class Provider {
                 val providers = ArrayList<Provider>()
 
                 providers.add(DigitalOcean())
-                providers.add(Amazon())
+                providers.add(Linode())
 
                 this.providers = providers
             }

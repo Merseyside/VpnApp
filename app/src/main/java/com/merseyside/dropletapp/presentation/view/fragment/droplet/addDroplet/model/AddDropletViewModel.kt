@@ -2,31 +2,46 @@ package com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.data.entity.Token
+import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
 import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.domain.interactor.GetRegionsByTokenInteractor
 import com.merseyside.dropletapp.domain.interactor.GetTokensByProviderIdInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.providerApi.Provider
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.utils.isServerNameValid
 import kotlinx.coroutines.cancel
 import ru.terrakok.cicerone.Router
 
 class AddDropletViewModel(
-    private val router: Router,
+    router: Router,
     private val getProvidersUseCase: GetProvidersInteractor,
     private val getTokensByProviderIdUseCase: GetTokensByProviderIdInteractor,
     private val getRegionsByTokenUseCase: GetRegionsByTokenInteractor,
     private val createServerUseCase: CreateServerInteractor
 ) : BaseDropletViewModel(router) {
-    override fun updateLanguage(context: Context) {
 
+    val providerHintObservableField = ObservableField<String>()
+    val keyHintObservableField = ObservableField<String>()
+    val regionHintObservableField = ObservableField<String>()
+    val nameHintObservableField = ObservableField<String>()
+    val buttonTextObservableField = ObservableField<String>()
+
+    override fun updateLanguage(context: Context) {
+        providerHintObservableField.set(context.getString(R.string.hint_provider_summary))
+        keyHintObservableField.set(context.getString(R.string.hint_token_summary))
+        regionHintObservableField.set(context.getString(R.string.hint_region_summary))
+        nameHintObservableField.set(context.getString(R.string.hint_server_name_summary))
+        buttonTextObservableField.set(context.getString(R.string.create_server))
     }
 
     val providerLiveData = MutableLiveData<List<Provider>>()
@@ -118,13 +133,22 @@ class AddDropletViewModel(
                         ?: throw IllegalArgumentException()
                             .also {
                                 showErrorMsg("Server name can not be empty")
+                            },
+                    logCallback = object: ProviderRepositoryImpl.LogCallback {
+                        override fun onLog(log: String) {
+                            Handler(Looper.getMainLooper()).post {
+                                showProgress(log)
                             }
+                        }
+                    }
                 ),
                 onComplete = {
-                    showMsg(getString(R.string.complete_msg))
+                    back()
                 },
                 onError = {throwable ->
-                    showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
+                    showErrorMsg(errorMsgCreator.createErrorMsg(throwable), getString(R.string.retry), View.OnClickListener {
+                        createServer()
+                    })
                 },
                 showProgress = { showProgress(getString(R.string.setup_server_msg)) },
                 hideProgress = { hideProgress() }

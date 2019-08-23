@@ -1,6 +1,6 @@
 package com.merseyside.dropletapp.providerApi.digitalOcean.entity.point
 
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

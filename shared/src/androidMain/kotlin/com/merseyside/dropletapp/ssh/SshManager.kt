@@ -9,6 +9,7 @@ import com.jcraft.jsch.Logger
 import com.merseyside.admin.merseylibrary.data.filemanager.FileManager
 import com.merseyside.dropletapp.data.entity.PrivateKey
 import com.merseyside.dropletapp.data.entity.PublicKey
+import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import kotlinx.coroutines.delay
 import java.io.File
 import java.net.ConnectException
@@ -55,7 +56,7 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
         keyPair.writePrivateKey(priFile.absolutePath)
 
         val privateKey = PrivateKey(FileManager.getStringFromFile(priFile.absolutePath), priFile.absolutePath)
-        val publicKey = PublicKey(FileManager.getStringFromFile(pubFile.absolutePath), pubFile.absolutePath)
+        val publicKey = PublicKey(FileManager.getStringFromFile(pubFile.absolutePath).replace("\n", ""), pubFile.absolutePath)
 
         keyPair.dispose()
 
@@ -65,9 +66,10 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
     actual suspend fun openSshConnection(
         username: String,
         host: String,
-        keyPathPrivate: String
+        keyPathPrivate: String,
+        logCallback: ProviderRepositoryImpl.LogCallback?
     ): SshConnection? {
-        Log.d(TAG, "Connecting to root@$host")
+        logCallback?.onLog("Connecting to root@$host")
 
         val connection = activeConnections.firstOrNull {
             it.host == host
@@ -79,6 +81,8 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
         }
 
         repeat(12) {
+
+            logCallback?.onLog("Connecting to root@$host attempt ${it+1}...")
 
             if (connection.openSshConnection()) {
                 return connection.also {
@@ -95,9 +99,12 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
     actual suspend fun setupServer(
         username: String,
         host: String,
-        keyPathPrivate: String
+        keyPathPrivate: String,
+        logCallback: ProviderRepositoryImpl.LogCallback?
     ): Boolean {
-        val connection = openSshConnection(username, host, keyPathPrivate) ?: return false
+        val connection = openSshConnection(username, host, keyPathPrivate, logCallback) ?: return false
+
+        logCallback?.onLog("Setting up server")
 
         return connection.setupServer()
     }
@@ -107,7 +114,7 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
         host: String,
         keyPathPrivate: String
     ): String? {
-        val connection = openSshConnection(username, host, keyPathPrivate) ?: throw ConnectException("Can not connect to server")
+        val connection = openSshConnection(username, host, keyPathPrivate, null) ?: throw ConnectException("Can not connect to server")
 
         return connection.getOvpnFile()
     }

@@ -27,7 +27,7 @@ import de.blinkt.openvpn.core.VpnStatus
 
 class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, DropletListViewModel>() {
 
-    private lateinit var adapter: DropletAdapter
+    private val adapter: DropletAdapter = DropletAdapter()
 
     private var isServiceBind = false
     private var vpnService: OpenVPNService? = null
@@ -54,12 +54,22 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
     }
 
     private val dropletObserver = Observer<List<Server>> {
-        Log.d(TAG, "here")
 
         if (!adapter.hasItems()) {
+
             adapter.add(it)
         } else {
             adapter.update(it)
+        }
+    }
+
+    private val changeConnectionObserver = Observer<Server> {
+        adapter.notifyItemChanged(it)
+
+        if (it.connectStatus) {
+            vpnService!!.server = it
+        } else {
+            vpnService!!.server = null
         }
     }
 
@@ -100,11 +110,19 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
 
         registerReceivers()
         doLayout()
+
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        viewModel.dropletLiveData.observe(this, dropletObserver)
+        viewModel.vpnProfileLiveData.observe(this, vpnProfileObserver)
+        viewModel.connectionLiveData.observe(this, changeConnectionObserver)
     }
 
     private fun init() {
-
-        adapter = DropletAdapter()
         adapter.setOnItemOptionClickListener(object: DropletAdapter.OnItemOptionsClickListener {
             override fun onPrepare(server: Server) {
                 viewModel.prepareServer(server)
@@ -132,9 +150,6 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
             }
 
         })
-
-        viewModel.dropletLiveData.observe(this, dropletObserver)
-        viewModel.vpnProfileLiveData.observe(this, vpnProfileObserver)
     }
 
     private fun connectToVpn(server: Server) {
@@ -144,7 +159,7 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
             if (vpnService != null) {
                 if (vpnService!!.management != null)
                     vpnService!!.management.stopVPN(false)
-                vpnService!!.currentServer = null
+                vpnService!!.server = null
             }
         }
 
@@ -161,7 +176,6 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
         viewModel.loadServers()
 
     }
-
     override fun onResume() {
         super.onResume()
         bindService()
@@ -176,6 +190,10 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
         super.onDestroyView()
 
         unregisterReceivers()
+
+        viewModel.connectionLiveData.removeObserver(changeConnectionObserver)
+        viewModel.vpnProfileLiveData.removeObserver(vpnProfileObserver)
+        viewModel.dropletLiveData.removeObserver(dropletObserver)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -213,9 +231,9 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
             val binder = service as OpenVPNService.LocalBinder
             vpnService = binder.service
 
-//            if (VpnStatus.isVPNActive() && vpnService!!.currentServer != null) {
-//                viewModel.showConnectedServer(vpnService!!.currentServer as Server, vpnService!!.connectTime)
-//            }
+            if (VpnStatus.isVPNActive() && vpnService!!.server != null) {
+                viewModel.showConnectedServer(vpnService!!.server as Server)
+            }
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {

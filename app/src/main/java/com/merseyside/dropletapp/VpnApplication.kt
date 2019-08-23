@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp
 
+import android.util.Log
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
@@ -10,6 +11,7 @@ import com.merseyside.dropletapp.presentation.di.component.DaggerAppComponent
 import com.merseyside.dropletapp.presentation.di.module.AppModule
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.upstream.basemvvmimpl.BaseApplication
+import java.util.*
 import javax.inject.Inject
 
 class VpnApplication : BaseApplication() {
@@ -56,8 +58,22 @@ class VpnApplication : BaseApplication() {
         sqlDriver = AndroidSqliteDriver(sqlHelper)
     }
 
+    override fun getBaseLanguage(): String {
+        val systemLanguage = Locale.getDefault().language
+
+        Log.d(TAG, systemLanguage)
+
+        val supportedLanguages = listOf("en", "ru")
+
+        return if (supportedLanguages.contains(systemLanguage)) {
+            systemLanguage
+        } else {
+            "en"
+        }
+    }
+
     companion object {
-        private const val TAG = "DropletApplication"
+        private const val TAG = "VpnApplication"
 
         private lateinit var instance: VpnApplication
 

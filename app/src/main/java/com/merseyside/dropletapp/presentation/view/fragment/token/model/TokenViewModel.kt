@@ -24,30 +24,20 @@ class TokenViewModel(
 ) : BaseDropletViewModel(router) {
 
     val tokenObservableField = ObservableField<Token>()
-    val tokenNameObservableField = ObservableField<String>("Test token")
+    val tokenNameObservableField = ObservableField<String>()
 
     val tokenHintObservableField = ObservableField<String>()
     val tokenNameHintObservableField = ObservableField<String>()
     val providerHintObservableField = ObservableField<String>()
     val saveButtonObservableField = ObservableField<String>()
-    val accessKeyHintObservableField = ObservableField<String>()
-    val secretKeyHintObservableField = ObservableField<String>()
 
-    val accessKeyObservableField = ObservableField<String>()
-    val secretKeyObservableField = ObservableField<String>()
-
-    val providerVisibilityObservableField = ObservableField<Boolean>(true)
-
-    var currentProviderId = 0L
-
+    private var currentProviderId = 0L
 
     val providerLiveData = MutableLiveData<List<Provider>>()
 
     init {
         if (BuildConfig.DEBUG) {
-            tokenObservableField.set("12b95eab5d9c089185068cd22cff4a59af1d3195c5e3390c212192c4bb802630")
-            accessKeyObservableField.set("AKIAIXEAFD32GJSV7OVQ")
-            secretKeyObservableField.set("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")
+            tokenNameObservableField.set("Test token")
         }
 
         getServices()
@@ -58,8 +48,6 @@ class TokenViewModel(
         tokenNameHintObservableField.set(context.getString(R.string.hint_token_name))
         providerHintObservableField.set(context.getString(R.string.hint_provider_summary))
         saveButtonObservableField.set(context.getString(R.string.save_token))
-        accessKeyHintObservableField.set(context.getString(R.string.access_key))
-        secretKeyHintObservableField.set(context.getString(R.string.secret_key))
     }
 
     override fun dispose() {
@@ -86,19 +74,11 @@ class TokenViewModel(
 
     fun saveToken(provider: Provider) {
 
-        val isValid = if (provider is Provider.DigitalOcean) {
-            isTokenValid(tokenObservableField.get())
-        } else {
-            isKeyValid(accessKeyObservableField.get()) && isKeyValid(secretKeyObservableField.get())
-        }
+        val isValid = isTokenValid(tokenObservableField.get())
 
         if (isValid && isNameValid(tokenNameObservableField.get())) {
 
-            val token = if (provider is Provider.DigitalOcean) {
-                tokenObservableField.get()
-            } else {
-                "${accessKeyObservableField.get()} ${secretKeyObservableField.get()}"
-            }
+            val token = tokenObservableField.get()
 
             saveTokenUseCase.execute(
                 params = SaveTokenInteractor.Params(
@@ -109,8 +89,6 @@ class TokenViewModel(
                 onComplete = {
                     if (it) {
                         showMsg(getString(R.string.complete_msg))
-                    } else {
-                        //showErrorMsg(getString(R.string.unknown_error_msg))
                     }
                 },
                 onError = {throwable ->
@@ -127,14 +105,17 @@ class TokenViewModel(
     fun setProviderId(id: Long) {
         currentProviderId = id
 
-        when(id) {
-            Provider.DigitalOcean().getId() -> {
-                providerVisibilityObservableField.set(true)
+        if (BuildConfig.DEBUG) {
+            when(id) {
+                Provider.DigitalOcean().getId() -> {
+                    tokenObservableField.set("12b95eab5d9c089185068cd22cff4a59af1d3195c5e3390c212192c4bb802630")
+                }
+
+                else -> {
+                    tokenObservableField.set("2d2ed3432b21e7e35ad624d396a16ad687c078b4cc77280a38e35bc08bab410e")
+                }
             }
 
-            else -> {
-                providerVisibilityObservableField.set(false)
-            }
         }
     }
 

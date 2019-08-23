@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.merseyside.dropletapp.R
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 
 class RegionAdapter(context: Activity,
                     private var resourceId: Int,

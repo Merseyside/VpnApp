@@ -87,7 +87,8 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     private fun init() {
-        viewModel.newRootScreen()
+        viewModel.navigateToDropletListScreen()
+        binding.bottomNavigation.selectedItemId = R.id.nav_droplets
         getMsgTextColor()
     }
 

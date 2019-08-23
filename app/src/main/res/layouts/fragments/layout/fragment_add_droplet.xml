@@ -35,7 +35,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                            android:text="@string/hint_provider_summary"
+                            android:text="@{viewModel.providerHintObservableField}"
                             android:layout_marginBottom="@dimen/very_small_spacing"/>
 
                     <androidx.appcompat.widget.AppCompatSpinner
@@ -60,7 +60,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                            android:text="@string/hint_token_summary"
+                            android:text="@{viewModel.keyHintObservableField}"
                             android:layout_marginBottom="@dimen/very_small_spacing"/>
 
                     <androidx.appcompat.widget.AppCompatSpinner
@@ -84,7 +84,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                            android:text="@string/hint_region_summary"
+                            android:text="@{viewModel.regionHintObservableField}"
                             android:layout_marginBottom="@dimen/very_small_spacing"/>
 
                     <androidx.appcompat.widget.AppCompatSpinner
@@ -105,7 +105,7 @@
                         android:layout_height="wrap_content"
                         style="@style/TextInputLayout"
                         android:layout_marginTop="@dimen/small_spacing"
-                        android:hint="@string/hint_server_name_summary">
+                        android:hint="@{viewModel.nameHintObservableField}">
 
                     <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
@@ -121,7 +121,7 @@
                         android:id="@+id/apply"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/create_server"/>
+                        android:text="@{viewModel.buttonTextObservableField}"/>
 
             </LinearLayout>
 
@@ -131,8 +131,6 @@
                 android:id="@+id/progress"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:indeterminateTintMode="src_atop"
-                android:indeterminateTint="?attr/colorPrimary"
                 bind:visibility="@{viewModel.inProgress ? View.VISIBLE : View.GONE}"
                 bind:text="@{viewModel.progressText}"/>
 

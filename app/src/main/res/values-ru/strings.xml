@@ -36,6 +36,15 @@
     <string name="provider_prefix">Провайдер:</string>
     <string name="region_prefix">Регион:</string>
 
+    <string name="no_data_msg">Нет данных</string>
+    <string name="already_added_msg">Уже добавлено</string>
+    <string name="banned_msg">IP адрес созданного сервера заблокирован надзорными инстанциями в Вашей стране</string>
+    <string name="successfully_deleted">Усапешно удалено</string>
+
     <string name="access_key">Ключ доступа</string>
     <string name="secret_key">Секретный ключ</string>
+
+    <string name="retry">Повтор</string>
+
+    <string name="tokens">Ключи</string>
 </resources>

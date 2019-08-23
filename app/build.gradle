@@ -9,9 +9,9 @@ android {
         applicationId "com.merseyside.dropletapp"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 3
+        versionCode 10
         multiDexEnabled true
-        versionName "0.03"
+        versionName "0.1"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -101,9 +101,8 @@ ext {
 
     cicerone = '5.0.0'
 
-    horizontalSelector = '1.11'
-
-    mvvmCleanArchLibrary = '1.26'
+    horizontalSelector = '1.12'
+    mvvmCleanArchLibrary = '1.27'
 }
 
 dependencies {
@@ -113,7 +112,7 @@ dependencies {
     implementation project(":shared")
     implementation project(':library')
     implementation project(':openvpn-core')
-    implementation project(':HorizontalSelectorView')
+    //implementation project(':HorizontalSelectorView')
 
     implementation "com.squareup.sqldelight:android-driver:$sqlDriver"
 
@@ -136,7 +135,7 @@ dependencies {
     compileOnly 'javax.annotation:jsr250-api:1.0'
 
     implementation "ru.terrakok.cicerone:cicerone:$cicerone"
-    //implementation "com.github.Merseyside.horizontal-selector-view:HorizontalSelectorView:$horizontalSelector"
+    implementation "com.github.Merseyside.horizontal-selector-view:HorizontalSelectorView:$horizontalSelector"
 
     //implementation "com.github.Merseyside.mvvm-clean-arch-library:library:$mvvmCleanArchLibrary"
 

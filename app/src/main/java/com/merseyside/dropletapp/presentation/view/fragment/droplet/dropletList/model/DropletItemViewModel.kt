@@ -1,6 +1,5 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.databinding.Bindable
 import com.merseyside.dropletapp.BR
@@ -13,11 +12,11 @@ import com.upstream.basemvvmimpl.presentation.model.BaseComparableAdapterViewMod
 class DropletItemViewModel(private var server: Server) : BaseComparableAdapterViewModel<Server>() {
 
     override fun isContentTheSame(obj: Server): Boolean {
-        return (server == obj).also { Log.d(TAG, "$it") }
+        return (server == obj)
     }
 
     override fun isItemsTheSame(obj: Server): Boolean {
-        return (server.id == obj.id).also { Log.d(TAG, "$it") }
+        return (server.id == obj.id)
     }
 
     override fun compareTo(obj: Server): Int {
@@ -31,8 +30,6 @@ class DropletItemViewModel(private var server: Server) : BaseComparableAdapterVi
     override fun setItem(item: Server) {
         this.server = item
 
-        Log.d(TAG, "here")
-
         notifyPropertyChanged(BR.status)
         notifyPropertyChanged(BR.statusColor)
         notifyPropertyChanged(BR.statusIcon)
@@ -44,28 +41,28 @@ class DropletItemViewModel(private var server: Server) : BaseComparableAdapterVi
 
     @Bindable
     fun getServerName(): String {
-        return "${VpnApplication.getInstance().getString(R.string.server_prefix)} ${server.name}"
+        return "${VpnApplication.getInstance().getActualString(R.string.server_prefix)} ${server.name}"
     }
 
     @Bindable
     fun getProviderName(): String {
-        return "${VpnApplication.getInstance().getString(R.string.provider_prefix)} ${server.providerName}"
+        return "${VpnApplication.getInstance().getActualString(R.string.provider_prefix)} ${server.providerName}"
     }
 
     @Bindable
     fun getRegion(): String {
-        return "${VpnApplication.getInstance().getString(R.string.region_prefix)} ${server.regionName}"
+        return "${VpnApplication.getInstance().getActualString(R.string.region_prefix)} ${server.regionName}"
     }
 
     @Bindable
     fun getStatus(): String {
         if (server.connectStatus) {
-            return VpnApplication.getInstance().getString(R.string.connected)
+            return VpnApplication.getInstance().getActualString(R.string.connected)
         }
 
         return when (server.environmentStatus) {
             SshManager.Status.READY -> {
-               VpnApplication.getInstance().getString(R.string.connect)
+               VpnApplication.getInstance().getActualString(R.string.connect)
             }
 
             else -> server.environmentStatus.toString()

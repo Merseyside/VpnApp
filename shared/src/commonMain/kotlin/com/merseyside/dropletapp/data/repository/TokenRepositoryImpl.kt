@@ -7,12 +7,21 @@ import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.data.exception.NoDataException
 import com.merseyside.dropletapp.domain.repository.TokenRepository
 import com.merseyside.dropletapp.providerApi.ProviderApiFactory
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 
 class TokenRepositoryImpl(
     private val tokenDao: TokenDao,
     private val providerApiFactory: ProviderApiFactory
 ) : TokenRepository {
+
+    override suspend fun getAllTokens(): List<TokenEntity> {
+        return tokenDao.getAllTokens()
+    }
+
+    override suspend fun deleteToken(token: Token): Boolean {
+        tokenDao.deleteToken(token)
+        return true
+    }
 
     override suspend fun getTokensByProviderId(providerId: Long): List<TokenEntity> {
         return tokenDao.selectByServiceId(providerId)

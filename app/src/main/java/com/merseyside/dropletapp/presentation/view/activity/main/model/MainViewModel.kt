@@ -21,7 +21,7 @@ class MainViewModel(private val router: Router) : BaseDropletViewModel(router) {
     }
 
     fun newRootScreen() {
-        router.newRootScreen(Screens.TokenScreen())
+        router.newRootScreen(Screens.DropletListScreen())
     }
 
     fun navigateToTokenScreen() {

@@ -6,9 +6,11 @@ import com.merseyside.dropletapp.providerApi.base.entity.point.NetworkPoint
 import com.merseyside.dropletapp.providerApi.base.entity.response.CreateDropletResponse
 import com.merseyside.dropletapp.providerApi.base.entity.response.ImportSshKeyResponse
 import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoResponse
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.providerApi.exception.InvalidTokenException
+import com.merseyside.dropletapp.utils.isDropletValid
 import io.ktor.client.engine.HttpClientEngine
+import kotlinx.coroutines.delay
 import kotlin.jvm.Synchronized
 
 class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngine) : ProviderApi {
@@ -16,7 +18,7 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
     private val responseCreator = DigitalOceanResponseCreator(httpClientEngine)
 
     override suspend fun isTokenValid(token: String): Boolean {
-        val response = responseCreator.isTokenValid(token)
+        val response = responseCreator.getAccountInfo(token)
 
         if (response.accountDataPoint?.email != null && response.accountDataPoint.status == "active") {
             return true
@@ -29,18 +31,30 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
         token: String,
         name: String,
         regionSlug: String,
-        sshKeyId: Long,
+        sshKeyId: Long?,
+        sshKey: String?,
         tag: String
-    ): CreateDropletResponse {
+    ): DropletInfoResponse {
 
-        val response = responseCreator.createDroplet(token, name, regionSlug, sshKeyId, tag)
+        val response = responseCreator.createDroplet(token, name, regionSlug, sshKeyId!!, tag)
 
-        return response.dropletPoint.let {
-            CreateDropletResponse(
-                id = it.id,
-                name = it.name,
-                createTime = it.createDate)
+        if (response.dropletPoint.id <= 0L) throw IllegalStateException("Error while creating droplet")
+
+        repeat(REPEAT_COUNT) {
+            val infoResponse = getDropletInfo(token, response.dropletPoint.id)
+
+            if (isDropletValid(infoResponse)) {
+                return infoResponse
+            } else {
+                if (it == REPEAT_COUNT -1) {
+                    deleteDroplet(token, response.dropletPoint.id)
+                } else {
+                    delay(DELAY_MILLIS)
+                }
+            }
         }
+
+        throw IllegalArgumentException("Can't create valid droplet. Please try again")
     }
 
     override suspend fun getRegions(token: Token): List<RegionPoint> {
@@ -58,7 +72,7 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
         }
     }
 
-    override suspend fun getDropletInfo(token: String, dropletId: Long): DropletInfoResponse {
+    private suspend fun getDropletInfo(token: String, dropletId: Long): DropletInfoResponse {
         val response = responseCreator.getDropletInfo(token, dropletId)
 
         return response.dropletInfoPoint.let {
@@ -105,6 +119,9 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
 
             return instance!!
         }
+
+        private const val REPEAT_COUNT = 5
+        private const val DELAY_MILLIS = 7000L
     }
 
 

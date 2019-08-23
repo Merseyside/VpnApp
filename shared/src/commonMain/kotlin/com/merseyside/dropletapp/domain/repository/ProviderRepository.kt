@@ -1,9 +1,10 @@
 package com.merseyside.dropletapp.domain.repository
 
 import com.merseyside.dropletapp.data.entity.Token
+import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.providerApi.Provider
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import kotlinx.coroutines.flow.Flow
 
 interface ProviderRepository {
@@ -16,7 +17,8 @@ interface ProviderRepository {
         token: Token,
         providerId: Long,
         regionSlug: String,
-        serverName: String
+        serverName: String,
+        logCallback: ProviderRepositoryImpl.LogCallback? = null
     ): Boolean
 
     suspend fun createServer(

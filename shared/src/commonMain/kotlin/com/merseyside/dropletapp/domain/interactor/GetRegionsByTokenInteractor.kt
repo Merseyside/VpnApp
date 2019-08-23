@@ -4,7 +4,7 @@ import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.di.providerComponent
 import com.merseyside.dropletapp.domain.base.CoroutineUseCase
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import org.kodein.di.erased.instance
 
 class GetRegionsByTokenInteractor : CoroutineUseCase<List<RegionPoint>, GetRegionsByTokenInteractor.Params>() {

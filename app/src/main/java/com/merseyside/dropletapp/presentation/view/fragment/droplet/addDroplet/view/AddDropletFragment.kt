@@ -20,7 +20,7 @@ import com.merseyside.dropletapp.presentation.di.module.AddDropletModule
 import com.merseyside.dropletapp.presentation.view.activity.main.adapter.ProviderAdapter
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter.RegionAdapter
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter.TokenAdapter
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 
 class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDropletViewModel>() {
 
@@ -123,6 +123,8 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
             } else {
                 PermissionsManager.verifyStoragePermissions(this, permission, PERMISSION_ACCESS_CODE)
             }
+
+            closeKeyboard()
         }
     }
 

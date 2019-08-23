@@ -13,7 +13,7 @@ import com.merseyside.dropletapp.domain.base.networkContext
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
 import com.merseyside.dropletapp.providerApi.ProviderApiFactory
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.RegionPoint
+import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.utils.DROPLET_TAG
 import com.merseyside.dropletapp.utils.Logger
 import com.merseyside.dropletapp.utils.isDropletValid
@@ -28,6 +28,10 @@ class ProviderRepositoryImpl(
     private val keyDao: KeyDao,
     private val serverDao: ServerDao
 ) : ProviderRepository, CoroutineScope {
+
+    interface LogCallback {
+        fun onLog(log: String)
+    }
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { context, throwable ->
         Logger.logError(TAG, throwable)
@@ -74,72 +78,70 @@ class ProviderRepositoryImpl(
         token: Token,
         providerId: Long,
         regionSlug: String,
-        serverName: String
+        serverName: String,
+        logCallback: LogCallback?
     ): Boolean {
+
+        logCallback?.onLog("Generating ssh keys...")
+
         val keyPair = createKey()
 
         val provider = providerApiFactory.getProvider(providerId)
         val keyResponse = provider.importKey(token, "My VPN ssh key", keyPair.first.key)
+
+        logCallback?.onLog("Creating a new server...")
 
         val createDropletResponse = provider.createDroplet(
             token = token,
             name = "vpn-$serverName",
             regionSlug = regionSlug,
             sshKeyId = keyResponse.id,
+            sshKey = keyPair.first.key,
             tag = DROPLET_TAG
         )
 
-        if (createDropletResponse.id <= 0L) throw IllegalStateException("Error while creating droplet")
+        if (isDropletValid(createDropletResponse)) {
 
-        repeat(REPEAT_COUNT) {
+            val address = createDropletResponse.networks.first().ipAddress
 
-            val infoResponse = provider.getDropletInfo(token, createDropletResponse.id)
+            val username = generateRandomString()
 
-            if (isDropletValid(infoResponse)) {
-                val address = infoResponse.networks.first().ipAddress
-
-                val username = generateRandomString()
-
-                infoResponse.let { info ->
-                    serverDao.insert(
-                        id = info.id,
-                        token = token,
-                        username = username,
-                        providerId = providerId,
-                        name = info.name,
-                        sshKeyId = keyResponse.id,
-                        serverStatus = info.status,
-                        environmentStatus = SshManager.Status.PENDING.toString(),
-                        createdAt = info.createdAt,
-                        regionName = info.regionName,
-                        address = address
-                    )
-                }
-
-                keyDao.insert(keyResponse.id, keyPair.first.keyPath, keyPair.second.keyPath, token)
-
-                val sshConnection = setupServer(
+            createDropletResponse.let { info ->
+                serverDao.insert(
+                    id = info.id,
+                    token = token,
                     username = username,
-                    ipAddress = address,
-                    keyPathPrivate = keyPair.second.keyPath
+                    providerId = providerId,
+                    name = info.name,
+                    sshKeyId = keyResponse.id,
+                    serverStatus = info.status,
+                    environmentStatus = SshManager.Status.PENDING.toString(),
+                    createdAt = info.createdAt,
+                    regionName = info.regionName,
+                    address = address
                 )
-
-                if (sshConnection) {
-                    serverDao.updateStatus(infoResponse.id, providerId, SshManager.Status.IN_PROCESS.toString())
-                } else {
-                    deleteDroplet(token, providerId, infoResponse.id)
-
-                    throw BannedAddressException()
-                }
-
-                return true
-            } else {
-                if (it == REPEAT_COUNT -1) {
-                    deleteDroplet(token, providerId, infoResponse.id)
-                } else {
-                    delay(DELAY_MILLIS)
-                }
             }
+
+            keyDao.insert(keyResponse.id, keyPair.first.keyPath, keyPair.second.keyPath, token)
+
+            logCallback?.onLog("Connecting to server by SSH...")
+
+            val sshConnection = setupServer(
+                username = username,
+                ipAddress = address,
+                keyPathPrivate = keyPair.second.keyPath,
+                logCallback = logCallback
+            )
+
+            if (sshConnection) {
+                serverDao.updateStatus(createDropletResponse.id, providerId, SshManager.Status.IN_PROCESS.toString())
+            } else {
+                deleteDroplet(token, providerId, createDropletResponse.id)
+
+                throw BannedAddressException()
+            }
+
+            return true
         }
 
         throw IllegalArgumentException("Can't create valid droplet. Please try again")
@@ -148,12 +150,14 @@ class ProviderRepositoryImpl(
     private suspend fun setupServer(
         username: String,
         ipAddress: String,
-        keyPathPrivate: String): Boolean {
+        keyPathPrivate: String,
+        logCallback: LogCallback? = null): Boolean {
 
         return sshManager.setupServer(
             username,
             ipAddress,
-            keyPathPrivate
+            keyPathPrivate,
+            logCallback
         )
     }
 
@@ -251,9 +255,6 @@ class ProviderRepositoryImpl(
     }
 
     companion object {
-
-        private const val REPEAT_COUNT = 5
-        private const val DELAY_MILLIS = 7000L
 
         private const val TAG = "ProviderRepository"
 

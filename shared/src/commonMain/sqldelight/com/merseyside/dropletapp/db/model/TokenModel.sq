@@ -9,3 +9,9 @@ INSERT INTO TokenModel(token, name, providerId) VALUES(?, ?, ?);
 
 selectByServiceId:
 SELECT * FROM TokenModel WHERE providerId = ?;
+
+selectAll:
+SELECT * FROM TokenModel;
+
+deleteItem:
+DELETE FROM TokenModel WHERE token = ?;

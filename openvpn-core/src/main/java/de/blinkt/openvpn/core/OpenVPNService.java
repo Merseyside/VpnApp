@@ -34,6 +34,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.vpnapp.upstream.openvpn_core.BuildConfig;
@@ -144,18 +145,6 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
                 VpnStatus.removeStateListener(this);
             }
         }
-    }
-
-    public void setCurrentServer(Object server) {
-        this.server = server;
-    }
-
-    public Object getCurrentServer() {
-        return server;
-    }
-
-    public long getConnectTime() {
-        return mConnecttime;
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -1033,5 +1022,14 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
             // Return this instance of LocalService so clients can call public methods
             return OpenVPNService.this;
         }
+    }
+
+    public void setServer(Object obj) {
+        this.server = obj;
+    }
+
+    @Nullable
+    public Object getServer() {
+        return server;
     }
 }

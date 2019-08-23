@@ -1,10 +1,13 @@
 package com.merseyside.dropletapp.presentation.view.fragment.token.view
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.AssetManager
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
@@ -64,7 +67,6 @@ class TokenFragment : BaseDropletFragment<FragmentTokenBinding, TokenViewModel>(
 
     private fun init() {
         viewModel.providerLiveData.observe(this, providerObserver)
-
     }
 
     private fun doLayout() {
@@ -81,6 +83,8 @@ class TokenFragment : BaseDropletFragment<FragmentTokenBinding, TokenViewModel>(
             val selectedProvider = providerAdapter.getItem(binding.providerSpinner.selectedItemPosition)!!
 
             viewModel.saveToken(selectedProvider)
+
+            closeKeyboard()
         }
 
     }

@@ -1,4 +1,4 @@
-package com.merseyside.dropletapp.providerApi.digitalOcean.entity.response
+package com.merseyside.dropletapp.providerApi.base.entity.point
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

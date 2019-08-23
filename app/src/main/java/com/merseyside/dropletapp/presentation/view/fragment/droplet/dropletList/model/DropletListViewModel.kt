@@ -31,7 +31,7 @@ class DropletListViewModel(
     private val createServerUseCase: CreateServerInteractor
 ) : BaseDropletViewModel(router), CoroutineScope {
     override fun updateLanguage(context: Context) {
-
+        noItemsHintObservableFiels.set(context.getString(R.string.no_servers))
     }
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { context, throwable -> }
@@ -41,6 +41,10 @@ class DropletListViewModel(
     val dropletsVisibility = ObservableField<Boolean>(true)
     val dropletLiveData = MutableLiveData<List<Server>>()
     val vpnProfileLiveData = MutableLiveData<VpnProfile>()
+
+    val connectionLiveData = MutableLiveData<Server>()
+
+    val noItemsHintObservableFiels = ObservableField<String>()
 
     var currentServer: Server? = null
 
@@ -66,10 +70,23 @@ class DropletListViewModel(
 
     private val dropletObserver = object : FlowCollector<List<Server>> {
         override suspend fun emit(value: List<Server>) {
+
+            Log.d(TAG, value.size.toString())
+
             if (value.isEmpty()) {
                 dropletsVisibility.set(false)
             }
 
+            if (currentServer != null) {
+                val newValue = value.map {
+                    if (it.id == currentServer!!.id) currentServer!!
+                    else it
+                }
+
+                dropletLiveData.value = newValue
+                return
+
+            }
             dropletLiveData.value = value
         }
 
@@ -108,13 +125,12 @@ class DropletListViewModel(
     fun getOvpnFile(server: Server) {
 
         if (currentServer != null) {
-            val copiedServer = currentServer!!.copy()
-            copiedServer.connectStatus = false
-            dropletLiveData.value = listOf(copiedServer)
+            currentServer!!.connectStatus = false
+            connectionLiveData.value = currentServer
         }
 
         if (currentServer != server) {
-            currentServer = server.copy()
+            currentServer = server
 
             getOvpnFileUseCase.execute(
                 params = GetOvpnFileInteractor.Params(server.id, server.providerId),
@@ -166,12 +182,22 @@ class DropletListViewModel(
                 }
             }
 
-            dropletLiveData.value = listOf(currentServer!!)
+            connectionLiveData.value = currentServer!!
         }
     }
 
     fun isConnected(): Boolean {
         return currentServer != null
+    }
+
+    fun showConnectedServer(server: Server) {
+        Log.d(TAG, server.toString())
+
+        currentServer = server
+
+        if (!dropletLiveData.value.isNullOrEmpty()) {
+            connectionLiveData.value = currentServer
+        }
     }
 
 

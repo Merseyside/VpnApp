@@ -47,8 +47,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/TextInputLayout"
-                    android:hint="@{viewModel.tokenHintObservableField}"
-                    android:visibility="@{viewModel.providerVisibilityObservableField ? View.VISIBLE : View.GONE}">
+                    android:hint="@{viewModel.tokenHintObservableField}">
 
                 <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
@@ -59,46 +58,6 @@
                         style="@style/TextInputEditText"/>
 
             </com.google.android.material.textfield.TextInputLayout>
-
-            <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="@{viewModel.providerVisibilityObservableField ? View.GONE : View.VISIBLE}">
-
-                <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        style="@style/TextInputLayout"
-                        android:hint="@{viewModel.accessKeyHintObservableField}">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text"
-                            android:imeOptions="actionGo"
-                            android:text="@={viewModel.accessKeyObservableField}"
-                            style="@style/TextInputEditText"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        style="@style/TextInputLayout"
-                        android:hint="@{viewModel.secretKeyHintObservableField}">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text"
-                            android:imeOptions="actionGo"
-                            android:text="@={viewModel.secretKeyObservableField}"
-                            style="@style/TextInputEditText"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/token_name"
@@ -133,8 +92,6 @@
                 android:id="@+id/progress"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:indeterminateTintMode="src_atop"
-                android:indeterminateTint="?attr/colorPrimary"
                 bind:visibility="@{viewModel.inProgress ? View.VISIBLE : View.GONE}"
                 bind:text="@{viewModel.progressText}"/>
 

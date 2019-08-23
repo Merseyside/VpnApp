@@ -2,6 +2,7 @@ package com.merseyside.dropletapp.ssh
 
 import com.merseyside.dropletapp.data.entity.PrivateKey
 import com.merseyside.dropletapp.data.entity.PublicKey
+import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 
 expect class SshManager(timeoutMillis: Int) {
 
@@ -18,13 +19,15 @@ expect class SshManager(timeoutMillis: Int) {
     suspend fun openSshConnection(
         username: String,
         host: String,
-        keyPathPrivate: String
+        keyPathPrivate: String,
+        logCallback: ProviderRepositoryImpl.LogCallback? = null
     ): SshConnection?
 
     suspend fun setupServer(
         username: String,
         host: String,
-        keyPathPrivate: String
+        keyPathPrivate: String,
+        logCallback: ProviderRepositoryImpl.LogCallback? = null
     ): Boolean
 
     suspend fun getOvpnFile(

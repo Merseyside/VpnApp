@@ -1,6 +1,5 @@
 package com.merseyside.dropletapp.providerApi.digitalOcean
 
-import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.providerApi.*
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.*
 import io.ktor.client.HttpClient
@@ -45,7 +44,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
     }
 
     @UseExperimental(ImplicitReflectionSerializer::class)
-    suspend fun isTokenValid(token: String): IsTokenValidResponse {
+    suspend fun getAccountInfo(token: String): IsTokenValidResponse {
         val apiMethod = "account"
 
         val call = client.get<String> {
@@ -58,7 +57,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
     }
 
     @UseExperimental(ImplicitReflectionSerializer::class)
-    suspend fun getRegions(token: Token): RegionResponse {
+    suspend fun getRegions(token: String): RegionResponse {
         val apiMethod = "regions"
 
         val call = client.get<String> {
@@ -70,7 +69,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
         return json.parse(call)
     }
 
-    private fun getAuthHeader(token: Token): String {
+    private fun getAuthHeader(token: String): String {
         return "Bearer $token"
     }
 
@@ -112,7 +111,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
             val obj = JsonObject(mapOf(
                 NAME_KEY to JsonPrimitive(name),
                 REGION_KEY to JsonPrimitive(regionSlut),
-                SSH_KEY to JsonArray(listOf(
+                SSH_KEYS to JsonArray(listOf(
                     JsonPrimitive(sshKeyId)
                 )),
                 IMAGE_KEY to JsonPrimitive("debian-9-x64"),

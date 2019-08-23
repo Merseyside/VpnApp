@@ -22,6 +22,14 @@ class TokenDao(database: VpnDatabase) {
         return tokenDataMapper.transform(db.selectByServiceId(providerId).executeAsList())
     }
 
+    internal fun getAllTokens(): List<TokenEntity> {
+        return tokenDataMapper.transform(db.selectAll().executeAsList())
+    }
+
+    internal fun deleteToken(token: Token) {
+        db.deleteItem(token)
+    }
+
     companion object {
         private const val TAG = "TokenDao"
     }
