@@ -45,6 +45,9 @@
     <string name="banned_msg">The IP address of the created server is blocked by supervisory authorities in your country</string>
     <string name="successfully_deleted">Successfully deleted</string>
 
+    <string name="wrong_server_name">Server name must be at least 3 characters </string>
+    <string name="empty_server_name">Server name can not be empty</string>
+
     <string name="retry">Retry</string>
 
     <string name="tokens">Tokens</string>

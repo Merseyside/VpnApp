@@ -44,6 +44,9 @@
     <string name="access_key">Ключ доступа</string>
     <string name="secret_key">Секретный ключ</string>
 
+    <string name="wrong_server_name">Имя сервера должно быть как минимум 3 символа</string>
+    <string name="empty_server_name">Имя сервера не может быть пустым</string>
+
     <string name="retry">Повтор</string>
 
     <string name="tokens">Ключи</string>

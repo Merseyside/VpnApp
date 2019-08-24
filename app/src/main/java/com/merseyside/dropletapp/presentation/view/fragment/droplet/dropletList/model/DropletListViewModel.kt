@@ -75,6 +75,8 @@ class DropletListViewModel(
 
             if (value.isEmpty()) {
                 dropletsVisibility.set(false)
+            } else {
+                dropletsVisibility.set(true)
             }
 
             if (currentServer != null) {

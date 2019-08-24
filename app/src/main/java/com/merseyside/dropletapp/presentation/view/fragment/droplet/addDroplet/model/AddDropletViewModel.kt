@@ -127,12 +127,12 @@ class AddDropletViewModel(
                     serverName = serverNameObservableField.get()
                         .also { if (!isServerNameValid(serverNameObservableField.get())) throw IllegalArgumentException()
                             .also {
-                                showErrorMsg("Wrong server name")
+                                showErrorMsg(getString(R.string.wrong_server_name))
                             }
                         }
                         ?: throw IllegalArgumentException()
                             .also {
-                                showErrorMsg("Server name can not be empty")
+                                showErrorMsg(getString(R.string.empty_server_name))
                             },
                     logCallback = object: ProviderRepositoryImpl.LogCallback {
                         override fun onLog(log: String) {
