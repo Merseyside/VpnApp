@@ -17,8 +17,6 @@ fun loadImageBitmap(iv: ImageView, bitmap: Bitmap) {
 
 @BindingAdapter("bind:imageDrawable")
 fun loadImageDrawable(iv: ImageView, drawable: Drawable?) {
-    Log.d("Binding", "here $drawable")
-
     iv.setImageDrawable(drawable)
 }
 

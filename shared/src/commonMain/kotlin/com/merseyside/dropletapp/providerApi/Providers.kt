@@ -44,7 +44,7 @@ sealed class Provider {
                 val providers = ArrayList<Provider>()
 
                 providers.add(DigitalOcean())
-                //providers.add(Linode())
+                providers.add(Linode())
 
                 this.providers = providers
             }
