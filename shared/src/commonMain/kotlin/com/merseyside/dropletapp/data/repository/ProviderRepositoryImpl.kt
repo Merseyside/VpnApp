@@ -52,11 +52,10 @@ class ProviderRepositoryImpl(
         launch {
             while(true) {
                 delay(15000)
-
                 val inProcessServers = serverDao.getByStatus(SshManager.Status.IN_PROCESS)
 
                 inProcessServers.forEach {
-                    getOvpnFile(it.id, it.providerId)
+                    getOvpnFile(it.token, it.id, it.providerId)
                 }
 
                 yield()
@@ -70,7 +69,7 @@ class ProviderRepositoryImpl(
         return provider.getRegions(token)
     }
 
-    private fun createKey(): Pair<PublicKey, PrivateKey> {
+    private fun createKeyPair(): Pair<PublicKey, PrivateKey> {
         return sshManager.createRsaKeys() ?: throw IllegalArgumentException()
     }
 
@@ -84,7 +83,7 @@ class ProviderRepositoryImpl(
 
         logCallback?.onLog("Generating ssh keys...")
 
-        val keyPair = createKey()
+        val keyPair = createKeyPair()
 
         val provider = providerApiFactory.getProvider(providerId)
         val keyResponse = provider.importKey(token, "My VPN ssh key", keyPair.first.key)
@@ -217,32 +216,48 @@ class ProviderRepositoryImpl(
         return false
     }
 
-    override suspend fun getOvpnFile(dropletId: Long, providerId: Long): String {
+    override suspend fun getOvpnFile(token: Token, dropletId: Long, providerId: Long): String {
         val server = serverDao.getDropletByIds(dropletId, providerId)
 
         if (server != null) {
-            val keys = keyDao.selectById(server.sshKeyId)
 
-            if (server.ovpnFile.isNullOrEmpty()) {
+            if (isServerAlive(token, providerId, dropletId)) {
 
-                val file = sshManager.getOvpnFile(
-                    server.username,
-                    server.address,
-                    keys?.privateKeyPath ?: throw NoDataException()
-                )
+                val keys = keyDao.selectById(server.sshKeyId)
 
-                if (file != null) {
-                    serverDao.updateStatus(dropletId, providerId, SshManager.Status.READY.toString())
-                    serverDao.addOvpnFile(dropletId, providerId, file)
-                } else throw NoDataException("No ovpn file found")
+                if (server.ovpnFile.isNullOrEmpty()) {
 
-                return file
+                    val file = sshManager.getOvpnFile(
+                        server.username,
+                        server.address,
+                        keys?.privateKeyPath ?: throw NoDataException()
+                    )
+
+                    if (file != null) {
+                        serverDao.updateStatus(
+                            dropletId,
+                            providerId,
+                            SshManager.Status.READY.toString()
+                        )
+                        serverDao.addOvpnFile(dropletId, providerId, file)
+                    } else throw NoDataException("No ovpn file found")
+
+                    return file
+                } else {
+                    return server.ovpnFile!!
+                }
             } else {
-                return server.ovpnFile!!
+                deleteDroplet(token, providerId, dropletId)
             }
         }
 
         throw NoDataException("No droplet with passed id")
+    }
+
+    private suspend fun isServerAlive(token: Token, providerId: Long, dropletId: Long): Boolean {
+        val provider = providerApiFactory.getProvider(providerId)
+
+        return provider.isServerAlive(token, dropletId)
     }
 
     private fun generateRandomString(): String {

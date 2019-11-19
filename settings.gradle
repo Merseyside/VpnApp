@@ -12,8 +12,8 @@ enableFeaturePreview("GRADLE_METADATA") //very important shit (in another case k
 
 include ':app', ':shared', ':openvpn-core'
 
-//include ':library'
-//project(':library').projectDir = new File(settingsDir, '../mvvm-clean-arch-library/library')
+include ':library'
+project(':library').projectDir = new File(settingsDir, '../mvvm-clean-arch-library/library')
 
 include ':merseylibrary'
 project(':merseylibrary').projectDir = new File(settingsDir, '../merseylibrary')

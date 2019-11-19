@@ -107,13 +107,11 @@ class TokenViewModel(
 
         if (BuildConfig.DEBUG) {
             when(id) {
-                Provider.DigitalOcean().getId() -> {
-                    tokenObservableField.set("12b95eab5d9c089185068cd22cff4a59af1d3195c5e3390c212192c4bb802630")
+                Provider.CryptoServers().getId() -> {
+                    tokenObservableField.set("sUaw6E2pJoK6ti9jn9FTrlOqXjCEXGkLgraW3wlIAYGuuvJDDZDdx1bVAHwk")
                 }
 
-                else -> {
-                    tokenObservableField.set("2d2ed3432b21e7e35ad624d396a16ad687c078b4cc77280a38e35bc08bab410e")
-                }
+                else -> {}
             }
 
         }

@@ -7,6 +7,7 @@ import com.merseyside.dropletapp.providerApi.base.entity.response.CreateDropletR
 import com.merseyside.dropletapp.providerApi.base.entity.response.ImportSshKeyResponse
 import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoResponse
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
+import com.merseyside.dropletapp.providerApi.digitalOcean.entity.point.DropletInfoPoint
 import com.merseyside.dropletapp.providerApi.exception.InvalidTokenException
 import com.merseyside.dropletapp.utils.isDropletValid
 import io.ktor.client.engine.HttpClientEngine
@@ -105,6 +106,10 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
 
     override suspend fun addFloatingAddress(token: String, dropletId: Long): String? {
         return responseCreator.addFloatingAddress(token, dropletId).point.address
+    }
+
+    override suspend fun isServerAlive(token: String, serverId: Long): Boolean {
+        return true
     }
 
     companion object {

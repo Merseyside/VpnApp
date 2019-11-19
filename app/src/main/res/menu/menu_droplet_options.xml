@@ -13,6 +13,12 @@
             app:showAsAction="ifRoom"/>
 
     <item
+        android:id="@+id/share_ovpn_action"
+        android:orderInCategory="300"
+        android:title="@string/share_ovpn_action"
+        app:showAsAction="ifRoom"/>
+
+    <item
             android:id="@+id/delete_action"
             android:orderInCategory="300"
             android:title="@string/delete_action"

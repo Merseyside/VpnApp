@@ -116,7 +116,10 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
         }
 
         binding.apply.setOnClickListener {
-            val permission = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            val permission = arrayOf(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
 
             if (PermissionsManager.isPermissionsGranted(baseActivityView, permission)) {
                 viewModel.createServer()

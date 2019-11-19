@@ -6,6 +6,7 @@ import com.merseyside.dropletapp.providerApi.base.entity.response.CreateDropletR
 import com.merseyside.dropletapp.providerApi.base.entity.response.ImportSshKeyResponse
 import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoResponse
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
+import com.merseyside.dropletapp.providerApi.digitalOcean.entity.point.DropletInfoPoint
 import com.merseyside.dropletapp.providerApi.exception.InvalidTokenException
 import io.ktor.client.engine.HttpClientEngine
 import kotlin.jvm.Synchronized
@@ -78,6 +79,10 @@ class LinodeProvider private constructor(httpClientEngine: HttpClientEngine): Pr
 
     override suspend fun addFloatingAddress(token: String, dropletId: Long): String? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override suspend fun isServerAlive(token: String, serverId: Long): Boolean {
+        return true
     }
 
     companion object {

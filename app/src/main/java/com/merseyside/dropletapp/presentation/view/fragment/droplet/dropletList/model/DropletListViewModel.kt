@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import com.merseyside.admin.merseylibrary.system.FileSystemHelper
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.domain.Server
@@ -21,6 +22,7 @@ import de.blinkt.openvpn.core.VpnStatus
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.FlowCollector
 import ru.terrakok.cicerone.Router
+import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 class DropletListViewModel(
@@ -31,7 +33,7 @@ class DropletListViewModel(
     private val createServerUseCase: CreateServerInteractor
 ) : BaseDropletViewModel(router), CoroutineScope {
     override fun updateLanguage(context: Context) {
-        noItemsHintObservableFiels.set(context.getString(R.string.no_servers))
+        noItemsHintObservableFields.set(context.getString(R.string.no_servers))
     }
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { context, throwable -> }
@@ -43,17 +45,16 @@ class DropletListViewModel(
     val vpnProfileLiveData = MutableLiveData<VpnProfile>()
 
     val connectionLiveData = MutableLiveData<Server>()
+    val ovpnFileLiveData = MutableLiveData<File>()
 
-    val noItemsHintObservableFiels = ObservableField<String>()
+    val noItemsHintObservableFields = ObservableField<String>()
 
     var currentServer: Server? = null
 
 
-    override fun readFrom(bundle: Bundle) {
-    }
+    override fun readFrom(bundle: Bundle) {}
 
-    override fun writeTo(bundle: Bundle) {
-    }
+    override fun writeTo(bundle: Bundle) {}
 
     override fun dispose() {
         getDropletsUseCase.cancel()
@@ -124,7 +125,7 @@ class DropletListViewModel(
         )
     }
 
-    fun getOvpnFile(server: Server) {
+    fun connectToServer(server: Server) {
 
         if (currentServer != null) {
             currentServer!!.connectStatus = false
@@ -135,8 +136,9 @@ class DropletListViewModel(
             currentServer = server
 
             getOvpnFileUseCase.execute(
-                params = GetOvpnFileInteractor.Params(server.id, server.providerId),
+                params = GetOvpnFileInteractor.Params(server.token, server.id, server.providerId),
                 onComplete = {
+                    Log.d(TAG, it)
                     loadServers()
 
                     prepareVpn(it)
@@ -153,6 +155,24 @@ class DropletListViewModel(
         } else {
             currentServer = null
         }
+    }
+
+    fun shareOvpnFile(server: Server) {
+
+        getOvpnFileUseCase.execute(
+            params = GetOvpnFileInteractor.Params(server.token, server.id, server.providerId),
+            onComplete = {
+                ovpnFileLiveData.value = FileSystemHelper.createTempFile(server.name, ".ovpn", it)
+            },
+            onError = { throwable ->
+                showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
+            },
+            showProgress = {
+                if (server.environmentStatus == SshManager.Status.IN_PROCESS) {
+                    showProgress(getString(R.string.receiving_access_msg))
+                }},
+            hideProgress = { hideProgress() }
+        )
     }
 
     fun prepareServer(server: Server) {

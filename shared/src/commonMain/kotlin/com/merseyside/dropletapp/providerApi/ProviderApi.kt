@@ -3,6 +3,7 @@ package com.merseyside.dropletapp.providerApi
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoResponse
 import com.merseyside.dropletapp.providerApi.base.entity.response.ImportSshKeyResponse
+import com.merseyside.dropletapp.providerApi.digitalOcean.entity.point.DropletInfoPoint
 
 interface ProviderApi {
 
@@ -24,4 +25,6 @@ interface ProviderApi {
     suspend fun deleteDroplet(token: String, dropletId: Long)
 
     suspend fun addFloatingAddress(token: String, dropletId: Long): String?
+
+    suspend fun isServerAlive(token: String, serverId: Long): Boolean
 }

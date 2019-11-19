@@ -26,7 +26,7 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
     private val tokenObserver = Observer<List<TokenEntity>> {
         Log.d(TAG, "size = ${it.size}")
 
-        if (adapter.hasItems()) {
+        if (adapter.isEmpty()) {
             adapter.removeAll()
         }
 
@@ -64,9 +64,9 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
     }
 
     private fun init() {
-        adapter.setOnItemClickListener(object : BaseAdapter.AdapterClickListener {
-            override fun onItemClicked(obj: Any) {
-                viewModel.deleteToken(obj as TokenEntity)
+        adapter.setOnItemClickListener(object : BaseAdapter.OnItemClickListener<TokenEntity> {
+            override fun onItemClicked(obj: TokenEntity) {
+                viewModel.deleteToken(obj)
             }
         })
 

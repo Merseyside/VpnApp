@@ -45,12 +45,15 @@
     <string name="banned_msg">The IP address of the created server is blocked by supervisory authorities in your country</string>
     <string name="successfully_deleted">Successfully deleted</string>
 
-    <string name="wrong_server_name">Server name must be at least 3 characters </string>
+    <string name="wrong_server_name">Server name must be at least 3 characters and contains only latin characters</string>
     <string name="empty_server_name">Server name can not be empty</string>
 
     <string name="retry">Retry</string>
 
     <string name="tokens">Tokens</string>
+
+    <string name="share_ovpn_action">Share OVPN file</string>
+    <string name="share_ovpn_to">Share ovpn file to&#8230;</string>
 
     <string-array name="language_entries">
         <item>ic_english</item>

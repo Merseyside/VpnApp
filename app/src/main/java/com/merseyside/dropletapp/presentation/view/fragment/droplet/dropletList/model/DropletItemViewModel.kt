@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.databinding.Bindable
 import com.merseyside.dropletapp.BR
@@ -9,73 +10,59 @@ import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.ssh.SshManager
 import com.upstream.basemvvmimpl.presentation.model.BaseComparableAdapterViewModel
 
-class DropletItemViewModel(private var server: Server) : BaseComparableAdapterViewModel<Server>() {
+class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterViewModel<Server>(obj) {
 
-    override fun isContentTheSame(obj: Server): Boolean {
-        return (server == obj)
+    override fun areContentsTheSame(obj: Server): Boolean {
+        return (obj == this.obj)
     }
 
-    override fun isItemsTheSame(obj: Server): Boolean {
-        return (server.id == obj.id)
+    override fun areItemsTheSame(obj: Server): Boolean {
+        return (obj.id == this.obj.id)
     }
 
     override fun compareTo(obj: Server): Int {
-        return obj.id.compareTo(server.id)
-    }
-
-    override fun getItem(): Server {
-        return server
-    }
-
-    override fun setItem(item: Server) {
-        this.server = item
-
-        notifyPropertyChanged(BR.status)
-        notifyPropertyChanged(BR.statusColor)
-        notifyPropertyChanged(BR.statusIcon)
-    }
-
-    fun onClick() {
-        getClickListener()?.onItemClicked(server)
+        return obj.id.compareTo(this.obj.id)
     }
 
     @Bindable
     fun getServerName(): String {
-        return "${VpnApplication.getInstance().getActualString(R.string.server_prefix)} ${server.name}"
+        return "${VpnApplication.getInstance().getActualString(R.string.server_prefix)} ${obj.name}"
     }
 
     @Bindable
     fun getProviderName(): String {
-        return "${VpnApplication.getInstance().getActualString(R.string.provider_prefix)} ${server.providerName}"
+        return "${VpnApplication.getInstance().getActualString(R.string.provider_prefix)} ${obj.providerName}"
     }
 
     @Bindable
     fun getRegion(): String {
-        return "${VpnApplication.getInstance().getActualString(R.string.region_prefix)} ${server.regionName}"
+        return "${VpnApplication.getInstance().getActualString(R.string.region_prefix)} ${obj.regionName}"
     }
 
     @Bindable
     fun getStatus(): String {
-        if (server.connectStatus) {
+        Log.d(TAG, "status $obj")
+
+        if (obj.connectStatus) {
             return VpnApplication.getInstance().getActualString(R.string.connected)
         }
 
-        return when (server.environmentStatus) {
+        return when (obj.environmentStatus) {
             SshManager.Status.READY -> {
                VpnApplication.getInstance().getActualString(R.string.connect)
             }
 
-            else -> server.environmentStatus.toString()
+            else -> obj.environmentStatus.toString()
         }
     }
 
     @Bindable
     fun getStatusColor(): Int {
-        if (server.connectStatus) {
+        if (obj.connectStatus) {
             return R.attr.colorSecondary
         }
 
-        return when(server.environmentStatus) {
+        return when(obj.environmentStatus) {
             SshManager.Status.PENDING -> {
                 R.attr.pendingColor
             }
@@ -91,11 +78,11 @@ class DropletItemViewModel(private var server: Server) : BaseComparableAdapterVi
     @Bindable
     @DrawableRes
     fun getStatusIcon(): Int? {
-        if (server.connectStatus) {
+        if (obj.connectStatus) {
             return R.drawable.ic_connected
         }
 
-        return when(server.environmentStatus) {
+        return when(obj.environmentStatus) {
             SshManager.Status.PENDING -> {
                 R.drawable.ic_pending
             }
@@ -110,5 +97,20 @@ class DropletItemViewModel(private var server: Server) : BaseComparableAdapterVi
 
     companion object {
         private const val TAG = "DropletItemViewModel"
+    }
+
+    override fun notifyUpdate() {
+        Log.d(TAG, "notify")
+
+        notifyPropertyChanged(BR.status)
+        notifyPropertyChanged(BR.statusColor)
+        notifyPropertyChanged(BR.statusIcon)
+    }
+
+    override fun setItem(item: Server) {
+        super.setItem(item)
+
+
+        Log.d(TAG, "$item")
     }
 }

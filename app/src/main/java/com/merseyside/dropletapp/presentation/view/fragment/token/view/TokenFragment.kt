@@ -1,23 +1,19 @@
 package com.merseyside.dropletapp.presentation.view.fragment.token.view
 
-import android.app.Activity
 import android.content.Context
-import android.content.res.AssetManager
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
-import com.merseyside.dropletapp.providerApi.Provider
-import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
-import com.merseyside.dropletapp.presentation.view.fragment.token.model.TokenViewModel
 import com.merseyside.dropletapp.databinding.FragmentTokenBinding
+import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
 import com.merseyside.dropletapp.presentation.di.component.DaggerTokenComponent
 import com.merseyside.dropletapp.presentation.di.module.TokenModule
 import com.merseyside.dropletapp.presentation.view.activity.main.adapter.ProviderAdapter
+import com.merseyside.dropletapp.presentation.view.fragment.token.model.TokenViewModel
+import com.merseyside.dropletapp.providerApi.Provider
 
 class TokenFragment : BaseDropletFragment<FragmentTokenBinding, TokenViewModel>() {
 
@@ -74,7 +70,7 @@ class TokenFragment : BaseDropletFragment<FragmentTokenBinding, TokenViewModel>(
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                viewModel.setProviderId(providerAdapter.getItem(binding.providerSpinner.selectedItemPosition).getId())
+                viewModel.setProviderId(providerAdapter.getItem(binding.providerSpinner.selectedItemPosition)!!.getId())
             }
 
         }

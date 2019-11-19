@@ -17,6 +17,8 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
         fun onDelete(server: Server)
 
         fun onPrepare(server: Server)
+
+        fun onShareOvpn(server: Server)
     }
 
     private var onItemOptionsClickListener: OnItemOptionsClickListener? = null
@@ -36,7 +38,7 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
 
-        val item = getObjForPosition(position).getItem()
+        val item = getObjByPosition(position)
 
         holder.itemView.rootView.setOnLongClickListener {
             val popup = PopupMenu(holder.itemView.context, holder.itemView.findViewById(R.id.status))
@@ -60,6 +62,10 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
 
                     R.id.prepare_action -> {
                         onItemOptionsClickListener?.onPrepare(item)
+                    }
+
+                    R.id.share_ovpn_action -> {
+                        onItemOptionsClickListener?.onShareOvpn(item)
                     }
 
                     else -> {

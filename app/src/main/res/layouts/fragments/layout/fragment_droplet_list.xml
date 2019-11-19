@@ -34,7 +34,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:textAlignment="center"
                     android:minLines="2"
-                    android:text="@{viewModel.noItemsHintObservableFiels}"
+                    android:text="@{viewModel.noItemsHintObservableFields}"
                     android:visibility="@{viewModel.dropletsVisibility ? View.GONE : View.VISIBLE}"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

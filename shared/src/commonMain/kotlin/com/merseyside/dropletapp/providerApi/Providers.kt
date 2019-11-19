@@ -11,8 +11,6 @@ sealed class Provider {
             return "Digital Ocean"
         }
 
-
-
         override fun equals(other: Any?): Boolean {
             return this === other
         }
@@ -36,6 +34,20 @@ sealed class Provider {
         }
     }
 
+    class CryptoServers : Provider() {
+        override fun getName(): String {
+            return "Crypto Servers"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            return this === other
+        }
+
+        override fun getId(): Long {
+            return 2
+        }
+    }
+
     companion object {
         private var providers: List<Provider>? = null
 
@@ -43,6 +55,7 @@ sealed class Provider {
             if (providers == null) {
                 val providers = ArrayList<Provider>()
 
+                providers.add(CryptoServers())
                 providers.add(DigitalOcean())
                 providers.add(Linode())
 

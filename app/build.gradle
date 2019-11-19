@@ -4,11 +4,11 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.merseyside.dropletapp"
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 14
         multiDexEnabled true
         versionName "0.14"
@@ -110,7 +110,7 @@ dependencies {
 
     implementation project(':merseylibrary')
     implementation project(":shared")
-    //implementation project(':library')
+    implementation project(":library")
     implementation project(':openvpn-core')
 
     implementation "com.squareup.sqldelight:android-driver:$sqlDriver"
@@ -136,7 +136,7 @@ dependencies {
     implementation "ru.terrakok.cicerone:cicerone:$cicerone"
     implementation "com.github.Merseyside.horizontal-selector-view:HorizontalSelectorView:$horizontalSelector"
 
-    implementation "com.github.Merseyside.mvvm-clean-arch-library:library:$mvvmCleanArchLibrary"
+    //implementation "com.github.Merseyside.mvvm-clean-arch-library:library:$mvvmCleanArchLibrary"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'

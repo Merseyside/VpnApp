@@ -36,6 +36,7 @@ class ProviderAdapter(
         val resId = when(provider) {
             is Provider.DigitalOcean -> R.drawable.digital_ocean
             is Provider.Linode -> R.drawable.ic_linode
+            is Provider.CryptoServers -> R.drawable.crypto_servers
         }
 
         icon.setImageResource(resId)

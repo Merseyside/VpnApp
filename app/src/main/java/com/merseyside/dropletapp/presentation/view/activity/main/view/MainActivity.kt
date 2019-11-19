@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -170,6 +171,10 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
 
     override fun getFragmentContainer(): Int? {
         return R.id.container
+    }
+
+    override fun getToolbar(): Toolbar? {
+        return null
     }
 
     companion object {
