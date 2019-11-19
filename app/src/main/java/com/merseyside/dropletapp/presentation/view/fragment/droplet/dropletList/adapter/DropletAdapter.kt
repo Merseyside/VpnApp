@@ -6,6 +6,7 @@ import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletItemViewModel
 import com.merseyside.dropletapp.ssh.SshManager
+import com.upstream.basemvvmimpl.presentation.adapter.BaseAdapter
 import com.upstream.basemvvmimpl.presentation.adapter.BaseSortedAdapter
 import com.upstream.basemvvmimpl.presentation.view.BaseViewHolder
 

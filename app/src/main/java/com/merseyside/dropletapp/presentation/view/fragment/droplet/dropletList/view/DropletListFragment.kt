@@ -68,7 +68,7 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
         if (it.isEmpty()) {
             adapter.removeAll()
         } else {
-            if (!adapter.isEmpty()) {
+            if (adapter.isEmpty()) {
 
                 adapter.add(it)
             } else {
@@ -215,6 +215,7 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
         viewModel.connectionLiveData.removeObserver(changeConnectionObserver)
         viewModel.vpnProfileLiveData.removeObserver(vpnProfileObserver)
         viewModel.dropletLiveData.removeObserver(dropletObserver)
+        viewModel.ovpnFileLiveData.removeObserver(ovpnFileObserver)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

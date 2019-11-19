@@ -13,10 +13,12 @@ import com.upstream.basemvvmimpl.presentation.model.BaseComparableAdapterViewMod
 class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterViewModel<Server>(obj) {
 
     override fun areContentsTheSame(obj: Server): Boolean {
+        Log.d(TAG, "here ${obj == this.obj}")
         return (obj == this.obj)
     }
 
     override fun areItemsTheSame(obj: Server): Boolean {
+        Log.d(TAG, "here1 ${obj.id == this.obj.id}")
         return (obj.id == this.obj.id)
     }
 
@@ -75,8 +77,9 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
         }
     }
 
-    @Bindable
+
     @DrawableRes
+    @Bindable
     fun getStatusIcon(): Int? {
         if (obj.connectStatus) {
             return R.drawable.ic_connected
@@ -100,17 +103,8 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
     }
 
     override fun notifyUpdate() {
-        Log.d(TAG, "notify")
-
         notifyPropertyChanged(BR.status)
         notifyPropertyChanged(BR.statusColor)
         notifyPropertyChanged(BR.statusIcon)
-    }
-
-    override fun setItem(item: Server) {
-        super.setItem(item)
-
-
-        Log.d(TAG, "$item")
     }
 }

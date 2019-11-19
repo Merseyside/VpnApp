@@ -51,6 +51,6 @@
 
     <string name="tokens">Ключи</string>
 
-    <string name="share_ovpn_action">Поделитсья OVPN файлом</string>
+    <string name="share_ovpn_action">Поделиться OVPN файлом</string>
     <string name="share_ovpn_to">Отправить ovpn файл&#8230;</string>
 </resources>
