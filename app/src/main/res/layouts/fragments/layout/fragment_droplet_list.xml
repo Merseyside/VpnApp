@@ -23,6 +23,7 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:overScrollMode="never"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:visibility="@{viewModel.dropletsVisibility ? View.VISIBLE : View.GONE}">
             </androidx.recyclerview.widget.RecyclerView>
@@ -47,6 +48,7 @@
                 app:srcCompat="@drawable/ic_plus"
                 android:layout_margin="@dimen/normal_spacing"
                 android:backgroundTint="?attr/colorPrimary"
+                android:onClick="@{view -> viewModel.onAddServerClick()}"
                 app:tint="@null"
                 style="@style/Widget.MaterialComponents.FloatingActionButton"/>
 

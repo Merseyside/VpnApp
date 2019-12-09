@@ -3,10 +3,7 @@ package com.merseyside.dropletapp.presentation.di.module
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
-import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
-import com.merseyside.dropletapp.domain.interactor.GetRegionsByTokenInteractor
-import com.merseyside.dropletapp.domain.interactor.GetTokensByProviderIdInteractor
+import com.merseyside.dropletapp.domain.interactor.*
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel
 import com.upstream.basemvvmimpl.presentation.fragment.BaseFragment
 import com.upstream.basemvvmimpl.presentation.model.BundleAwareViewModelFactory
@@ -36,9 +33,14 @@ class AddDropletModule(
     }
 
     @Provides
+    internal fun provideGetProvidersWithTokenInteractor(): GetProvidersWithTokenInteractor {
+        return GetProvidersWithTokenInteractor()
+    }
+
+    @Provides
     internal fun provideAddProviderFragmentViewModelProvider(
         router: Router,
-        getProvidersUseCase: GetProvidersInteractor,
+        getProvidersUseCase: GetProvidersWithTokenInteractor,
         getTokensByProviderIdUseCase: GetTokensByProviderIdInteractor,
         getRegionsByTokenUseCase: GetRegionsByTokenInteractor,
         createServerUseCase: CreateServerInteractor
@@ -61,7 +63,7 @@ class AddDropletModule(
     class AddProviderFragmentViewModelProviderFactory(
         bundle: Bundle?,
         private val router: Router,
-        private val getProvidersUseCase: GetProvidersInteractor,
+        private val getProvidersUseCase: GetProvidersWithTokenInteractor,
         private val getTokensByProviderIdUseCase: GetTokensByProviderIdInteractor,
         private val getRegionsByTokenUseCase: GetRegionsByTokenInteractor,
         private val createServerUseCase: CreateServerInteractor

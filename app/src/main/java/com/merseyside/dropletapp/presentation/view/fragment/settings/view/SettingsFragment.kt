@@ -2,15 +2,13 @@ package com.merseyside.dropletapp.presentation.view.fragment.settings.view
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
-import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.data.db.token.TokenEntity
-import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
 import com.merseyside.dropletapp.databinding.FragmentSettingsBinding
+import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
 import com.merseyside.dropletapp.presentation.di.component.DaggerSettingsComponent
 import com.merseyside.dropletapp.presentation.di.module.SettingsModule
 import com.merseyside.dropletapp.presentation.view.fragment.settings.adapter.TokenAdapter
@@ -24,9 +22,7 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
     private val adapter = TokenAdapter()
 
     private val tokenObserver = Observer<List<TokenEntity>> {
-        Log.d(TAG, "size = ${it.size}")
-
-        if (adapter.isEmpty()) {
+        if (!adapter.isEmpty()) {
             adapter.removeAll()
         }
 

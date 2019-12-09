@@ -52,12 +52,12 @@ actual class SshConnection actual constructor(
 
             val session = ssh.startSession()
 
+            Log.d(TAG, "start script")
             val cmd = session!!.exec(command)
 
             try {
-                //cmd.join(5, TimeUnit.SECONDS)
+                cmd.join(50, TimeUnit.SECONDS)
 
-                cmd.join(400, TimeUnit.SECONDS)
                 Log.d(TAG, "exit = ${cmd.exitStatus}")
 
                 val output = IOUtils.readFully(cmd.inputStream).toString()
@@ -80,6 +80,7 @@ actual class SshConnection actual constructor(
 
     actual fun setupServer(): Boolean {
         Log.d(TAG, "setupServer")
+        Thread.sleep(30000)
 
         val pair = execCommand(getSetupScript())
 
@@ -87,8 +88,6 @@ actual class SshConnection actual constructor(
     }
 
     actual fun getOvpnFile(): String? {
-        Log.d(TAG, "getOvpnFile ${getOvpnFileScript()}")
-
         val pair = execCommand(getOvpnFileScript())
 
         return if (pair.first == OK) {

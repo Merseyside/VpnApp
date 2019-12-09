@@ -11,20 +11,18 @@ import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
-import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
-import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
-import com.merseyside.dropletapp.domain.interactor.GetRegionsByTokenInteractor
-import com.merseyside.dropletapp.domain.interactor.GetTokensByProviderIdInteractor
+import com.merseyside.dropletapp.domain.interactor.*
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.utils.isServerNameValid
+import com.upstream.basemvvmimpl.utils.SingleLiveEvent
 import kotlinx.coroutines.cancel
 import ru.terrakok.cicerone.Router
 
 class AddDropletViewModel(
     router: Router,
-    private val getProvidersUseCase: GetProvidersInteractor,
+    private val getProvidersUseCase: GetProvidersWithTokenInteractor,
     private val getTokensByProviderIdUseCase: GetTokensByProviderIdInteractor,
     private val getRegionsByTokenUseCase: GetRegionsByTokenInteractor,
     private val createServerUseCase: CreateServerInteractor
@@ -35,6 +33,12 @@ class AddDropletViewModel(
     val regionHintObservableField = ObservableField<String>()
     val nameHintObservableField = ObservableField<String>()
     val buttonTextObservableField = ObservableField<String>()
+
+    val serverNameVisibility = ObservableField<Boolean>(true)
+
+    val navigationEnableLiveData = SingleLiveEvent<Boolean>()
+
+    private var provider: Provider? = null
 
     override fun updateLanguage(context: Context) {
         providerHintObservableField.set(context.getString(R.string.hint_provider_summary))
@@ -74,12 +78,19 @@ class AddDropletViewModel(
     private fun getProviders() {
         getProvidersUseCase.execute(
             onComplete = {
+                setProvider(it.first())
                 providerLiveData.value = it
             },
             onError = {
 
             }
         )
+    }
+
+    fun setProvider(provider: Provider) {
+        this.provider = provider
+
+        serverNameVisibility.set(provider !is Provider.CryptoServers)
     }
 
     fun getTokens(providerId: Long) {
@@ -116,7 +127,7 @@ class AddDropletViewModel(
         currentRegion = region
     }
 
-    fun createServer() {
+    fun createServer(): Boolean {
 
         try {
             createServerUseCase.execute(
@@ -124,20 +135,25 @@ class AddDropletViewModel(
                     token = currentToken,
                     providerId = currentProvider,
                     regionSlug = currentRegion?.slug ?: throw IllegalArgumentException(),
-                    serverName = serverNameObservableField.get()
-                        .also { if (!isServerNameValid(serverNameObservableField.get())) throw IllegalArgumentException()
-                            .also {
-                                showErrorMsg(getString(R.string.wrong_server_name))
+                    serverName = serverNameObservableField.get().let {
+                        if (provider !is Provider.CryptoServers) {
+                            if (!isServerNameValid(serverNameObservableField.get())) throw IllegalArgumentException()
+                                .also { showErrorMsg(getString(R.string.wrong_server_name)) }
+                            else {
+                                it
                             }
+                        } else {
+                            "default"
                         }
-                        ?: throw IllegalArgumentException()
-                            .also {
-                                showErrorMsg(getString(R.string.empty_server_name))
-                            },
+                    },
                     logCallback = object: ProviderRepositoryImpl.LogCallback {
                         override fun onLog(log: String) {
                             Handler(Looper.getMainLooper()).post {
                                 showProgress(log)
+
+                                if (log == "Server is valid") {
+                                    navigationEnableLiveData.value = true
+                                }
                             }
                         }
                     }
@@ -146,15 +162,27 @@ class AddDropletViewModel(
                     back()
                 },
                 onError = {throwable ->
+                    if (navigationEnableLiveData. value == false) {
+                        navigationEnableLiveData.value = true
+                    }
                     showErrorMsg(errorMsgCreator.createErrorMsg(throwable), getString(R.string.retry), View.OnClickListener {
                         createServer()
                     })
                 },
-                showProgress = { showProgress(getString(R.string.setup_server_msg)) },
+                showProgress = {
+                    navigationEnableLiveData.value = false
+                    showProgress(getString(R.string.setup_server_msg))
+                },
                 hideProgress = { hideProgress() }
             )
         } catch(e: Exception) {
-
+            return false
         }
+
+        return true
+    }
+
+    override fun onBackPressed(): Boolean {
+        return navigationEnableLiveData.value ?: true
     }
 }

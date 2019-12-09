@@ -2,6 +2,8 @@ package com.merseyside.dropletapp.presentation.view.fragment.token.view
 
 import android.content.Context
 import android.os.Bundle
+import android.text.InputFilter
+import android.text.Spanned
 import android.view.View
 import android.widget.AdapterView
 import androidx.lifecycle.Observer
@@ -82,7 +84,6 @@ class TokenFragment : BaseDropletFragment<FragmentTokenBinding, TokenViewModel>(
 
             closeKeyboard()
         }
-
     }
 
     companion object {

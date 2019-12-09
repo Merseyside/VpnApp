@@ -70,6 +70,7 @@
                     android:hint="@{viewModel.tokenNameHintObservableField}">
 
                 <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/token_name_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"

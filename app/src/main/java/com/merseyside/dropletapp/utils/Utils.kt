@@ -12,19 +12,16 @@ fun isServerNameValid(name: String?): Boolean {
 
 fun isNameValid(name: String?): Boolean {
     return name?.let {
-        val regex = "^[A-Za-z0-9\\s]+$".toRegex()
-
-        name.length > 2 && regex.matches(name)
+        name.length > 2
     } ?: false
 }
 
 fun isTokenValid(token: Token?): Boolean {
-    return true
 
     return token?.let {
-        val regex = "^[A-Fa-f0-9]+$".toRegex()
+        val regex = "^[A-Za-z0-9]+$".toRegex()
 
-        token.length == 64 && regex.matches(token)
+        token.isNotEmpty() && regex.matches(token)
     } ?: false
 
 }

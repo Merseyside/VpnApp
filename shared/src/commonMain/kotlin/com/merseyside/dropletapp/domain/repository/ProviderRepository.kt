@@ -11,6 +11,8 @@ interface ProviderRepository {
 
     suspend fun getProviders(): List<Provider>
 
+    suspend fun getProvidersWithToken(): List<Provider>
+
     suspend fun getRegions(token: Token, providerId: Long): List<RegionPoint>
 
     suspend fun createServer(
@@ -23,7 +25,8 @@ interface ProviderRepository {
 
     suspend fun createServer(
         dropletId: Long,
-        providerId: Long
+        providerId: Long,
+        logCallback: ProviderRepositoryImpl.LogCallback? = null
     ): Boolean
 
     fun getDropletsFlow(): Flow<List<Server>>

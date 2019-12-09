@@ -20,7 +20,9 @@
             android:name=".VpnApplication"
             tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".presentation.view.activity.main.view.MainActivity">
+        <activity
+            android:name=".presentation.view.activity.main.view.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

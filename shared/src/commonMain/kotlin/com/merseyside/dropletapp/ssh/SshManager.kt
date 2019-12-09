@@ -7,7 +7,7 @@ import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 expect class SshManager(timeoutMillis: Int) {
 
     enum class Status{
-        PENDING, IN_PROCESS, READY;
+        PENDING, IN_PROCESS, READY, ERROR;
 
         companion object {
             fun getStatusByString(status: String): Status?

@@ -105,12 +105,14 @@
                         android:layout_height="wrap_content"
                         style="@style/TextInputLayout"
                         android:layout_marginTop="@dimen/small_spacing"
+                        android:visibility="@{viewModel.serverNameVisibility ? View.VISIBLE : View.GONE}"
                         android:hint="@{viewModel.nameHintObservableField}">
 
                     <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="text"
+                            android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
                             android:imeOptions="actionGo"
                             android:text="@={viewModel.serverNameObservableField}"
                             style="@style/TextInputEditText"/>

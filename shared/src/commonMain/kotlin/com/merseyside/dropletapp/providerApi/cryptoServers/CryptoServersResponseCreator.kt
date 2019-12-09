@@ -1,7 +1,9 @@
 package com.merseyside.dropletapp.providerApi.cryptoServers
 
+import com.merseyside.dropletapp.data.exception.IllegalResponseCode
 import com.merseyside.dropletapp.providerApi.*
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
+import com.merseyside.dropletapp.providerApi.base.entity.response.ErrorResponse
 import com.merseyside.dropletapp.providerApi.cryptoServers.entity.point.CryptoDropletInfoPoint
 import com.merseyside.dropletapp.providerApi.cryptoServers.entity.point.CryptoServerPoint
 import com.merseyside.dropletapp.providerApi.cryptoServers.entity.response.CryptoCreateSshKeyResponse
@@ -13,6 +15,8 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.features.BadResponseStatusException
 import io.ktor.client.features.defaultRequest
 import io.ktor.client.request.*
+import io.ktor.client.response.HttpResponse
+import io.ktor.client.response.readText
 import io.ktor.http.ContentType
 import io.ktor.http.takeFrom
 import kotlinx.serialization.ImplicitReflectionSerializer
@@ -70,13 +74,17 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
     suspend fun getRegions(token: String): List<RegionPoint> {
         val apiMethod = "regions"
 
-        val call = client.get<String> {
+        val call = client.get<HttpResponse> {
             url.takeFrom(getRoute(apiMethod))
 
             header(AUTHORIZATION_KEY, getAuthHeader(token))
         }
 
-        return json.parse(RegionPoint.serializer().list, call)
+        if (call.status.value > 300) {
+            throw IllegalResponseCode(call.status.value, json.parse(ErrorResponse.serializer(), call.readText()).error)
+        } else {
+            return json.parse(RegionPoint.serializer().list, call.readText())
+        }
     }
 
     @UseExperimental(ImplicitReflectionSerializer::class)

@@ -23,7 +23,6 @@
 -keep class org.apache.http.** {
     *;
 }
-#-keep class !com.lazycat.**
 
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
@@ -44,4 +43,26 @@
 -keep class com.merseyside.findbyclap.presentation.view.views.stateSwitch.Arc {
     void set*(***);
     *** get*();
+}
+
+-keepattributes Signature
+
+# For using GSON @Expose annotation
+-keepattributes *Annotation*
+
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+#-keep class com.google.gson.stream.** { *; }
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.google.gson.examples.android.model.** { *; }
+
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.SerializationKt
+-keep,includedescriptorclasses class com.merseyside.dropletapp.**$$serializer { *; }
+-keepclassmembers class com.merseyside.partyapp.** {
+    *** Companion;
+}
+-keepclasseswithmembers class com.merseyside.partyapp.** {
+    kotlinx.serialization.KSerializer serializer(...);
 }

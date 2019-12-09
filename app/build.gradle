@@ -9,9 +9,9 @@ android {
         applicationId "com.merseyside.dropletapp"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 14
+        versionCode 22
         multiDexEnabled true
-        versionName "0.14"
+        versionName "0.22"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -84,15 +84,15 @@ android {
 ext {
     appcompat = '1.1.0-beta01'
     androidX = '1.1.0-alpha03'
-    materialDesign = '1.1.0-alpha05'
+    materialDesign = '1.2.0-alpha02'
     constraintLayout = '1.1.3'
-    ktxCore = '1.0.2'
-    lifecycleExtensions = '2.0.0'
-    preferences = '1.1.0-rc01'
+    ktxCore = '1.1.0'
+    lifecycleExtensions = '2.1.0'
+    preferences = '1.1.0'
 
     coroutines = '1.3.0-RC'
 
-    materialDesign = '1.1.0-alpha07'
+    materialDesign = '1.2.0-alpha02'
 
     dagger2 = '2.17'
     dagger2Compiler = '2.17'
@@ -101,8 +101,8 @@ ext {
 
     cicerone = '5.0.0'
 
-    horizontalSelector = '1.12'
-    mvvmCleanArchLibrary = '1.28'
+    horizontalSelector = '1.13'
+    mvvmCleanArchLibrary = '1.34'
 }
 
 dependencies {
@@ -110,7 +110,6 @@ dependencies {
 
     implementation project(':merseylibrary')
     implementation project(":shared")
-    implementation project(":library")
     implementation project(':openvpn-core')
 
     implementation "com.squareup.sqldelight:android-driver:$sqlDriver"
@@ -136,7 +135,7 @@ dependencies {
     implementation "ru.terrakok.cicerone:cicerone:$cicerone"
     implementation "com.github.Merseyside.horizontal-selector-view:HorizontalSelectorView:$horizontalSelector"
 
-    //implementation "com.github.Merseyside.mvvm-clean-arch-library:library:$mvvmCleanArchLibrary"
+    implementation "com.github.Merseyside.mvvm-clean-arch-library:library:$mvvmCleanArchLibrary"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'

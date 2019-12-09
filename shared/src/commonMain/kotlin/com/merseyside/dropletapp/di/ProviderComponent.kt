@@ -13,7 +13,7 @@ import org.kodein.di.erased.with
 
 private val providerModule = Kodein.Module("providerName") {
 
-    bind<ProviderRepository>() with singleton { ProviderRepositoryImpl( instance(), instance(), instance(), instance() ) }
+    bind<ProviderRepository>() with singleton { ProviderRepositoryImpl( instance(), instance(), instance(), instance(), instance() ) }
 
     bind<SshManager>() with singleton { SshManager( instance("sshTimeout")) }
 
@@ -27,4 +27,5 @@ private val providerModule = Kodein.Module("providerName") {
 internal val providerComponent = Kodein {
     extend(appComponent)
     import(providerModule)
+    import(tokenModule)
 }

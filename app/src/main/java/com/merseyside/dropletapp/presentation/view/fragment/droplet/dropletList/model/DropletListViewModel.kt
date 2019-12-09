@@ -2,12 +2,15 @@ package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.admin.merseylibrary.system.FileSystemHelper
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.VpnApplication
+import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
 import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
@@ -62,8 +65,12 @@ class DropletListViewModel(
         getOvpnFileUseCase.cancel()
     }
 
+    init {
+        loadServers()
+    }
+
     @UseExperimental(InternalCoroutinesApi::class)
-    fun loadServers() {
+    private fun loadServers() {
         launch {
             getDropletsUseCase.observe().collect(dropletObserver)
         }
@@ -71,8 +78,6 @@ class DropletListViewModel(
 
     private val dropletObserver = object : FlowCollector<List<Server>> {
         override suspend fun emit(value: List<Server>) {
-
-            Log.d(TAG, value.size.toString())
 
             if (value.isEmpty()) {
                 dropletsVisibility.set(false)
@@ -125,7 +130,7 @@ class DropletListViewModel(
         )
     }
 
-    fun connectToServer(server: Server) {
+    fun onServerClick(server: Server) {
 
         if (currentServer != null) {
             currentServer!!.connectStatus = false
@@ -138,9 +143,6 @@ class DropletListViewModel(
             getOvpnFileUseCase.execute(
                 params = GetOvpnFileInteractor.Params(server.token, server.id, server.providerId),
                 onComplete = {
-                    Log.d(TAG, it)
-                    loadServers()
-
                     prepareVpn(it)
                 },
                 onError = { throwable ->
@@ -152,8 +154,11 @@ class DropletListViewModel(
                     }},
                 hideProgress = { hideProgress() }
             )
+
+            connectionLiveData.value = currentServer
         } else {
             currentServer = null
+            connectionLiveData.value = null
         }
     }
 
@@ -177,14 +182,22 @@ class DropletListViewModel(
 
     fun prepareServer(server: Server) {
         createServerUseCase.execute(
-            params = CreateServerInteractor.Params(dropletId = server.id, providerId = server.providerId),
+            params = CreateServerInteractor.Params(
+                dropletId = server.id,
+                providerId = server.providerId,
+                logCallback = object: ProviderRepositoryImpl.LogCallback {
+                    override fun onLog(log: String) {
+                        Handler(Looper.getMainLooper()).post {
+                            showProgress(log)
+                        }
+                    }
+                }),
             onComplete = {
                 loadServers()
             },
             onError = { throwable ->
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
             },
-            showProgress = { showProgress(getString(R.string.setup_server_msg)) },
             hideProgress = { hideProgress() }
         )
     }
@@ -219,6 +232,23 @@ class DropletListViewModel(
 
         if (!dropletLiveData.value.isNullOrEmpty()) {
             connectionLiveData.value = currentServer
+        }
+    }
+
+    fun onAddServerClick() {
+        if (currentServer != null) {
+            showAlertDialog(
+                VpnApplication.getInstance(),
+                messageRes = R.string.add_server_without_vpn_message,
+                positiveButtonTextRes = R.string.add_server_positive,
+                negativeButtonTextRes = R.string.add_server_negative,
+                onPositiveClick = {
+                    onServerClick(currentServer!!)
+                    navigateToAddDropletScreen()
+                }
+            )
+        } else {
+            navigateToAddDropletScreen()
         }
     }
 

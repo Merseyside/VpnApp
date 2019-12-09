@@ -23,6 +23,7 @@
 
     <string name="delete_action">Delete</string>
     <string name="connect_to_vpn_action">Connect to VPN</string>
+    <string name="disconnect_action">Disconnect from VPN</string>
     <string name="prepare_vpn_action">Prepare VPN server</string>
 
     <string name="create_server" >Create server and get vpn access</string>
@@ -32,6 +33,9 @@
 
     <string name="connected">Connected</string>
     <string name="connect">Connect</string>
+    <string name="error">Error</string>
+    <string name="in_process">In process</string>
+    <string name="pending">Pending</string>
     <string name="server_prefix">Server:</string>
     <string name="provider_prefix">Provider:</string>
     <string name="region_prefix">Region:</string>
@@ -54,6 +58,14 @@
 
     <string name="share_ovpn_action">Share OVPN file</string>
     <string name="share_ovpn_to">Share ovpn file to&#8230;</string>
+
+    <string name="error_dialog_message">An error occurred while configuring the server, delete it and try again</string>
+    <string name="error_dialog_positive">Delete server</string>
+    <string name="error_dialog_negative">Cancel</string>
+
+    <string name="add_server_without_vpn_message">To create a new server, you need a direct connection to the provider</string>
+    <string name="add_server_positive">Turn VPN off</string>
+    <string name="add_server_negative">Cancel</string>
 
     <string-array name="language_entries">
         <item>ic_english</item>

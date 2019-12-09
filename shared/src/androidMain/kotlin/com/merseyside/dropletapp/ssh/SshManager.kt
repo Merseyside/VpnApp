@@ -17,7 +17,7 @@ import java.net.ConnectException
 actual class SshManager actual constructor(private val timeoutMillis: Int) {
 
     actual enum class Status(val status: String) {
-        PENDING("Pending"), IN_PROCESS("In Process"), READY("Ready");
+        PENDING("Pending"), IN_PROCESS("In Process"), READY("Ready"), ERROR("Error");
 
         override fun toString(): String {
             return status
@@ -116,7 +116,7 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
     ): String? {
         val connection = openSshConnection(username, host, keyPathPrivate, null) ?: throw ConnectException("Can not connect to server")
 
-        return connection.getOvpnFile()
+        return connection.getOvpnFile()?.also { Log.d(TAG, it) }
     }
 
     actual fun closeConnection(connection: SshConnection) {

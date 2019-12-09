@@ -27,6 +27,7 @@ import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Command
 import javax.inject.Inject
 
+
 class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
 
     @Inject
@@ -71,18 +72,18 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
         return BR.viewModel
     }
 
-    override fun setLayoutId(): Int {
+    override fun getLayoutId(): Int {
         return R.layout.activity_main
     }
 
-    override fun onCreate(savedInstance: Bundle?) {
-        super.onCreate(savedInstance)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
         doLayout()
 
-        if (savedInstance == null) {
+        if (savedInstanceState == null) {
             init()
         }
     }
@@ -157,6 +158,12 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
         }
 
         return true
+    }
+
+    fun setNavigationEnabled(isEnable: Boolean) {
+        for (i in 0 until binding.bottomNavigation.menu.size()) {
+            binding.bottomNavigation.menu.getItem(i).isEnabled = isEnable
+        }
     }
 
     override fun onResumeFragments() {

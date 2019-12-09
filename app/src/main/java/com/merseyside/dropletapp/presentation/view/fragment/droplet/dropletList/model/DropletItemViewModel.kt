@@ -1,6 +1,5 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.databinding.Bindable
 import com.merseyside.dropletapp.BR
@@ -12,18 +11,33 @@ import com.upstream.basemvvmimpl.presentation.model.BaseComparableAdapterViewMod
 
 class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterViewModel<Server>(obj) {
 
+    interface OnShareClickListener {
+        fun onShareOvpn(server: Server)
+    }
+
+    private var onShareClickListener: OnShareClickListener? = null
+
+    fun setOnShareClickListener(listener: OnShareClickListener?) {
+        this.onShareClickListener = listener
+    }
+
     override fun areContentsTheSame(obj: Server): Boolean {
-        Log.d(TAG, "here ${obj == this.obj}")
         return (obj == this.obj)
     }
 
     override fun areItemsTheSame(obj: Server): Boolean {
-        Log.d(TAG, "here1 ${obj.id == this.obj.id}")
         return (obj.id == this.obj.id)
     }
 
     override fun compareTo(obj: Server): Int {
-        return obj.id.compareTo(this.obj.id)
+
+        return when {
+            this.obj.connectStatus == obj.connectStatus -> {
+                this.obj.id.compareTo(obj.id)
+            }
+            this.obj.connectStatus -> -1
+            else -> 1
+        }
     }
 
     @Bindable
@@ -43,18 +57,15 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
 
     @Bindable
     fun getStatus(): String {
-        Log.d(TAG, "status $obj")
-
         if (obj.connectStatus) {
             return VpnApplication.getInstance().getActualString(R.string.connected)
         }
 
         return when (obj.environmentStatus) {
-            SshManager.Status.READY -> {
-               VpnApplication.getInstance().getActualString(R.string.connect)
-            }
-
-            else -> obj.environmentStatus.toString()
+            SshManager.Status.READY -> VpnApplication.getInstance().getActualString(R.string.connect)
+            SshManager.Status.ERROR -> VpnApplication.getInstance().getActualString(R.string.error)
+            SshManager.Status.IN_PROCESS -> VpnApplication.getInstance().getActualString(R.string.in_process)
+            SshManager.Status.PENDING -> VpnApplication.getInstance().getActualString(R.string.pending)
         }
     }
 
@@ -73,6 +84,9 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
             }
             SshManager.Status.READY -> {
                 R.attr.colorPrimary
+            }
+            SshManager.Status.ERROR -> {
+                R.attr.colorError
             }
         }
     }
@@ -95,7 +109,19 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
             SshManager.Status.READY -> {
                 R.drawable.ic_ready
             }
+            SshManager.Status.ERROR -> {
+                R.drawable.ic_error
+            }
         }
+    }
+
+    @Bindable
+    fun getShareVisibility(): Boolean {
+        return obj.environmentStatus == SshManager.Status.READY
+    }
+
+    fun onShareClick() {
+        onShareClickListener?.onShareOvpn(obj)
     }
 
     companion object {
@@ -106,5 +132,6 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
         notifyPropertyChanged(BR.status)
         notifyPropertyChanged(BR.statusColor)
         notifyPropertyChanged(BR.statusIcon)
+        notifyPropertyChanged(BR.shareVisibility)
     }
 }

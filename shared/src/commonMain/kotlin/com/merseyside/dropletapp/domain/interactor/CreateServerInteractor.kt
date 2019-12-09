@@ -13,7 +13,7 @@ class CreateServerInteractor : CoroutineUseCase<Boolean, CreateServerInteractor.
 
     override suspend fun executeOnBackground(params: Params?): Boolean {
         return if (params!!.dropletId != null) {
-            repository.createServer(params.dropletId!!, params.providerId)
+            repository.createServer(params.dropletId!!, params.providerId, params.logCallback)
         } else {
             repository.createServer(
                 params.token!!,

@@ -18,6 +18,7 @@ import com.merseyside.dropletapp.databinding.FragmentAddDropletBinding
 import com.merseyside.dropletapp.presentation.di.component.DaggerAddDropletComponent
 import com.merseyside.dropletapp.presentation.di.module.AddDropletModule
 import com.merseyside.dropletapp.presentation.view.activity.main.adapter.ProviderAdapter
+import com.merseyside.dropletapp.presentation.view.activity.main.view.MainActivity
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter.RegionAdapter
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter.TokenAdapter
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
@@ -41,6 +42,10 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
     private val regionObserver = Observer<List<RegionPoint>> {
         regionAdapter = RegionAdapter(baseActivityView, R.layout.view_text, it)
         binding.regionSpinner.adapter = regionAdapter
+    }
+
+    private val navigationEnableObserver = Observer<Boolean> {
+        (baseActivityView as MainActivity).setNavigationEnabled(it)
     }
 
     override fun setBindingVariable(): Int {
@@ -87,12 +92,16 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
         viewModel.providerLiveData.observe(this, providerObserver)
         viewModel.tokenLiveData.observe(this, tokenObserver)
         viewModel.regionLiveData.observe(this, regionObserver)
+        viewModel.navigationEnableLiveData.observe(this, navigationEnableObserver)
     }
 
     private fun doLayout() {
         binding.providerSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                viewModel.getTokens(providerAdapter.getItem(position)!!.getId())
+                providerAdapter.getItem(position)!!.let {
+                    viewModel.setProvider(it)
+                    viewModel.getTokens(it.getId())
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -122,7 +131,9 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
             )
 
             if (PermissionsManager.isPermissionsGranted(baseActivityView, permission)) {
-                viewModel.createServer()
+                if (viewModel.createServer()) {
+
+                }
             } else {
                 PermissionsManager.verifyStoragePermissions(this, permission, PERMISSION_ACCESS_CODE)
             }

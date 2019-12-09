@@ -2,7 +2,6 @@ package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList
 
 import android.app.Activity
 import android.content.*
-import android.net.Uri
 import android.net.VpnService
 import android.os.Bundle
 import android.os.IBinder
@@ -11,7 +10,6 @@ import android.view.View
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
-import com.merseyside.admin.merseylibrary.system.FileSystemHelper
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
@@ -21,6 +19,7 @@ import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.presentation.di.component.DaggerDropletListComponent
 import com.merseyside.dropletapp.presentation.di.module.DropletListModule
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.adapter.DropletAdapter
+import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletItemViewModel
 import com.merseyside.dropletapp.ssh.SshManager
 import com.upstream.basemvvmimpl.presentation.adapter.BaseAdapter
 import com.upstream.basemvvmimpl.presentation.adapter.UpdateRequest
@@ -39,7 +38,9 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
     private var vpnService: OpenVPNService? = null
 
     private val vpnProfileObserver = Observer<VpnProfile> {
-        connectToVpn()
+        if (it != null) {
+            connectToVpn()
+        }
     }
 
     private val ovpnFileObserver = Observer<File> {
@@ -82,12 +83,24 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
         }
     }
 
-    private val changeConnectionObserver = Observer<Server> {
-        adapter.notifyItemChanged(it)
+    private val changeConnectionObserver = Observer<Server?> {
+        if (it != null) {
+            adapter.notifyItemChanged(it)
 
-        if (it.connectStatus) {
-            vpnService!!.server = it
-        } else {
+            if (it.connectStatus) {
+                vpnService!!.server = it
+            } else {
+                vpnService!!.server = null
+                turnOffVpn()
+            }
+        }
+    }
+
+    private fun turnOffVpn() {
+        ProfileManager.setConntectedVpnProfileDisconnected(baseActivityView)
+        if (vpnService != null) {
+            if (vpnService!!.management != null)
+                vpnService!!.management.stopVPN(false)
             vpnService!!.server = null
         }
     }
@@ -130,12 +143,6 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
         registerReceivers()
         doLayout()
 
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-
         viewModel.dropletLiveData.observe(this, dropletObserver)
         viewModel.vpnProfileLiveData.observe(this, vpnProfileObserver)
         viewModel.connectionLiveData.observe(this, changeConnectionObserver)
@@ -162,41 +169,43 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
 
         })
 
-        adapter.setOnItemClickListener(object: BaseAdapter.OnItemClickListener<Server> {
-            override fun onItemClicked(obj: Server) {
-                if (obj.environmentStatus == SshManager.Status.PENDING) {
-                    viewModel.prepareServer(obj)
-                } else {
-                    connectToVpn(obj)
-                }
+        adapter.setOnShareClickListener(object: DropletItemViewModel.OnShareClickListener {
+            override fun onShareOvpn(server: Server) {
+                viewModel.shareOvpnFile(server)
             }
         })
     }
 
     private fun connectToVpn(server: Server) {
+        if (server.environmentStatus == SshManager.Status.ERROR) {
+            showAlertDialog(
+                messageRes = R.string.error_dialog_message,
+                positiveButtonTextRes = R.string.error_dialog_positive,
+                negativeButtonTextRes = R.string.error_dialog_negative,
+                onPositiveClick = { viewModel.deleteServer(server) }
+            )
+        } else {
 
-        if (viewModel.isConnected()) {
-            ProfileManager.setConntectedVpnProfileDisconnected(baseActivityView)
-            if (vpnService != null) {
-                if (vpnService!!.management != null)
-                    vpnService!!.management.stopVPN(false)
-                vpnService!!.server = null
-            }
+            viewModel.onServerClick(server)
         }
-
-        viewModel.connectToServer(server)
     }
 
     private fun doLayout() {
+        adapter.setOnItemClickListener(onServerClickListener)
+
         binding.serverList.adapter = adapter
-
-        binding.fab.setOnClickListener {
-            viewModel.navigateToAddDropletScreen()
-        }
-
-        viewModel.loadServers()
-
     }
+
+    private val onServerClickListener = object: BaseAdapter.OnItemClickListener<Server> {
+        override fun onItemClicked(obj: Server) {
+            if (obj.environmentStatus == SshManager.Status.PENDING) {
+                viewModel.prepareServer(obj)
+            } else {
+                connectToVpn(obj)
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         bindService()
@@ -210,16 +219,19 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
     override fun onDestroyView() {
         super.onDestroyView()
 
+        adapter.removeOnItemClickListener(onServerClickListener)
+
         unregisterReceivers()
 
         viewModel.connectionLiveData.removeObserver(changeConnectionObserver)
         viewModel.vpnProfileLiveData.removeObserver(vpnProfileObserver)
         viewModel.dropletLiveData.removeObserver(dropletObserver)
         viewModel.ovpnFileLiveData.removeObserver(ovpnFileObserver)
+
+        viewModel.vpnProfileLiveData.value = null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.d(TAG, "onActivityResult $requestCode $resultCode")
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 START_VPN_PROFILE -> {
@@ -254,6 +266,7 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
             vpnService = binder.service
 
             if (VpnStatus.isVPNActive() && vpnService!!.server != null) {
+                Log.d(TAG, "show connected server")
                 viewModel.showConnectedServer(vpnService!!.server as Server)
             }
         }
@@ -282,6 +295,8 @@ class DropletListFragment : BaseDropletFragment<FragmentDropletListBinding, Drop
     }
 
     private fun shareOvpn(file: File) {
+
+        Log.d(TAG, "shareOvpn")
 
         val shareIntent = ShareCompat.IntentBuilder.from(baseActivityView)
             .setType("text/*")

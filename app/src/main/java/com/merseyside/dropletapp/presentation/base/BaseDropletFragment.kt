@@ -8,12 +8,12 @@ import androidx.appcompat.widget.Toolbar
 import androidx.databinding.ViewDataBinding
 import com.upstream.basemvvmimpl.presentation.fragment.BaseMvvmFragment
 import com.upstream.basemvvmimpl.presentation.view.IFocusManager
+import com.upstream.basemvvmimpl.presentation.view.OnBackPressedListener
 
 abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel>
-    : BaseMvvmFragment<B, M>(), HasAppComponent, IFocusManager {
+    : BaseMvvmFragment<B, M>(), HasAppComponent, IFocusManager, OnBackPressedListener {
 
-    override fun clear() {
-    }
+    override fun clear() {}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,6 +32,10 @@ abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel
 
     override fun getToolbar(): Toolbar? {
         return null
+    }
+
+    override fun onBackPressed(): Boolean {
+        return viewModel.onBackPressed()
     }
 
     companion object {

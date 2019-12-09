@@ -11,7 +11,6 @@ import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.domain.interactor.SaveTokenInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.providerApi.Provider
-import com.merseyside.dropletapp.utils.isKeyValid
 import com.merseyside.dropletapp.utils.isNameValid
 import com.merseyside.dropletapp.utils.isTokenValid
 import kotlinx.coroutines.cancel
@@ -89,6 +88,9 @@ class TokenViewModel(
                 onComplete = {
                     if (it) {
                         showMsg(getString(R.string.complete_msg))
+
+                        tokenNameObservableField.set("")
+                        tokenObservableField.set("")
                     }
                 },
                 onError = {throwable ->
@@ -104,17 +106,6 @@ class TokenViewModel(
 
     fun setProviderId(id: Long) {
         currentProviderId = id
-
-        if (BuildConfig.DEBUG) {
-            when(id) {
-                Provider.CryptoServers().getId() -> {
-                    tokenObservableField.set("sUaw6E2pJoK6ti9jn9FTrlOqXjCEXGkLgraW3wlIAYGuuvJDDZDdx1bVAHwk")
-                }
-
-                else -> {}
-            }
-
-        }
     }
 
     companion object {
