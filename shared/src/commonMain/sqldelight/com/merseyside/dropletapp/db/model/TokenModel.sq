@@ -1,11 +1,17 @@
 CREATE TABLE TokenModel(
     token TEXT NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
-    serviceId INTEGER NOT NULL
+    providerId INTEGER NOT NULL
 );
 
 insertItem:
-INSERT INTO TokenModel(token, name, serviceId) VALUES(?, ?, ?);
+INSERT INTO TokenModel(token, name, providerId) VALUES(?, ?, ?);
 
 selectByServiceId:
-SELECT * FROM TokenModel WHERE serviceId = ?;
+SELECT * FROM TokenModel WHERE providerId = ?;
+
+selectAll:
+SELECT * FROM TokenModel;
+
+deleteItem:
+DELETE FROM TokenModel WHERE token = ?;

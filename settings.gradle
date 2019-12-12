@@ -10,10 +10,7 @@ pluginManagement {
 
 enableFeaturePreview("GRADLE_METADATA") //very important shit (in another case kodein doesn't work )
 
-include ':app', ':shared'
-
-include ':library'
-project(':library').projectDir = new File(settingsDir, '../mvvm-clean-arch-library/library')
+include ':app', ':shared', ':openvpn-core'
 
 include ':merseylibrary'
 project(':merseylibrary').projectDir = new File(settingsDir, '../merseylibrary')

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:bind="http://schemas.android.com/tools">
+    <data>
+        <import type="android.view.View"/>
+        <variable
+                name="viewModel"
+                type="com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletListViewModel"/>
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/small_spacing">
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/server_list"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:overScrollMode="never"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:visibility="@{viewModel.dropletsVisibility ? View.VISIBLE : View.GONE}">
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:textAlignment="center"
+                    android:minLines="2"
+                    android:text="@{viewModel.noItemsHintObservableFields}"
+                    android:visibility="@{viewModel.dropletsVisibility ? View.GONE : View.VISIBLE}"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                app:srcCompat="@drawable/ic_plus"
+                android:layout_margin="@dimen/normal_spacing"
+                android:backgroundTint="?attr/colorPrimary"
+                android:onClick="@{view -> viewModel.onAddServerClick()}"
+                app:tint="@null"
+                style="@style/Widget.MaterialComponents.FloatingActionButton"/>
+
+        <com.upstream.basemvvmimpl.presentation.view.progressBar.TextProgressBar
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                bind:visibility="@{viewModel.inProgress ? View.VISIBLE : View.GONE}"
+                bind:text="@{viewModel.progressText}"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

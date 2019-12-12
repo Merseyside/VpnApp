@@ -6,5 +6,5 @@ data class TokenEntity(
 
     val token: Token,
     val name: String,
-    val serviceId: Long
+    val providerId: Long
 )

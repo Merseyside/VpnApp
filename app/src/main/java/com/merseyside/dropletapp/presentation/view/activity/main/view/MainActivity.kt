@@ -1,8 +1,11 @@
 package com.merseyside.dropletapp.presentation.view.activity.main.view
 
+import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -15,12 +18,15 @@ import com.merseyside.dropletapp.presentation.base.BaseDropletActivity
 import com.merseyside.dropletapp.presentation.di.component.DaggerMainComponent
 import com.merseyside.dropletapp.presentation.di.module.MainModule
 import com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewModel
+import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view.DropletListFragment
+import com.merseyside.dropletapp.presentation.view.fragment.settings.view.SettingsFragment
 import com.merseyside.dropletapp.presentation.view.fragment.token.view.TokenFragment
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Command
 import javax.inject.Inject
+
 
 class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
 
@@ -66,22 +72,26 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
         return BR.viewModel
     }
 
-    override fun setLayoutId(): Int {
+    override fun getLayoutId(): Int {
         return R.layout.activity_main
     }
 
-    override fun onCreate(savedInstance: Bundle?) {
-        super.onCreate(savedInstance)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
         doLayout()
 
-        if (savedInstance == null) {
+        if (savedInstanceState == null) {
             init()
         }
     }
 
     private fun init() {
-        viewModel.newRootScreen()
+        viewModel.navigateToDropletListScreen()
+        binding.bottomNavigation.selectedItemId = R.id.nav_droplets
+        getMsgTextColor()
     }
 
     private fun doLayout() {
@@ -89,6 +99,21 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
 
         binding.bottomNavigation.setOnNavigationItemSelectedListener { onNavigationItemSelected(it) }
 
+    }
+
+    override fun updateLanguage(context: Context) {
+        super.updateLanguage(context)
+
+        (0 until binding.bottomNavigation.menu.size()).forEach {
+            val menuItem = binding.bottomNavigation.menu.getItem(it)
+
+            when(menuItem.itemId) {
+                R.id.nav_tokens -> menuItem.title = context.getString(R.string.nav_tokens)
+                R.id.nav_droplets -> menuItem.title = context.getString(R.string.nav_droplets)
+                R.id.nav_settings -> menuItem.title = context.getString(R.string.nav_settings)
+            }
+
+        }
     }
 
     private fun fixBottomNavigation() {
@@ -120,15 +145,25 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
                     viewModel.navigateToTokenScreen()
                 }
 
-            //R.id.nav_droplets ->
-                //if (currentFragment !is )
+            R.id.nav_droplets ->
+                if (currentFragment !is DropletListFragment) {
+                    viewModel.navigateToDropletListScreen()
+                }
 
-            else -> {
-
+            R.id.nav_settings -> {
+                if (currentFragment !is SettingsFragment) {
+                    viewModel.navigateToSettings()
+                }
             }
         }
 
         return true
+    }
+
+    fun setNavigationEnabled(isEnable: Boolean) {
+        for (i in 0 until binding.bottomNavigation.menu.size()) {
+            binding.bottomNavigation.menu.getItem(i).isEnabled = isEnable
+        }
     }
 
     override fun onResumeFragments() {
@@ -143,6 +178,10 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
 
     override fun getFragmentContainer(): Int? {
         return R.id.container
+    }
+
+    override fun getToolbar(): Toolbar? {
+        return null
     }
 
     companion object {

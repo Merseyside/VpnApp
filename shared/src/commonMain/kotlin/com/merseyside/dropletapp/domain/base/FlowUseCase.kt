@@ -1,6 +1,5 @@
-package com.merseyside.chatapp.domain.base
+package com.merseyside.dropletapp.domain.base
 
-import com.merseyside.dropletapp.domain.base.applicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +16,7 @@ abstract class FlowUseCase<T, Params> : CoroutineScope by CoroutineScope(Dispatc
     @ExperimentalCoroutinesApi
     protected abstract fun executeOnBackground(params: Params?): Flow<T>
 
-    fun observe(params: Params?): Flow<T> {
+    fun observe(params: Params? = null): Flow<T> {
 
         return executeOnBackground(params)
                 .flowOn(backgroundContext)

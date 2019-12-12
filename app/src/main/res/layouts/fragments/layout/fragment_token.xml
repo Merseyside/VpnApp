@@ -1,83 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
-        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:bind="http://schemas.android.com/tools">
     <data>
+        <import type="android.view.View"/>
         <variable
                 name="viewModel"
                 type="com.merseyside.dropletapp.presentation.view.fragment.token.model.TokenViewModel"/>
     </data>
 
-    <LinearLayout
-            android:orientation="vertical"
+    <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/large_spacing"
-            android:gravity="center">
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/token_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/TextInputLayout"
-                android:hint="@string/hint_token_name">
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:imeOptions="actionGo"
-                    android:text="@={viewModel.tokenNameObservableField}"
-                    style="@style/TextInputEditText"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/token"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/TextInputLayout"
-                app:counterEnabled="true"
-                app:counterMaxLength="32"
-                app:counterTextAppearance="@style/CustomCounterTextAppearance"
-                android:hint="@string/hint_token">
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:imeOptions="actionGo"
-                    android:text="@={viewModel.tokenObservableField}"
-                    style="@style/TextInputEditText"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="match_parent">
 
         <LinearLayout
-                android:id="@+id/spinner_container"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            <TextView
+                android:layout_height="match_parent"
+                android:padding="@dimen/large_spacing"
+                android:gravity="center">
+
+            <LinearLayout
+                    android:id="@+id/spinner_container"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:text="@{viewModel.providerHintObservableField}"/>
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/provider_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spinner_size"
+                        android:overlapAnchor="false"
+                        android:scrollbars="none"
+                        android:minWidth="@dimen/spinner_size"
+                        android:backgroundTint="@color/grey_dark"/>
+
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/token"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextInputLayout"
+                    android:hint="@{viewModel.tokenHintObservableField}">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionGo"
+                        android:text="@={viewModel.tokenObservableField}"
+                        style="@style/TextInputEditText"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/token_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextInputLayout"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="64"
+                    app:counterTextAppearance="@style/CustomCounterTextAppearance"
+                    android:hint="@{viewModel.tokenNameHintObservableField}">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/token_name_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionGo"
+                        android:text="@={viewModel.tokenNameObservableField}"
+                        style="@style/TextInputEditText"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                    android:id="@+id/save"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                    android:text="@string/hint_provider_summary"/>
-
-            <androidx.appcompat.widget.AppCompatSpinner
-                    android:id="@+id/service_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/spinner_size"
-                    android:overlapAnchor="false"
-                    android:scrollbars="none"
-                    android:minWidth="@dimen/spinner_size"/>
+                    android:text="@{viewModel.saveButtonObservableField}"
+                    android:layout_marginTop="@dimen/large_spacing"/>
 
         </LinearLayout>
 
-        <Button
-                android:id="@+id/save"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/save_token"
-                android:layout_marginTop="@dimen/large_spacing"/>
+        <com.upstream.basemvvmimpl.presentation.view.progressBar.TextProgressBar
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                bind:visibility="@{viewModel.inProgress ? View.VISIBLE : View.GONE}"
+                bind:text="@{viewModel.progressText}"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 </layout>

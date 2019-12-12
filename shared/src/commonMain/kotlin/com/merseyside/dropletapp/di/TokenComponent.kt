@@ -12,7 +12,7 @@ internal val tokenModule = Kodein.Module("token") {
 
     bind<TokenDao>() with singleton { TokenDao( instance() ) }
 
-    bind<TokenRepository>() with singleton { TokenRepositoryImpl( instance() ) }
+    bind<TokenRepository>() with singleton { TokenRepositoryImpl( instance(), instance() ) }
 }
 
 internal val tokenComponent = Kodein {

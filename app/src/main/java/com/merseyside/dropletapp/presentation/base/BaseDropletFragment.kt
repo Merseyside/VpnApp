@@ -1,23 +1,19 @@
 package com.merseyside.dropletapp.presentation.base
 
-import android.content.Context
+import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.ViewDataBinding
-import com.merseyside.dropletapp.VpnApplication
 import com.upstream.basemvvmimpl.presentation.fragment.BaseMvvmFragment
 import com.upstream.basemvvmimpl.presentation.view.IFocusManager
+import com.upstream.basemvvmimpl.presentation.view.OnBackPressedListener
 
 abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel>
-    : BaseMvvmFragment<B, M>(), HasAppComponent, IFocusManager {
+    : BaseMvvmFragment<B, M>(), HasAppComponent, IFocusManager, OnBackPressedListener {
 
-    override fun getApplicationContext(): Context {
-        return VpnApplication.getInstance()
-    }
-
-    override fun clear() {
-    }
+    override fun clear() {}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,6 +23,19 @@ abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel
 
     override fun getRootView(): View {
         return view!!
+    }
+
+    protected fun closeKeyboard() {
+        val inputMethodManager = baseActivityView.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view!!.windowToken, 0)
+    }
+
+    override fun getToolbar(): Toolbar? {
+        return null
+    }
+
+    override fun onBackPressed(): Boolean {
+        return viewModel.onBackPressed()
     }
 
     companion object {

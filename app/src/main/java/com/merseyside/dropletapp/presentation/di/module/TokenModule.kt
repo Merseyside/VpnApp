@@ -3,7 +3,8 @@ package com.merseyside.dropletapp.presentation.di.module
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import com.merseyside.dropletapp.domain.interactor.GetServicesInteractor
+import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
+import com.merseyside.dropletapp.domain.interactor.SaveTokenInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.token.model.TokenViewModel
 import com.upstream.basemvvmimpl.presentation.fragment.BaseFragment
 import com.upstream.basemvvmimpl.presentation.model.BundleAwareViewModelFactory
@@ -18,26 +19,33 @@ class TokenModule(
 ) {
 
     @Provides
-    internal fun addTokenFragmentViewModelProvider(
-        router: Router,
-        getServicesUseCase: GetServicesInteractor
-    ): ViewModelProvider.Factory {
-        return AddProfileFragmentViewModelProviderFactory(bundle, router, getServicesUseCase)
+    internal fun provideSaveTokenInteractor(): SaveTokenInteractor {
+        return SaveTokenInteractor()
     }
 
     @Provides
-    internal fun provideTokenProfileFragmentViewModel(factory: ViewModelProvider.Factory): TokenViewModel {
+    internal fun provideTokenFragmentViewModelProvider(
+        router: Router,
+        getProvidersUseCase: GetProvidersInteractor,
+        saveTokenUseCase: SaveTokenInteractor
+    ): ViewModelProvider.Factory {
+        return TokenFragmentViewModelProviderFactory(bundle, router, getProvidersUseCase, saveTokenUseCase)
+    }
+
+    @Provides
+    internal fun provideTokenFragmentViewModel(factory: ViewModelProvider.Factory): TokenViewModel {
         return ViewModelProviders.of(fragment, factory).get(TokenViewModel::class.java)
     }
 
-    class AddProfileFragmentViewModelProviderFactory(
+    class TokenFragmentViewModelProviderFactory(
         bundle: Bundle?,
         private val router: Router,
-        private val getServicesUseCase: GetServicesInteractor
+        private val getProvidersUseCase: GetProvidersInteractor,
+        private val saveTokenUseCase: SaveTokenInteractor
     ): BundleAwareViewModelFactory<TokenViewModel>(bundle) {
 
         override fun getViewModel(): TokenViewModel {
-            return TokenViewModel(router, getServicesUseCase)
+            return TokenViewModel(router, getProvidersUseCase, saveTokenUseCase)
         }
     }
 }

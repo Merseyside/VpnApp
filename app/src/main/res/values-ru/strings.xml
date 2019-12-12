@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="language">Язык</string>
+
+    <string name="nav_new_token">Новый ключ</string>
+    <string name="nav_tokens">Ключи</string>
+    <string name="nav_droplets">Серверы</string>
+    <string name="nav_settings">Настройки</string>
+
+    <string name="hint_token">API ключ</string>
+    <string name="hint_token_name">Имя ключа</string>
+    <string name="save_token">Сохранить ключ</string>
+    <string name="hint_provider_summary">Выберите хостинг-провайдера</string>
+    <string name="hint_token_summary">Выберите API ключ</string>
+    <string name="hint_region_summary">Выберите регион</string>
+    <string name="hint_server_name_summary">Имя сервера</string>
+
+    <string name="complete_msg">Удачно выполнено</string>
+    <string name="fill_fields_msg">Пожалуйста, заполните все поля правильно. Имя должно быть от 3-х символов</string>
+    <string name="unknown_error_msg">Неизвестная ошибка</string>
+    <string name="grant_permissions">необходимо получить данное разрешение чтобы пользоваться приложением</string>
+    <string name="no_servers">Серверы не добавлены\nНажмите + чтобы добавить</string>
+
+    <string name="delete_action">Удалить</string>
+    <string name="connect_to_vpn_action">Подключить по VPN</string>
+    <string name="disconnect_action">Отключиться от VPN</string>
+    <string name="prepare_vpn_action">Подготовка VPN сервера</string>
+
+    <string name="create_server" >Создание сервера и получение VPN доступа</string>
+    <string name="setup_server_msg">Настройка вашего сервера, это может занять 2&#8211;5 минут</string>
+    <string name="receiving_access_msg">Получение VPN доступа, пожалуйста, подождите…</string>
+    <string name="loading_regions_msg">Загрузка регионов, пожалуйста, подождите…</string>
+
+    <string name="connected">Подключено</string>
+    <string name="connect">Соединиться</string>
+    <string name="error">Ошибка</string>
+    <string name="in_process">В процессе</string>
+    <string name="pending">Ожидается</string>
+    <string name="server_prefix">Сервер:</string>
+    <string name="provider_prefix">Провайдер:</string>
+    <string name="region_prefix">Регион:</string>
+
+    <string name="no_data_msg">Нет данных</string>
+    <string name="already_added_msg">Уже добавлено</string>
+    <string name="banned_msg">IP адрес созданного сервера заблокирован надзорными инстанциями в Вашей стране</string>
+    <string name="successfully_deleted">Усапешно удалено</string>
+
+    <string name="access_key">Ключ доступа</string>
+    <string name="secret_key">Секретный ключ</string>
+
+    <string name="wrong_server_name">Имя сервера должно быть как минимум 3 символа и сожержать только латинские символы</string>
+    <string name="empty_server_name">Имя сервера не может быть пустым</string>
+
+    <string name="retry">Повтор</string>
+
+    <string name="tokens">Ключи</string>
+
+    <string name="share_ovpn_action">Поделиться OVPN файлом</string>
+    <string name="share_ovpn_to">Отправить ovpn файл&#8230;</string>
+
+    <string name="error_dialog_message">При настройке сервера произошла ошибка, удалите его и попробуйте ещё раз</string>
+    <string name="error_dialog_positive">Удалить сервер</string>
+    <string name="error_dialog_negative">Отмена</string>
+
+    <string name="add_server_without_vpn_message">Для создания нового сервера необходимо прямое подключение к провайдеру</string>
+    <string name="add_server_positive">Отключить VPN</string>
+    <string name="add_server_negative">Отмена</string>
+
+</resources>

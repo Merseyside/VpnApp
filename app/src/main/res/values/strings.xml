@@ -1,5 +1,6 @@
-<resources>
-    <string name="app_name">DropletApp</string>
+<resources xmlns:tools="http://schemas.android.com/tools"
+           tools:ignore="MissingTranslation">
+    <string name="app_name" translatable="false">MyVPN.RUN</string>
 
     <string name="nav_new_token">New token</string>
     <string name="nav_tokens">Tokens</string>
@@ -10,4 +11,69 @@
     <string name="hint_token_name">Key name</string>
     <string name="save_token">Save token</string>
     <string name="hint_provider_summary">Choose hosting provider</string>
+    <string name="hint_token_summary">Choose API key</string>
+    <string name="hint_region_summary">Choose region</string>
+    <string name="hint_server_name_summary">Server name</string>
+
+    <string name="complete_msg">Successfully completed</string>
+    <string name="fill_fields_msg">Please fill all fields correctly</string>
+    <string name="unknown_error_msg">Unknown error</string>
+    <string name="grant_permissions">You have to access thi permission in order to you app</string>
+    <string name="no_servers">No servers\nPress + to add server</string>
+
+    <string name="delete_action">Delete</string>
+    <string name="connect_to_vpn_action">Connect to VPN</string>
+    <string name="disconnect_action">Disconnect from VPN</string>
+    <string name="prepare_vpn_action">Prepare VPN server</string>
+
+    <string name="create_server" >Create server and get vpn access</string>
+    <string name="setup_server_msg">Setting up your server, it may takes 2&#8211;5 minutes</string>
+    <string name="receiving_access_msg">Receiving vpn access, please wait…</string>
+    <string name="loading_regions_msg">Loading regions, please wait…</string>
+
+    <string name="connected">Connected</string>
+    <string name="connect">Connect</string>
+    <string name="error">Error</string>
+    <string name="in_process">In process</string>
+    <string name="pending">Pending</string>
+    <string name="server_prefix">Server:</string>
+    <string name="provider_prefix">Provider:</string>
+    <string name="region_prefix">Region:</string>
+    <string name="language">Language</string>
+
+    <string name="access_key">Access key</string>
+    <string name="secret_key">Secret key</string>
+
+    <string name="no_data_msg">No data</string>
+    <string name="already_added_msg">Already added</string>
+    <string name="banned_msg">The IP address of the created server is blocked by supervisory authorities in your country</string>
+    <string name="successfully_deleted">Successfully deleted</string>
+
+    <string name="wrong_server_name">Server name must be at least 3 characters and contains only latin characters</string>
+    <string name="empty_server_name">Server name can not be empty</string>
+
+    <string name="retry">Retry</string>
+
+    <string name="tokens">Tokens</string>
+
+    <string name="share_ovpn_action">Share OVPN file</string>
+    <string name="share_ovpn_to">Share ovpn file to&#8230;</string>
+
+    <string name="error_dialog_message">An error occurred while configuring the server, delete it and try again</string>
+    <string name="error_dialog_positive">Delete server</string>
+    <string name="error_dialog_negative">Cancel</string>
+
+    <string name="add_server_without_vpn_message">To create a new server, you need a direct connection to the provider</string>
+    <string name="add_server_positive">Turn VPN off</string>
+    <string name="add_server_negative">Cancel</string>
+
+    <string-array name="language_entries">
+        <item>ic_english</item>
+        <item>ic_russian</item>
+    </string-array>
+
+    <string-array name="language_entry_values">
+        <item>en</item>
+        <item>ru</item>
+    </string-array>
 </resources>
