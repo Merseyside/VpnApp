@@ -11,11 +11,10 @@ class DeleteDropletInteractor : CoroutineUseCase<Boolean, DeleteDropletInteracto
     private val repository: ProviderRepository by providerComponent.instance()
 
     override suspend fun executeOnBackground(params: Params?): Boolean {
-        return repository.deleteDroplet(params!!.token, params.providerId, params.dropletId)
+        return repository.deleteDroplet(params!!.providerId, params.dropletId)
     }
 
     data class Params(
-        val token: Token,
         val providerId: Long,
         val dropletId: Long
     )

@@ -82,7 +82,6 @@ class TokenViewModel(
             saveTokenUseCase.execute(
                 params = SaveTokenInteractor.Params(
                     token = token!!,
-                    name = tokenNameObservableField.get()!!,
                     providerId = provider.getId()
                 ),
                 onComplete = {

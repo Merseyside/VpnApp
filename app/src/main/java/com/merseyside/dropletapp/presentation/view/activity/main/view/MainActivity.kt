@@ -1,16 +1,13 @@
 package com.merseyside.dropletapp.presentation.view.activity.main.view
 
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.google.android.material.bottomnavigation.BottomNavigationItemView
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.databinding.ActivityMainBinding
@@ -18,9 +15,8 @@ import com.merseyside.dropletapp.presentation.base.BaseDropletActivity
 import com.merseyside.dropletapp.presentation.di.component.DaggerMainComponent
 import com.merseyside.dropletapp.presentation.di.module.MainModule
 import com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewModel
-import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view.DropletListFragment
+import com.merseyside.dropletapp.presentation.view.fragment.authFragment.view.IAuthFragment
 import com.merseyside.dropletapp.presentation.view.fragment.settings.view.SettingsFragment
-import com.merseyside.dropletapp.presentation.view.fragment.token.view.TokenFragment
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -51,9 +47,6 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
         }
     }
 
-    override fun clear() {
-    }
-
     override fun loadingObserver(isLoading: Boolean) {
     }
 
@@ -68,7 +61,7 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
         return MainModule(this, bundle)
     }
 
-    override fun setBindingVariable(): Int {
+    override fun getBindingVariable(): Int {
         return BR.viewModel
     }
 
@@ -81,89 +74,13 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
-        doLayout()
-
         if (savedInstanceState == null) {
             init()
         }
     }
 
     private fun init() {
-        viewModel.navigateToDropletListScreen()
-        binding.bottomNavigation.selectedItemId = R.id.nav_droplets
         getMsgTextColor()
-    }
-
-    private fun doLayout() {
-        fixBottomNavigation()
-
-        binding.bottomNavigation.setOnNavigationItemSelectedListener { onNavigationItemSelected(it) }
-
-    }
-
-    override fun updateLanguage(context: Context) {
-        super.updateLanguage(context)
-
-        (0 until binding.bottomNavigation.menu.size()).forEach {
-            val menuItem = binding.bottomNavigation.menu.getItem(it)
-
-            when(menuItem.itemId) {
-                R.id.nav_tokens -> menuItem.title = context.getString(R.string.nav_tokens)
-                R.id.nav_droplets -> menuItem.title = context.getString(R.string.nav_droplets)
-                R.id.nav_settings -> menuItem.title = context.getString(R.string.nav_settings)
-            }
-
-        }
-    }
-
-    private fun fixBottomNavigation() {
-        val menu = (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView)
-
-        for (i in 0 until menu.childCount) {
-            val item = menu.getChildAt(i) as BottomNavigationItemView
-
-            for (j in 0 until item.childCount) {
-                val child = item.getChildAt(j) as View
-
-                child.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
-
-                child.findViewById<View?>(com.google.android.material.R.id.largeLabel)
-                    ?.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
-
-                child.findViewById<View?>(com.google.android.material.R.id.smallLabel)
-                    ?.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
-            }
-        }
-    }
-
-    private fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
-        val currentFragment = getCurrentFragment()
-
-        when(menuItem.itemId) {
-            R.id.nav_tokens ->
-                if (currentFragment !is TokenFragment) {
-                    viewModel.navigateToTokenScreen()
-                }
-
-            R.id.nav_droplets ->
-                if (currentFragment !is DropletListFragment) {
-                    viewModel.navigateToDropletListScreen()
-                }
-
-            R.id.nav_settings -> {
-                if (currentFragment !is SettingsFragment) {
-                    viewModel.navigateToSettings()
-                }
-            }
-        }
-
-        return true
-    }
-
-    fun setNavigationEnabled(isEnable: Boolean) {
-        for (i in 0 until binding.bottomNavigation.menu.size()) {
-            binding.bottomNavigation.menu.getItem(i).isEnabled = isEnable
-        }
     }
 
     override fun onResumeFragments() {
@@ -181,10 +98,33 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     override fun getToolbar(): Toolbar? {
-        return null
+        return binding.toolbar
     }
 
-    companion object {
-        private const val TAG = "MainActivity"
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        val fragment = getCurrentFragment()
+        if (fragment is IAuthFragment) {
+            fragment.checkIntent(intent)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.action_settings -> {
+                if (getCurrentFragment() !is SettingsFragment) {
+                    viewModel.navigateToSettings()
+                }
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 }

@@ -45,14 +45,8 @@ class DropletListViewModel(
 
     val dropletsVisibility = ObservableField<Boolean>(true)
     val dropletLiveData = MutableLiveData<List<Server>>()
-    val vpnProfileLiveData = MutableLiveData<VpnProfile>()
-
-    val connectionLiveData = MutableLiveData<Server>()
-    val ovpnFileLiveData = MutableLiveData<File>()
 
     val noItemsHintObservableFields = ObservableField<String>()
-
-    var currentServer: Server? = null
 
 
     override fun readFrom(bundle: Bundle) {}
@@ -85,39 +79,23 @@ class DropletListViewModel(
                 dropletsVisibility.set(true)
             }
 
-            if (currentServer != null) {
-                val newValue = value.map {
-                    if (it.id == currentServer!!.id) currentServer!!
-                    else it
-                }
-
-                dropletLiveData.value = newValue
-                return
-
-            }
             dropletLiveData.value = value
         }
-
     }
 
-    fun navigateToAddDropletScreen() {
-        router.navigateTo(Screens.AddDropletScreen())
+    fun navigateToAuthScreen() {
+        router.navigateTo(Screens.AuthScreen())
     }
 
-    private fun loadVpnProfile(body: String): VpnProfile? {
-        return UpstreamConfigParser.parseConfig(VpnApplication.getInstance(), body)
+    fun navigateToDropletScreen(server: Server) {
+        router.navigateTo(Screens.DropletScreen(server))
     }
 
-    private fun prepareVpn(body: String) {
-        val vpnProfile: VpnProfile? = loadVpnProfile(body)
-        if (vpnProfile != null) {
-            vpnProfileLiveData.value = vpnProfile
-        }
-    }
+
 
     fun deleteServer(server: Server) {
         deleteDropletUseCase.execute(
-            params = DeleteDropletInteractor.Params(server.token, server.providerId, server.id),
+            params = DeleteDropletInteractor.Params(server.providerId, server.id),
             onComplete = {
                 showMsg(getString(R.string.complete_msg))
                 loadServers()
@@ -131,53 +109,7 @@ class DropletListViewModel(
     }
 
     fun onServerClick(server: Server) {
-
-        if (currentServer != null) {
-            currentServer!!.connectStatus = false
-            connectionLiveData.value = currentServer
-        }
-
-        if (currentServer != server) {
-            currentServer = server
-
-            getOvpnFileUseCase.execute(
-                params = GetOvpnFileInteractor.Params(server.token, server.id, server.providerId),
-                onComplete = {
-                    prepareVpn(it)
-                },
-                onError = { throwable ->
-                    showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
-                },
-                showProgress = {
-                    if (server.environmentStatus == SshManager.Status.IN_PROCESS) {
-                        showProgress(getString(R.string.receiving_access_msg))
-                    }},
-                hideProgress = { hideProgress() }
-            )
-
-            connectionLiveData.value = currentServer
-        } else {
-            currentServer = null
-            connectionLiveData.value = null
-        }
-    }
-
-    fun shareOvpnFile(server: Server) {
-
-        getOvpnFileUseCase.execute(
-            params = GetOvpnFileInteractor.Params(server.token, server.id, server.providerId),
-            onComplete = {
-                ovpnFileLiveData.value = FileSystemHelper.createTempFile(server.name, ".ovpn", it)
-            },
-            onError = { throwable ->
-                showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
-            },
-            showProgress = {
-                if (server.environmentStatus == SshManager.Status.IN_PROCESS) {
-                    showProgress(getString(R.string.receiving_access_msg))
-                }},
-            hideProgress = { hideProgress() }
-        )
+        navigateToDropletScreen(server)
     }
 
     fun prepareServer(server: Server) {
@@ -202,58 +134,20 @@ class DropletListViewModel(
         )
     }
 
-    fun setConnectionStatus(status: VpnStatus.ConnectionStatus) {
-        if (currentServer != null) {
-
-            when (status) {
-                VpnStatus.ConnectionStatus.LEVEL_CONNECTED -> {
-                    if (currentServer!!.connectStatus) return
-                    currentServer!!.connectStatus = true
-                }
-
-                else -> {
-                    if (!currentServer!!.connectStatus) return
-                    currentServer!!.connectStatus = false
-                }
-            }
-
-            connectionLiveData.value = currentServer!!
-        }
-    }
-
-    fun isConnected(): Boolean {
-        return currentServer != null
-    }
-
-    fun showConnectedServer(server: Server) {
-        Log.d(TAG, server.toString())
-
-        currentServer = server
-
-        if (!dropletLiveData.value.isNullOrEmpty()) {
-            connectionLiveData.value = currentServer
-        }
-    }
-
     fun onAddServerClick() {
-        if (currentServer != null) {
-            showAlertDialog(
-                VpnApplication.getInstance(),
-                messageRes = R.string.add_server_without_vpn_message,
-                positiveButtonTextRes = R.string.add_server_positive,
-                negativeButtonTextRes = R.string.add_server_negative,
-                onPositiveClick = {
-                    onServerClick(currentServer!!)
-                    navigateToAddDropletScreen()
-                }
-            )
-        } else {
-            navigateToAddDropletScreen()
-        }
-    }
 
-
-    companion object {
-        private const val TAG = "DropletListViewModel"
+//            showAlertDialog(
+//                VpnApplication.getInstance(),
+//                messageRes = R.string.add_server_without_vpn_message,
+//                positiveButtonTextRes = R.string.add_server_positive,
+//                negativeButtonTextRes = R.string.add_server_negative,
+//                onPositiveClick = {
+//                    onServerClick(currentServer!!)
+//                    navigateToAuthScreen()
+//                }
+//            )
+//        } else {
+        navigateToAuthScreen()
+//        }
     }
 }

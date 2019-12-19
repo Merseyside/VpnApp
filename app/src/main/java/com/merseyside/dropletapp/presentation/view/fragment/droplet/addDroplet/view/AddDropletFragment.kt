@@ -15,6 +15,7 @@ import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel
 import com.merseyside.dropletapp.databinding.FragmentAddDropletBinding
+import com.merseyside.dropletapp.domain.model.OAuthProvider
 import com.merseyside.dropletapp.presentation.di.component.DaggerAddDropletComponent
 import com.merseyside.dropletapp.presentation.di.module.AddDropletModule
 import com.merseyside.dropletapp.presentation.view.activity.main.adapter.ProviderAdapter
@@ -22,33 +23,22 @@ import com.merseyside.dropletapp.presentation.view.activity.main.view.MainActivi
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter.RegionAdapter
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter.TokenAdapter
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
+import com.merseyside.mvvmcleanarch.data.deserialize
+import com.merseyside.mvvmcleanarch.data.serialize
+import com.merseyside.mvvmcleanarch.presentation.view.OnBackPressedListener
 
-class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDropletViewModel>() {
+class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDropletViewModel>(),
+    OnBackPressedListener {
 
-    private lateinit var providerAdapter: ProviderAdapter
-    private lateinit var tokenAdapter: TokenAdapter
     private lateinit var regionAdapter: RegionAdapter
 
-    private val providerObserver = Observer<List<Provider>> {
-        providerAdapter = ProviderAdapter(baseActivityView, R.layout.view_provider, it)
-        binding.providerSpinner.adapter = providerAdapter
-    }
-
-    private val tokenObserver = Observer<List<TokenEntity>> {
-        tokenAdapter = TokenAdapter(baseActivityView, R.layout.view_text, it)
-        binding.tokenSpinner.adapter = tokenAdapter
-    }
 
     private val regionObserver = Observer<List<RegionPoint>> {
         regionAdapter = RegionAdapter(baseActivityView, R.layout.view_text, it)
         binding.regionSpinner.adapter = regionAdapter
     }
 
-    private val navigationEnableObserver = Observer<Boolean> {
-        (baseActivityView as MainActivity).setNavigationEnabled(it)
-    }
-
-    override fun setBindingVariable(): Int {
+    override fun getBindingVariable(): Int {
         return BR.viewModel
     }
 
@@ -63,7 +53,7 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
         return AddDropletModule(this, bundle)
     }
 
-    override fun setLayoutId(): Int {
+    override fun getLayoutId(): Int {
         return R.layout.fragment_add_droplet
     }
 
@@ -71,7 +61,7 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
     }
 
     override fun getTitle(context: Context): String? {
-        return null
+        return context.getString(R.string.nav_add_server)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,32 +79,10 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
     }
 
     private fun init() {
-        viewModel.providerLiveData.observe(this, providerObserver)
-        viewModel.tokenLiveData.observe(this, tokenObserver)
         viewModel.regionLiveData.observe(this, regionObserver)
-        viewModel.navigationEnableLiveData.observe(this, navigationEnableObserver)
     }
 
     private fun doLayout() {
-        binding.providerSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                providerAdapter.getItem(position)!!.let {
-                    viewModel.setProvider(it)
-                    viewModel.getTokens(it.getId())
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-
-        }
-
-        binding.tokenSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                viewModel.getRegions(tokenAdapter.getItem(position)!!.token)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
 
         binding.regionSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -140,6 +108,11 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
 
             closeKeyboard()
         }
+
+        if (arguments?.containsKey(PROVIDER_KEY) == true) {
+            viewModel.setProvider(arguments!!.getString(PROVIDER_KEY)!!.deserialize())
+        }
+
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -162,8 +135,18 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
         private const val TAG = "ProviderFragment"
         private const val PERMISSION_ACCESS_CODE = 15
 
-        fun newInstance(): AddDropletFragment {
-            return AddDropletFragment()
+        private const val PROVIDER_KEY = "provider"
+
+        fun newInstance(provider: Provider): AddDropletFragment {
+            val bundle = Bundle().apply {
+                putString(PROVIDER_KEY, provider.serialize())
+            }
+
+            return AddDropletFragment().also { it.arguments = bundle }
         }
+    }
+
+    override fun onBackPressed(): Boolean {
+        return viewModel.onBackPressed()
     }
 }

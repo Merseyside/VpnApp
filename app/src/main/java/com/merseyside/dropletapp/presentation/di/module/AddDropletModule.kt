@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.merseyside.dropletapp.domain.interactor.*
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel
-import com.upstream.basemvvmimpl.presentation.fragment.BaseFragment
-import com.upstream.basemvvmimpl.presentation.model.BundleAwareViewModelFactory
+import com.merseyside.mvvmcleanarch.presentation.fragment.BaseFragment
+import com.merseyside.mvvmcleanarch.presentation.model.BundleAwareViewModelFactory
 import dagger.Module
 import dagger.Provides
 import ru.terrakok.cicerone.Router
@@ -23,34 +23,20 @@ class AddDropletModule(
     }
 
     @Provides
-    internal fun provideGetTokensByIdInteractor(): GetTokensByProviderIdInteractor {
-        return GetTokensByProviderIdInteractor()
-    }
-
-    @Provides
-    internal fun provideGetRegionsByTokenInteractor(): GetRegionsByTokenInteractor {
-        return GetRegionsByTokenInteractor()
-    }
-
-    @Provides
-    internal fun provideGetProvidersWithTokenInteractor(): GetProvidersWithTokenInteractor {
-        return GetProvidersWithTokenInteractor()
+    internal fun provideGetRegionsByTokenInteractor(): GetRegionsByProviderInteractor {
+        return GetRegionsByProviderInteractor()
     }
 
     @Provides
     internal fun provideAddProviderFragmentViewModelProvider(
         router: Router,
-        getProvidersUseCase: GetProvidersWithTokenInteractor,
-        getTokensByProviderIdUseCase: GetTokensByProviderIdInteractor,
-        getRegionsByTokenUseCase: GetRegionsByTokenInteractor,
+        getRegionsByProviderUseCase: GetRegionsByProviderInteractor,
         createServerUseCase: CreateServerInteractor
     ): ViewModelProvider.Factory {
         return AddProviderFragmentViewModelProviderFactory(
             bundle,
             router,
-            getProvidersUseCase,
-            getTokensByProviderIdUseCase,
-            getRegionsByTokenUseCase,
+            getRegionsByProviderUseCase,
             createServerUseCase
         )
     }
@@ -63,18 +49,14 @@ class AddDropletModule(
     class AddProviderFragmentViewModelProviderFactory(
         bundle: Bundle?,
         private val router: Router,
-        private val getProvidersUseCase: GetProvidersWithTokenInteractor,
-        private val getTokensByProviderIdUseCase: GetTokensByProviderIdInteractor,
-        private val getRegionsByTokenUseCase: GetRegionsByTokenInteractor,
+        private val getRegionsByProviderUseCase: GetRegionsByProviderInteractor,
         private val createServerUseCase: CreateServerInteractor
     ): BundleAwareViewModelFactory<AddDropletViewModel>(bundle) {
 
         override fun getViewModel(): AddDropletViewModel {
             return AddDropletViewModel(
                 router,
-                getProvidersUseCase,
-                getTokensByProviderIdUseCase,
-                getRegionsByTokenUseCase,
+                getRegionsByProviderUseCase,
                 createServerUseCase)
         }
     }

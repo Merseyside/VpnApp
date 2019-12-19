@@ -80,7 +80,7 @@ actual class SshConnection actual constructor(
 
     actual fun setupServer(): Boolean {
         Log.d(TAG, "setupServer")
-        Thread.sleep(30000)
+        //Thread.sleep(30000)
 
         val pair = execCommand(getSetupScript())
 

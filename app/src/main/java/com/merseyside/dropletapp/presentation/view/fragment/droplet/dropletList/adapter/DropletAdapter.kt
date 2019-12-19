@@ -1,15 +1,13 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.adapter
 
-import android.util.Log
 import androidx.appcompat.widget.PopupMenu
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
-import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletItemViewModel
 import com.merseyside.dropletapp.ssh.SshManager
-import com.upstream.basemvvmimpl.presentation.adapter.BaseSortedAdapter
-import com.upstream.basemvvmimpl.presentation.view.BaseViewHolder
+import com.merseyside.mvvmcleanarch.presentation.adapter.BaseSortedAdapter
+import com.merseyside.mvvmcleanarch.presentation.view.BaseViewHolder
 
 class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
 
@@ -51,16 +49,10 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
     private fun setupPopup(holder: BaseViewHolder) {
 
         holder.itemView.rootView.setOnLongClickListener {
-            val item = getObjByPosition(holder.adapterPosition)
+            val item = getItemByPosition(holder.adapterPosition)
 
-            val popup = PopupMenu(holder.itemView.context, holder.itemView.findViewById(R.id.status))
+            val popup = PopupMenu(holder.itemView.context, holder.itemView.findViewById(R.id.provider))
             popup.inflate(R.menu.menu_droplet_options)
-
-            Log.d(TAG, item.environmentStatus.toString())
-
-            if (item.connectStatus) {
-                popup.menu.findItem(R.id.delete_action).isVisible = false
-            }
 
             when (item.environmentStatus) {
                 SshManager.Status.PENDING -> {
@@ -79,11 +71,11 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
                 else -> {
                     popup.menu.findItem(R.id.prepare_action).isVisible = false
 
-                    popup.menu.findItem(R.id.connect_action).title = if (item.connectStatus) {
-                         VpnApplication.getInstance().getActualString(R.string.disconnect_action)
-                    } else {
-                        VpnApplication.getInstance().getActualString(R.string.connect_to_vpn_action)
-                    }
+//                    popup.menu.findItem(R.id.connect_action).title = if (item.connectStatus) {
+//                         VpnApplication.getInstance().getActualString(R.string.disconnect_action)
+//                    } else {
+//                        VpnApplication.getInstance().getActualString(R.string.connect_to_vpn_action)
+//                    }
                 }
             }
 

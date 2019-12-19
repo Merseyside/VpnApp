@@ -8,6 +8,7 @@ import com.merseyside.dropletapp.data.exception.NoDataException
 import com.merseyside.dropletapp.domain.repository.TokenRepository
 import com.merseyside.dropletapp.providerApi.ProviderApiFactory
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
+import com.merseyside.dropletapp.utils.Logger
 
 class TokenRepositoryImpl(
     private val tokenDao: TokenDao,
@@ -27,16 +28,11 @@ class TokenRepositoryImpl(
         return tokenDao.selectByServiceId(providerId)
     }
 
-    override suspend fun addToken(token: Token, name: String, providerId: Long): Boolean {
-        val provider = providerApiFactory.getProvider(providerId)
+    override suspend fun addToken(token: Token, providerId: Long): Boolean {
+        tokenDao.insert(token,Provider.getProviderById(providerId) ?: throw NoDataException("No service with passed id"))
 
-        return if (provider.isTokenValid(token)) {
-            tokenDao.insert(token, name, Provider.getProviderById(providerId) ?: throw NoDataException("No service with passed id"))
-
-            true
-        } else {
-            false
-        }
+        Logger.logMsg(TAG, "saved")
+        return true
     }
 
     override suspend fun getRegions(token: Token, providerId: Long): List<RegionPoint> {

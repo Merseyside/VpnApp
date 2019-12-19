@@ -4,8 +4,10 @@
 
     <string name="nav_new_token">Новый ключ</string>
     <string name="nav_tokens">Ключи</string>
-    <string name="nav_droplets">Серверы</string>
+    <string name="nav_droplets">Список серверов</string>
     <string name="nav_settings">Настройки</string>
+    <string name="nav_add_server">Добавить сервер</string>
+    <string name="nav_server">Сервер</string>
 
     <string name="hint_token">API ключ</string>
     <string name="hint_token_name">Имя ключа</string>
@@ -32,7 +34,7 @@
     <string name="loading_regions_msg">Загрузка регионов, пожалуйста, подождите…</string>
 
     <string name="connected">Подключено</string>
-    <string name="connect">Соединиться</string>
+    <string name="ready">Готов</string>
     <string name="error">Ошибка</string>
     <string name="in_process">В процессе</string>
     <string name="pending">Ожидается</string>
@@ -65,5 +67,7 @@
     <string name="add_server_without_vpn_message">Для создания нового сервера необходимо прямое подключение к провайдеру</string>
     <string name="add_server_positive">Отключить VPN</string>
     <string name="add_server_negative">Отмена</string>
+
+    <string name="choose_provider">Выберите провайдера</string>
 
 </resources>

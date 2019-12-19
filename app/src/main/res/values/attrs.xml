@@ -2,4 +2,6 @@
 <resources>
 
     <attr name="pendingColor" format="reference"/>
+
+    <attr name="vpnHeadlineTextColor" format="reference"/>
 </resources>

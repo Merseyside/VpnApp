@@ -1,6 +1,5 @@
 package com.merseyside.dropletapp.domain.repository
 
-import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.providerApi.Provider
@@ -13,13 +12,11 @@ interface ProviderRepository {
 
     suspend fun getProvidersWithToken(): List<Provider>
 
-    suspend fun getRegions(token: Token, providerId: Long): List<RegionPoint>
+    suspend fun getRegions(providerId: Long): List<RegionPoint>
 
     suspend fun createServer(
-        token: Token,
         providerId: Long,
         regionSlug: String,
-        serverName: String,
         logCallback: ProviderRepositoryImpl.LogCallback? = null
     ): Boolean
 
@@ -31,7 +28,7 @@ interface ProviderRepository {
 
     fun getDropletsFlow(): Flow<List<Server>>
 
-    suspend fun deleteDroplet(token: Token, providerId: Long, dropletId: Long): Boolean
+    suspend fun deleteDroplet(providerId: Long, dropletId: Long): Boolean
 
-    suspend fun getOvpnFile(token: Token, dropletId: Long, providerId: Long): String
+    suspend fun getOvpnFile(dropletId: Long, providerId: Long): String
 }

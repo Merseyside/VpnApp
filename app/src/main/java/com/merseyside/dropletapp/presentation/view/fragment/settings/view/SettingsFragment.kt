@@ -2,6 +2,7 @@ package com.merseyside.dropletapp.presentation.view.fragment.settings.view
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.BR
@@ -13,7 +14,8 @@ import com.merseyside.dropletapp.presentation.di.component.DaggerSettingsCompone
 import com.merseyside.dropletapp.presentation.di.module.SettingsModule
 import com.merseyside.dropletapp.presentation.view.fragment.settings.adapter.TokenAdapter
 import com.merseyside.dropletapp.presentation.view.fragment.settings.model.SettingsViewModel
-import com.upstream.basemvvmimpl.presentation.adapter.BaseAdapter
+import com.merseyside.mvvmcleanarch.presentation.adapter.BaseAdapter
+import com.merseyside.mvvmcleanarch.utils.Logger
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 
@@ -39,11 +41,11 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
             .build().inject(this)
     }
 
-    override fun setBindingVariable(): Int {
+    override fun getBindingVariable(): Int {
         return BR.viewModel
     }
 
-    override fun setLayoutId(): Int {
+    override fun getLayoutId(): Int {
         return R.layout.fragment_settings
     }
 
@@ -74,7 +76,8 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
 
         language.currentEntryValue = getLanguage()
         language.setOnValueChangeListener {
-            updateLanguage(it)
+            Logger.log(this, "here")
+            setLanguage(it)
         }
 
         viewModel.getAllTokens()
@@ -86,7 +89,7 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
     }
 
     override fun getTitle(context: Context): String? {
-        return null
+        return context.getString(R.string.nav_settings)
     }
 
     companion object {

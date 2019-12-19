@@ -89,7 +89,7 @@
 
         </LinearLayout>
 
-        <com.upstream.basemvvmimpl.presentation.view.progressBar.TextProgressBar
+        <com.merseyside.mvvmcleanarch.presentation.view.progressBar.TextProgressBar
                 android:id="@+id/progress"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

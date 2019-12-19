@@ -1,28 +1,18 @@
 package com.merseyside.dropletapp.providerApi
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 sealed class Provider {
 
     abstract fun getName(): String
 
     abstract fun getId(): Long
 
+    @Serializable
     class DigitalOcean : Provider() {
         override fun getName(): String {
             return "Digital Ocean"
-        }
-
-        override fun equals(other: Any?): Boolean {
-            return this === other
-        }
-
-        override fun getId(): Long {
-            return 0
-        }
-    }
-
-    class Linode : Provider() {
-        override fun getName(): String {
-            return "Linode"
         }
 
         override fun equals(other: Any?): Boolean {
@@ -34,6 +24,22 @@ sealed class Provider {
         }
     }
 
+    @Serializable
+    class Linode : Provider() {
+        override fun getName(): String {
+            return "Linode"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            return this === other
+        }
+
+        override fun getId(): Long {
+            return 2
+        }
+    }
+
+    @Serializable
     class CryptoServers : Provider() {
         override fun getName(): String {
             return "Crypto Servers"
@@ -44,7 +50,7 @@ sealed class Provider {
         }
 
         override fun getId(): Long {
-            return 2
+            return 0
         }
     }
 

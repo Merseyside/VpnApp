@@ -14,7 +14,7 @@
                   android:layout_height="match_parent"
                   android:padding="@dimen/normal_spacing"  >
 
-        <com.vpnapp.upstream.horizontalselectorview.HorizontalSelectorView
+        <com.merseyside.horizontalselectorview.HorizontalSelectorView
                 android:id="@+id/language"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
                 android:entries="@array/language_entries"
                 app:horizontalSelectorType="image">
 
-        </com.vpnapp.upstream.horizontalselectorview.HorizontalSelectorView>
+        </com.merseyside.horizontalselectorview.HorizontalSelectorView>
 
 
         <LinearLayout

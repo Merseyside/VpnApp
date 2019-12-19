@@ -12,9 +12,9 @@
     <!--End of base colors-->
 
     <!--Purple theme-->
-    <color name="purple_primary">#6200ee</color>
+    <color name="blue_primary">#1E88E5</color>
     <color name="purple_primary_variant">#3700B3</color>
-    <color name="purple_dark">#3700B3</color>
+    <color name="blue_primary_dark">#005BB2</color>
     <color name="purple_light">#9e47ff</color>
     <color name="purple_opacity">#186200ee</color>
 
@@ -29,6 +29,10 @@
     <color name="secondary_text_color_purple">@color/white</color>
 
     <color name="purple_pending_color">#E49100</color>
+
+    <color name="linode_color">#017C15</color>
+    <color name="digital_ocean_color">#0C84C8</color>
+    <color name="crypto_servers_color">#454242</color>
 
     <!--End of purple theme-->
 </resources>

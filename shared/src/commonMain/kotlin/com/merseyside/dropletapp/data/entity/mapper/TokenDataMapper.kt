@@ -15,7 +15,6 @@ class TokenDataMapper {
         return tokenModel.let {
             TokenEntity(
                 token = it.token,
-                name = it.name,
                 providerId = it.providerId
             )
         }

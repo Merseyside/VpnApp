@@ -3,14 +3,9 @@ package com.merseyside.dropletapp.presentation.view.fragment.settings.model
 import androidx.databinding.Bindable
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.providerApi.Provider
-import com.upstream.basemvvmimpl.presentation.model.BaseAdapterViewModel
+import com.merseyside.mvvmcleanarch.presentation.model.BaseAdapterViewModel
 
 class TokenItemViewModel(override var obj: TokenEntity) : BaseAdapterViewModel<TokenEntity>(obj) {
-
-    @Bindable
-    fun getName(): String {
-        return obj.name
-    }
 
     @Bindable
     fun getProviderName(): String {

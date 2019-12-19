@@ -7,13 +7,16 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.features.defaultRequest
 import io.ktor.client.request.*
 import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.http.takeFrom
+import kotlinx.io.charsets.Charsets
 import kotlinx.serialization.ImplicitReflectionSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.parse
+import kotlinx.serialization.stringify
 
 class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
@@ -27,7 +30,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
         HttpClient(httpClientEngine) {
             engine {
                 response.apply {
-                    //defaultCharset = Charsets.UTF_8
+                    defaultCharset = Charsets.UTF_8
                 }
             }
 
@@ -39,7 +42,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
         }
     }
 
-    private fun getRoute(method: String): String{
+    private fun getRoute(method: String): String {
         return "$baseUrl/$method"
     }
 

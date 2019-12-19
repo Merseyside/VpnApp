@@ -24,4 +24,6 @@
     <dimen name="service_icon_size">32dp</dimen>
     <dimen name="token_view_size">32dp</dimen>
     <dimen name="icon_size">24dp</dimen>
+    <dimen name="provider_icon_size">36dp</dimen>
+    <dimen name="provider_icon_size_large">48dp</dimen>
 </resources>

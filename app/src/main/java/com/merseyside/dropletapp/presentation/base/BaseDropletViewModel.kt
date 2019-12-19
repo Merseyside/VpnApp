@@ -3,14 +3,14 @@ package com.merseyside.dropletapp.presentation.base
 import androidx.annotation.StringRes
 import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.presentation.exception.ErrorMessageFactory
-import com.upstream.basemvvmimpl.presentation.model.ParcelableViewModel
+import com.merseyside.mvvmcleanarch.presentation.model.ParcelableViewModel
 import ru.terrakok.cicerone.Router
 
 abstract class BaseDropletViewModel(private val router: Router? = null) : ParcelableViewModel() {
 
     protected val errorMsgCreator = ErrorMessageFactory()
 
-    protected fun back() {
+    fun goBack() {
         router?.exit()
     }
 

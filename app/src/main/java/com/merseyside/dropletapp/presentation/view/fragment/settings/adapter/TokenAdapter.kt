@@ -4,7 +4,7 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.presentation.view.fragment.settings.model.TokenItemViewModel
-import com.upstream.basemvvmimpl.presentation.adapter.BaseAdapter
+import com.merseyside.mvvmcleanarch.presentation.adapter.BaseAdapter
 
 class TokenAdapter : BaseAdapter<TokenEntity, TokenItemViewModel>() {
 

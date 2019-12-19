@@ -2,7 +2,6 @@ import com.merseyside.dropletapp.data.db.server.NetworkEntity;
 
 CREATE TABLE ServerModel(
     id INTEGER NOT NULL PRIMARY KEY,
-    token TEXT NOT NULL,
     username TEXT NOT NULL,
     providerId INTEGER NOT NULL,
     name TEXT NOT NULL,
@@ -17,8 +16,8 @@ CREATE TABLE ServerModel(
 
 insert:
 INSERT OR REPLACE INTO ServerModel(
-    id, token, username, providerId, name, sshKeyId, serverStatus, environmentStatus, createdAt, regionName, address
-    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    id, username, providerId, name, sshKeyId, serverStatus, environmentStatus, createdAt, regionName, address
+    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 selectAll:
 SELECT * FROM ServerModel;

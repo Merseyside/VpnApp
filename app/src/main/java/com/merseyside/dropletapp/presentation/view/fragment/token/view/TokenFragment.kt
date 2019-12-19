@@ -43,11 +43,11 @@ class TokenFragment : BaseDropletFragment<FragmentTokenBinding, TokenViewModel>(
         return TokenModule(this, bundle)
     }
 
-    override fun setBindingVariable(): Int {
+    override fun getBindingVariable(): Int {
         return BR.viewModel
     }
 
-    override fun setLayoutId(): Int {
+    override fun getLayoutId(): Int {
         return R.layout.fragment_token
     }
 

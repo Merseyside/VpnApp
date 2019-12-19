@@ -19,7 +19,7 @@
                 android:paddingTop="@dimen/small_spacing">
 
             <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/server_list"
+                    android:id="@+id/droplet_list"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -52,7 +52,7 @@
                 app:tint="@null"
                 style="@style/Widget.MaterialComponents.FloatingActionButton"/>
 
-        <com.upstream.basemvvmimpl.presentation.view.progressBar.TextProgressBar
+        <com.merseyside.mvvmcleanarch.presentation.view.progressBar.TextProgressBar
                 android:id="@+id/progress"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

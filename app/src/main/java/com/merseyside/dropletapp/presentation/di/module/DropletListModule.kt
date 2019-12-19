@@ -8,8 +8,8 @@ import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetOvpnFileInteractor
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletListViewModel
-import com.upstream.basemvvmimpl.presentation.fragment.BaseFragment
-import com.upstream.basemvvmimpl.presentation.model.BundleAwareViewModelFactory
+import com.merseyside.mvvmcleanarch.presentation.fragment.BaseFragment
+import com.merseyside.mvvmcleanarch.presentation.model.BundleAwareViewModelFactory
 import dagger.Module
 import dagger.Provides
 import ru.terrakok.cicerone.Router

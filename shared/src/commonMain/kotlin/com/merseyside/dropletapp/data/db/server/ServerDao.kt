@@ -14,7 +14,6 @@ class ServerDao(database: VpnDatabase) {
 
     internal fun insert(
         id: Long,
-        token: Token,
         username: String,
         providerId: Long,
         name: String,
@@ -27,7 +26,6 @@ class ServerDao(database: VpnDatabase) {
     ) {
         db.insert(
             id = id,
-            token = token,
             username = username,
             providerId = providerId,
             name = name,

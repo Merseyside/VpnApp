@@ -8,8 +8,10 @@ import com.merseyside.dropletapp.data.entity.PublicKey
 import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.data.exception.BannedAddressException
 import com.merseyside.dropletapp.data.exception.NoDataException
+import com.merseyside.dropletapp.data.exception.NonValidToken
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.domain.base.networkContext
+import com.merseyside.dropletapp.domain.repository.OAuthProviderRepository
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
 import com.merseyside.dropletapp.domain.repository.TokenRepository
@@ -28,7 +30,8 @@ class ProviderRepositoryImpl(
     private val sshManager: SshManager,
     private val keyDao: KeyDao,
     private val serverDao: ServerDao,
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private val oAuthProviderRepository: OAuthProviderRepository
 ) : ProviderRepository, CoroutineScope {
 
     interface LogCallback {
@@ -71,7 +74,7 @@ class ProviderRepositoryImpl(
 
                 inProcessServers.forEach {
                     try {
-                        getOvpnFile(it.token, it.id, it.providerId)
+                        getOvpnFile(it.id, it.providerId)
                     } catch(e: NoDataException) {
                         serverDao.updateStatus(
                             it.id,
@@ -86,10 +89,10 @@ class ProviderRepositoryImpl(
         }
     }
 
-    override suspend fun getRegions(token: Token, providerId: Long): List<RegionPoint> {
+    override suspend fun getRegions(providerId: Long): List<RegionPoint> {
         val provider = providerApiFactory.getProvider(providerId)
 
-        return provider.getRegions(token)
+        return provider.getRegions(getToken(providerId))
     }
 
     private fun createKeyPair(): Pair<PublicKey, PrivateKey> {
@@ -114,7 +117,7 @@ class ProviderRepositoryImpl(
             if (isInProgress) {
                 serverDao.updateStatus(dropletId, providerId, SshManager.Status.IN_PROCESS.toString())
             } else {
-                deleteDroplet(server.token, providerId, server.id)
+                deleteDroplet(providerId, server.id)
 
                 throw BannedAddressException()
             }
@@ -125,26 +128,34 @@ class ProviderRepositoryImpl(
         return false
     }
 
+    private suspend fun getToken(providerId: Long): String {
+        val oAuthProvider = oAuthProviderRepository.getOAuthProvider(Provider.getProviderById(providerId)!!)
+
+        if (oAuthProvider.token.isNullOrEmpty()) throw NonValidToken(Provider.getProviderById(providerId)!!)
+
+        return oAuthProvider.token!!
+    }
+
     override suspend fun createServer(
-        token: Token,
         providerId: Long,
         regionSlug: String,
-        serverName: String,
         logCallback: LogCallback?
     ): Boolean {
 
         logCallback?.onLog("Generating ssh keys...")
 
+        val token = getToken(providerId)
+
         val keyPair = createKeyPair()
 
-        val provider = providerApiFactory.getProvider(providerId)
-        val keyResponse = provider.importKey(token, "My VPN ssh key", keyPair.first.key)
+        val providerApi = providerApiFactory.getProvider(providerId)
+        val keyResponse = providerApi.importKey(token, "My VPN ssh key", keyPair.first.key)
 
         logCallback?.onLog("Creating a new server...")
 
-        val createDropletResponse = provider.createDroplet(
+        val createDropletResponse = providerApi.createDroplet(
             token = token,
-            name = "vpn-$serverName",
+            name = "vpn-${generateRandomString()}",
             regionSlug = regionSlug,
             sshKeyId = keyResponse.id,
             sshKey = keyPair.first.key,
@@ -160,7 +171,6 @@ class ProviderRepositoryImpl(
             createDropletResponse.let { info ->
                 serverDao.insert(
                     id = info.id,
-                    token = token,
                     username = username,
                     providerId = providerId,
                     name = info.name,
@@ -189,7 +199,7 @@ class ProviderRepositoryImpl(
             if (isInProgress) {
                 serverDao.updateStatus(createDropletResponse.id, providerId, SshManager.Status.IN_PROCESS.toString())
             } else {
-                deleteDroplet(token, providerId, createDropletResponse.id)
+                deleteDroplet(providerId, createDropletResponse.id)
 
                 throw BannedAddressException()
             }
@@ -219,7 +229,6 @@ class ProviderRepositoryImpl(
             it.map {server ->
                 Server(
                     id = server.id,
-                    token = server.token,
                     name = server.name,
                     createdAt = server.createdAt,
                     regionName = server.regionName,
@@ -229,20 +238,19 @@ class ProviderRepositoryImpl(
                     ),
                     serverStatus = server.serverStatus,
                     environmentStatus = SshManager.Status.getStatusByString(server.environmentStatus)
-                        ?: throw IllegalArgumentException("Wrong status name"),
-                    connectStatus = false
+                        ?: throw IllegalArgumentException("Wrong status name")
                 )
             }
         }
     }
 
 
-    override suspend fun deleteDroplet(token: Token, providerId: Long, dropletId: Long): Boolean {
+    override suspend fun deleteDroplet(providerId: Long, dropletId: Long): Boolean {
         Logger.logMsg(TAG, "Delete droplet")
         val provider = providerApiFactory.getProvider(providerId)
 
         try {
-            provider.deleteDroplet(token, dropletId)
+            provider.deleteDroplet(getToken(providerId), dropletId)
         } catch (e: Exception) {}
 
         serverDao.deleteDroplet(dropletId, providerId)
@@ -250,12 +258,12 @@ class ProviderRepositoryImpl(
         return true
     }
 
-    override suspend fun getOvpnFile(token: Token, dropletId: Long, providerId: Long): String {
+    override suspend fun getOvpnFile(dropletId: Long, providerId: Long): String {
         val server = serverDao.getDropletByIds(dropletId, providerId)
 
         if (server != null) {
 
-            if (isServerAlive(token, providerId, dropletId)) {
+            if (isServerAlive(providerId, dropletId)) {
 
                 val keys = keyDao.selectById(server.sshKeyId)
 
@@ -281,14 +289,14 @@ class ProviderRepositoryImpl(
                     return server.ovpnFile!!
                 }
             } else {
-                deleteDroplet(token, providerId, dropletId)
+                deleteDroplet(providerId, dropletId)
             }
         }
 
         throw NoDataException("No droplet with passed id")
     }
 
-    private suspend fun isServerAlive(token: Token, providerId: Long, dropletId: Long): Boolean {
+    private suspend fun isServerAlive(providerId: Long, dropletId: Long): Boolean {
 //        val provider = providerApiFactory.getProvider(providerId)
 //
 //        return provider.isServerAlive(token, dropletId)
@@ -309,7 +317,7 @@ class ProviderRepositoryImpl(
 
         private const val TAG = "ProviderRepository"
 
-        private val providers: List<Provider> = Provider.getAllServices()
+        val providers: List<Provider> = Provider.getAllServices()
 
     }
 }
