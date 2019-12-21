@@ -7,7 +7,7 @@
         <item name="colorPrimary">@color/blue_primary</item>
         <item name="colorPrimaryDark">@color/blue_primary_dark</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorPrimaryVariant">@color/purple_primary_variant</item>
+        <item name="colorPrimaryVariant">@color/blue_primary</item>
 
         <item name="colorSecondary">@color/cyan_secondary</item>
         <item name="colorSecondaryVariant">@color/cyan_secondary_variant</item>
@@ -19,17 +19,20 @@
         <item name="colorSurface">@color/white</item>
         <item name="colorOnSurface">@color/black</item>
 
-        <item name="android:colorBackground">@color/background_purple</item>
-        <item name="colorOnBackground">@color/main_text_color_purple</item>
+        <item name="android:colorBackground">@color/background_blue_theme</item>
+        <item name="colorOnBackground">@color/main_text_color_blue_theme</item>
 
-        <item name="android:textColor">@color/main_text_color_purple</item>
+        <item name="android:textColor">@color/main_text_color_blue_theme</item>
 
         <item name="materialCardViewStyle">@style/MyCardView</item>
         <item name="buttonStyle">@style/ButtonStyle</item>
 
         <item name="dividerHorizontal">@style/DividerStyle</item>
 
-        <item name="pendingColor">@color/purple_pending_color</item>
+        <item name="vpnTextColor">@color/main_text_color_blue_theme</item>
+        <item name="pendingColor">@color/blue_theme_pending_color</item>
+        <item name="inactiveColor">@color/grey</item>
+
         <item name="vpnHeadlineTextColor">?attr/colorOnPrimary</item>
 
 

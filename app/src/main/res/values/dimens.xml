@@ -23,7 +23,8 @@
     <dimen name="spinner_radius">4dp</dimen>
     <dimen name="service_icon_size">32dp</dimen>
     <dimen name="token_view_size">32dp</dimen>
-    <dimen name="icon_size">24dp</dimen>
+    <dimen name="icon_size">28dp</dimen>
     <dimen name="provider_icon_size">36dp</dimen>
     <dimen name="provider_icon_size_large">48dp</dimen>
+    <dimen name="button_size">36dp</dimen>
 </resources>

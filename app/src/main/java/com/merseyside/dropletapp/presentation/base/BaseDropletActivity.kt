@@ -1,6 +1,5 @@
 package com.merseyside.dropletapp.presentation.base
 
-import androidx.appcompat.widget.Toolbar
 import androidx.databinding.ViewDataBinding
 import com.merseyside.dropletapp.R
 import com.merseyside.mvvmcleanarch.presentation.activity.BaseMvvmActivity

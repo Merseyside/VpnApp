@@ -69,7 +69,6 @@ class ProviderRepositoryImpl(
         launch {
             while(true) {
                 delay(15000)
-                Logger.logMsg(TAG, "checking...")
                 val inProcessServers = serverDao.getByStatus(SshManager.Status.IN_PROCESS)
 
                 inProcessServers.forEach {
@@ -237,6 +236,8 @@ class ProviderRepositoryImpl(
                         "No providerName found with this id"
                     ),
                     serverStatus = server.serverStatus,
+                    address = server.address,
+                    config = server.ovpnFile,
                     environmentStatus = SshManager.Status.getStatusByString(server.environmentStatus)
                         ?: throw IllegalArgumentException("Wrong status name")
                 )

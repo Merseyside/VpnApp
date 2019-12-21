@@ -7,13 +7,14 @@ import android.os.Looper
 import androidx.annotation.DrawableRes
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import com.merseyside.admin.merseylibrary.system.FileSystemHelper
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
+import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
-import com.merseyside.dropletapp.domain.interactor.GetOvpnFileInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.ssh.SshManager
@@ -30,13 +31,15 @@ import kotlin.coroutines.CoroutineContext
 class DropletViewModel(
     router: Router,
     private val getDropletsUseCase: GetDropletsInteractor,
-    private val getOvpnFileUseCase: GetOvpnFileInteractor,
-    private val createServerUseCase: CreateServerInteractor
+    private val createServerUseCase: CreateServerInteractor,
+    private val deleteServerUseCase: DeleteDropletInteractor
 ) : BaseDropletViewModel(router), CoroutineScope {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { context, throwable -> }
     private val job = Job()
     override val coroutineContext: CoroutineContext = Dispatchers.Main + coroutineExceptionHandler + job
+
+    val serverStatusEvent = SingleLiveEvent<SshManager.Status>()
 
     val providerIcon = ObservableField<Int>()
     val providerTitle = ObservableField<String>()
@@ -45,12 +48,23 @@ class DropletViewModel(
     val statusColor = ObservableField<Int>()
     val status = ObservableField<String>()
 
+    val region = ObservableField<String>()
+    val address = ObservableField<String>()
+    val type = ObservableField<String>()
+
+    val connectButtonColor = ObservableField<Int>()
+    val connectButtonTitle = ObservableField<String>(getString(R.string.connect))
+    val isConnectButtonEnable = ObservableField<Boolean>(true)
+
     val connectionLiveData = SingleLiveEvent<Boolean>()
     val ovpnFileLiveData = MutableLiveData<File>()
     val vpnProfileLiveData = MutableLiveData<VpnProfile>()
 
+    val serverConfigTitle = ObservableField<String>(getString(R.string.server_config))
+    val serverConfig = ObservableField<String>()
+
     lateinit var server: Server
-    private set
+        private set
 
     private var isConnected = false
     set(value) {
@@ -61,13 +75,11 @@ class DropletViewModel(
         }
     }
 
-    init {
-        loadServers()
-    }
+    private var loadServersJob: Job? = null
 
     @UseExperimental(InternalCoroutinesApi::class)
-    private fun loadServers() {
-        launch {
+    private fun loadServers(): Job {
+        return launch {
             getDropletsUseCase.observe().collect(dropletObserver)
         }
     }
@@ -90,31 +102,37 @@ class DropletViewModel(
 
     override fun dispose() {
         getDropletsUseCase.cancel()
-        getOvpnFileUseCase.cancel()
+        deleteServerUseCase.cancel()
+        createServerUseCase.cancel()
     }
 
-    override fun updateLanguage(context: Context) {}
+    override fun updateLanguage(context: Context) {
+        region.set(context.getString(R.string.region, server.regionName))
+        address.set(context.getString(R.string.address, server.address))
 
-    fun onConnectClick(server: Server) {
+        serverConfigTitle.set(context.getString(R.string.server_config))
+        //type.set()
+    }
 
-        if (!isConnected) {
-            getOvpnFileUseCase.execute(
-                params = GetOvpnFileInteractor.Params(server.id, server.providerId),
-                onComplete = {
-                    prepareVpn(it)
-                },
-                onError = { throwable ->
-                    showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
-                },
-                showProgress = {
-                    if (server.environmentStatus == SshManager.Status.IN_PROCESS) {
-                        showProgress(getString(R.string.receiving_access_msg))
-                    }
-                },
-                hideProgress = { hideProgress() }
-            )
+    fun onConnect() {
+        if (server.environmentStatus == SshManager.Status.READY) {
+            if (!isConnected) {
+                prepareVpn(server.config!!)
+            } else {
+                isConnected = false
+            }
         } else {
-            isConnected = false
+            when(server.environmentStatus) {
+                SshManager.Status.ERROR -> {
+                    deleteServer(server)
+                }
+
+                SshManager.Status.PENDING -> {
+                    prepareServer(server)
+                }
+
+                else -> {}
+            }
         }
     }
 
@@ -129,18 +147,9 @@ class DropletViewModel(
         }
     }
 
-    fun setServer(server: Server) {
-        this.server = server
-
-        providerIcon.set(getIcon())
-        providerTitle.set(getTitle())
-
-        statusIcon.set(getStatusIcon())
-        statusColor.set(getStatusColor())
-        status.set(getStatus())
-    }
-
     fun setConnectionStatus(status: VpnStatus.ConnectionStatus) {
+        updateConnectButtonWithVpnStatus(status)
+
         when (status) {
             VpnStatus.ConnectionStatus.LEVEL_CONNECTED -> {
                 if (isConnected) return
@@ -154,11 +163,7 @@ class DropletViewModel(
         }
     }
 
-    fun setConnectionStatus(isConnected: Boolean) {
-        this.isConnected = isConnected
-    }
-
-    fun prepareServer(server: Server) {
+    private fun prepareServer(server: Server) {
         createServerUseCase.execute(
             params = CreateServerInteractor.Params(
                 dropletId = server.id,
@@ -171,7 +176,7 @@ class DropletViewModel(
                     }
                 }),
             onComplete = {
-                loadServers()
+                loadServersJob = loadServers()
             },
             onError = { throwable ->
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
@@ -180,15 +185,49 @@ class DropletViewModel(
         )
     }
 
+    private fun deleteServer(server: Server) {
+        deleteServerUseCase.execute(
+            params = DeleteDropletInteractor.Params(server.providerId, server.id),
+            onComplete = {
+                goBack()
+            },
+            onError = { throwable ->
+                showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
+            },
+            showProgress = { showProgress() },
+            hideProgress = { hideProgress() }
+        )
+    }
 
+    fun shareOvpnFile() {
+        ovpnFileLiveData.value = FileSystemHelper.createTempFile(server.name, ".ovpn", server.config!!)
+    }
 
+    fun setServer(server: Server) {
+        this.server = server
 
+        serverStatusEvent.value = server.environmentStatus
 
+        updateConnectButtonWithServerStatus(server.environmentStatus)
 
-    fun getStatus(): String {
-        if (isConnected) {
-            return VpnApplication.getInstance().getActualString(R.string.connected)
+        providerIcon.set(getIcon())
+        providerTitle.set(getTitle())
+
+        statusIcon.set(getStatusIcon())
+        statusColor.set(getStatusColor())
+        status.set(getStatus())
+
+        if (server.environmentStatus == SshManager.Status.READY && loadServersJob != null) {
+            loadServersJob?.cancel()
+            loadServersJob = null
         }
+
+        serverConfig.set(server.config)
+
+        updateLanguage(VpnApplication.getInstance().context)
+    }
+
+    private fun getStatus(): String {
 
         return when (server.environmentStatus) {
             SshManager.Status.READY -> VpnApplication.getInstance().getActualString(R.string.ready)
@@ -198,10 +237,7 @@ class DropletViewModel(
         }
     }
 
-    fun getStatusColor(): Int {
-        if (isConnected) {
-            return R.attr.colorSecondary
-        }
+    private fun getStatusColor(): Int {
 
         return when(server.environmentStatus) {
             SshManager.Status.PENDING -> {
@@ -221,9 +257,6 @@ class DropletViewModel(
 
     @DrawableRes
     fun getStatusIcon(): Int {
-        if (isConnected) {
-            return R.drawable.ic_connected
-        }
 
         return when(server.environmentStatus) {
             SshManager.Status.PENDING -> {
@@ -248,6 +281,104 @@ class DropletViewModel(
             is Provider.Linode -> R.drawable.ic_linode
             is Provider.CryptoServers -> R.drawable.crypto_servers
             null -> TODO()
+        }
+    }
+
+    private fun updateConnectButtonWithVpnStatus(status: VpnStatus.ConnectionStatus) {
+        connectButtonColor.set(getConnectButtonColor(status))
+        connectButtonTitle.set(getConnectButtonTitle(status))
+    }
+
+    private fun updateConnectButtonWithServerStatus(status: SshManager.Status) {
+        isConnectButtonEnable.set(getConnectButtonAvailability(status))
+        connectButtonColor.set(getConnectButtonColor(status))
+        connectButtonTitle.set(getConnectButtonTitle(status))
+    }
+
+    @DrawableRes
+    private fun getConnectButtonColor(status: VpnStatus.ConnectionStatus): Int {
+        return when(status) {
+            VpnStatus.ConnectionStatus.LEVEL_CONNECTED -> {
+                R.attr.colorError
+            }
+
+            VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED -> {
+                R.attr.colorPrimary
+            }
+
+            else -> {
+                R.attr.pendingColor
+            }
+        }
+    }
+
+    private fun getConnectButtonTitle(serverStatus: VpnStatus.ConnectionStatus): String {
+        return when(serverStatus) {
+            VpnStatus.ConnectionStatus.LEVEL_CONNECTED -> {
+                getString(R.string.disconnect_action)
+            }
+
+            VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED -> {
+                getString(R.string.connect)
+            }
+
+            else -> {
+                getString(R.string.connecting)
+            }
+        }
+    }
+
+    @DrawableRes
+    private fun getConnectButtonColor(status: SshManager.Status): Int {
+        return when(status) {
+            SshManager.Status.ERROR -> {
+                R.attr.colorError
+            }
+
+            SshManager.Status.IN_PROCESS -> {
+                R.attr.inactiveColor
+            }
+
+            SshManager.Status.PENDING -> {
+                R.attr.pendingColor
+            }
+
+            SshManager.Status.READY -> {
+                R.attr.colorPrimary
+            }
+        }
+    }
+
+    private fun getConnectButtonTitle(status: SshManager.Status): String {
+        return when(status) {
+            SshManager.Status.ERROR -> {
+                getString(R.string.delete_action)
+            }
+
+            SshManager.Status.IN_PROCESS -> {
+                getString(R.string.setting_up)
+            }
+
+            SshManager.Status.PENDING -> {
+                getString(R.string.setup_server)
+            }
+
+            SshManager.Status.READY -> {
+                getString(R.string.connect)
+            }
+        }
+    }
+
+    private fun getConnectButtonAvailability(status: SshManager.Status): Boolean {
+        return when(status) {
+            SshManager.Status.IN_PROCESS -> {
+                false
+            }
+
+            else -> {
+                true
+            }
+
         }
     }
 

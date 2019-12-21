@@ -24,8 +24,8 @@ class AddDropletViewModel(
     private val createServerUseCase: CreateServerInteractor
 ) : BaseDropletViewModel(router) {
 
-    val regionHintObservableField = ObservableField<String>()
-    val buttonTextObservableField = ObservableField<String>()
+    val regionHintObservableField = ObservableField<String>(getString(R.string.hint_region_summary))
+    val buttonTextObservableField = ObservableField<String>(getString(R.string.create_server))
 
     private var provider: Provider? = null
     private var isNavigationEnable = true
@@ -39,11 +39,9 @@ class AddDropletViewModel(
 
     private var currentRegion: RegionPoint? = null
 
-    override fun readFrom(bundle: Bundle) {
-    }
+    override fun readFrom(bundle: Bundle) {}
 
-    override fun writeTo(bundle: Bundle) {
-    }
+    override fun writeTo(bundle: Bundle) {}
 
     override fun dispose() {
         getRegionsByProviderUseCase.cancel()
@@ -117,7 +115,7 @@ class AddDropletViewModel(
         return true
     }
 
-    fun newRootDropletListScreen() {
+    private fun newRootDropletListScreen() {
         router.newRootScreen(Screens.DropletListScreen())
     }
 

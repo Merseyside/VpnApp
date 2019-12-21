@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
+import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
-import com.merseyside.dropletapp.domain.interactor.GetOvpnFileInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.model.DropletViewModel
 import com.merseyside.mvvmcleanarch.presentation.fragment.BaseFragment
 import com.merseyside.mvvmcleanarch.presentation.model.BundleAwareViewModelFactory
@@ -23,10 +23,21 @@ class DropletModule(
     internal fun addDropletViewModelProvider(
         router: Router,
         getDropletsUseCase: GetDropletsInteractor,
-        getOvpnFileUseCase: GetOvpnFileInteractor,
-        createServerUseCase: CreateServerInteractor
+        createServerUseCase: CreateServerInteractor,
+        deleteServerUseCase: DeleteDropletInteractor
     ): ViewModelProvider.Factory {
-        return DropletViewModelProviderFactory(bundle, router, getDropletsUseCase, getOvpnFileUseCase, createServerUseCase)
+        return DropletViewModelProviderFactory(
+            bundle,
+            router,
+            getDropletsUseCase,
+            createServerUseCase,
+            deleteServerUseCase
+        )
+    }
+
+    @Provides
+    internal fun provideDeleteDropletInteractor(): DeleteDropletInteractor {
+        return DeleteDropletInteractor()
     }
 
     @Provides
@@ -44,21 +55,16 @@ class DropletModule(
         return GetDropletsInteractor()
     }
 
-    @Provides
-    internal fun provideGetOvpnFileInteractor(): GetOvpnFileInteractor {
-        return GetOvpnFileInteractor()
-    }
-
     class DropletViewModelProviderFactory(
         bundle: Bundle?,
         private val router: Router,
         private val getDropletsUseCase: GetDropletsInteractor,
-        private val getOvpnFileUseCase: GetOvpnFileInteractor,
-        private val createServerUseCase: CreateServerInteractor
+        private val createServerUseCase: CreateServerInteractor,
+        private val deleteServerUseCase: DeleteDropletInteractor
     ): BundleAwareViewModelFactory<DropletViewModel>(bundle) {
 
         override fun getViewModel(): DropletViewModel {
-            return DropletViewModel(router, getDropletsUseCase, getOvpnFileUseCase, createServerUseCase)
+            return DropletViewModel(router, getDropletsUseCase, createServerUseCase, deleteServerUseCase)
         }
     }
 }

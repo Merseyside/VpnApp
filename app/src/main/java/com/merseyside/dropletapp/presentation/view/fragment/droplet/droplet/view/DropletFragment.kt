@@ -7,30 +7,30 @@ import android.os.Bundle
 import android.os.IBinder
 import android.view.View
 import androidx.core.app.ShareCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.databinding.FragmentDropletBinding
 import com.merseyside.dropletapp.domain.Server
-import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
+import com.merseyside.dropletapp.presentation.base.BaseVpnFragment
 import com.merseyside.dropletapp.presentation.di.component.DaggerDropletComponent
 import com.merseyside.dropletapp.presentation.di.module.DropletModule
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.model.DropletViewModel
+import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.mvvmcleanarch.data.deserialize
 import com.merseyside.mvvmcleanarch.data.serialize
 import com.merseyside.mvvmcleanarch.utils.Logger
+import com.merseyside.mvvmcleanarch.utils.ValueAnimatorHelper
 import de.blinkt.openvpn.VpnProfile
 import de.blinkt.openvpn.core.OpenVPNService
-import de.blinkt.openvpn.core.ProfileManager
 import de.blinkt.openvpn.core.VPNLaunchHelper
 import de.blinkt.openvpn.core.VpnStatus
 import java.io.File
 
-class DropletFragment : BaseDropletFragment<FragmentDropletBinding, DropletViewModel>() {
+class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel>() {
 
-    private var isServiceBind = false
-    private var vpnService: OpenVPNService? = null
 
     private val vpnProfileObserver = Observer<VpnProfile> {
         if (it != null) {
@@ -40,6 +40,17 @@ class DropletFragment : BaseDropletFragment<FragmentDropletBinding, DropletViewM
 
     private val ovpnFileObserver = Observer<File> {
         shareOvpn(it)
+    }
+
+    private val serverStatus = Observer<SshManager.Status> {
+        if (it != SshManager.Status.READY) {
+            binding.share.visibility = View.GONE
+            binding.configCard.visibility = View.GONE
+        } else if (it == SshManager.Status.READY) {
+            if (binding.share.visibility == View.GONE) {
+                startAnimation()
+            }
+        }
     }
 
     private fun connectToVpn() {
@@ -60,27 +71,23 @@ class DropletFragment : BaseDropletFragment<FragmentDropletBinding, DropletViewM
     }
 
     private val changeConnectionObserver = Observer<Boolean> {
+        Logger.log(this, it)
         if (it) {
             if (vpnService!!.server != null) {
                 if (vpnService!!.server != viewModel.server) {
                     turnOffVpn()
                 }
             }
-            vpnService!!.server = it
+            vpnService!!.server = viewModel.server
         } else {
-            if (vpnService!!.server == viewModel.server) {
+            val currentServer = vpnService!!.server as Server
+
+            if (currentServer == viewModel.server) {
                 vpnService!!.server = null
                 turnOffVpn()
-            }
-        }
-    }
 
-    private fun turnOffVpn() {
-        ProfileManager.setConntectedVpnProfileDisconnected(baseActivityView)
-        if (vpnService != null) {
-            if (vpnService!!.management != null)
-                vpnService!!.management.stopVPN(false)
-            vpnService!!.server = null
+                viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED)
+            }
         }
     }
 
@@ -109,10 +116,6 @@ class DropletFragment : BaseDropletFragment<FragmentDropletBinding, DropletViewM
         return context.getString(R.string.nav_server)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -123,22 +126,23 @@ class DropletFragment : BaseDropletFragment<FragmentDropletBinding, DropletViewM
         viewModel.vpnProfileLiveData.observe(this, vpnProfileObserver)
         viewModel.connectionLiveData.observe(this, changeConnectionObserver)
         viewModel.ovpnFileLiveData.observe(this, ovpnFileObserver)
+        viewModel.serverStatusEvent.observe(this, serverStatus)
     }
 
     private fun doLayout() {
         if (arguments?.containsKey(SERVER_KEY) == true) {
             viewModel.setServer(arguments!!.getString(SERVER_KEY)!!.deserialize())
         }
-    }
 
-    override fun onResume() {
-        super.onResume()
-        bindService()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        unbindService()
+        binding.config.setOnClickListener {
+            if (binding.expandedGroup.visibility == View.VISIBLE) {
+                binding.expandedGroup.visibility = View.GONE
+                binding.expandableIcon.setImageDrawable(ContextCompat.getDrawable(baseActivityView, R.drawable.ic_arrow_down))
+            } else {
+                binding.expandedGroup.visibility = View.VISIBLE
+                binding.expandableIcon.setImageDrawable(ContextCompat.getDrawable(baseActivityView, R.drawable.ic_arrow_up))
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -149,28 +153,17 @@ class DropletFragment : BaseDropletFragment<FragmentDropletBinding, DropletViewM
         viewModel.connectionLiveData.removeObserver(changeConnectionObserver)
         viewModel.vpnProfileLiveData.removeObserver(vpnProfileObserver)
         viewModel.ovpnFileLiveData.removeObserver(ovpnFileObserver)
+        viewModel.serverStatusEvent.removeObserver(serverStatus)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 START_VPN_PROFILE -> {
+                    vpnService!!.server = viewModel.server
                     VPNLaunchHelper.startOpenVpn(viewModel.vpnProfileLiveData.value, context)
                 }
             }
-        }
-    }
-
-    private fun bindService() {
-        val intent = Intent(baseActivityView, OpenVPNService::class.java)
-        intent.action = OpenVPNService.START_SERVICE
-        isServiceBind = baseActivityView.bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
-    }
-
-    private fun unbindService() {
-        if (isServiceBind) {
-            isServiceBind = false
-            baseActivityView.unbindService(mConnection)
         }
     }
 
@@ -192,7 +185,7 @@ class DropletFragment : BaseDropletFragment<FragmentDropletBinding, DropletViewM
         viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.valueOf(intent.getStringExtra("status")))
     }
 
-    private val mConnection = object : ServiceConnection {
+    override val mConnection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName,
                                         service: IBinder
@@ -200,10 +193,14 @@ class DropletFragment : BaseDropletFragment<FragmentDropletBinding, DropletViewM
             val binder = service as OpenVPNService.LocalBinder
             vpnService = binder.service
 
-            if (VpnStatus.isVPNActive() && vpnService!!.server != null) {
-                Logger.log(this, "show connected server")
+            Logger.log(this@DropletFragment, "on service connected")
 
-                viewModel.setConnectionStatus(vpnService!!.server == viewModel.server)
+            if (VpnStatus.isVPNActive() && vpnService!!.server != null) {
+                Logger.log(this@DropletFragment, "show connected server")
+
+                if (vpnService!!.server == viewModel.server) {
+                    viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.LEVEL_CONNECTED)
+                }
             }
         }
 
@@ -224,6 +221,38 @@ class DropletFragment : BaseDropletFragment<FragmentDropletBinding, DropletViewM
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         startActivity(shareIntent)
+    }
+
+    private fun startAnimation() {
+        val animation = ValueAnimatorHelper()
+
+        animation.addAnimation(
+            ValueAnimatorHelper.Builder(binding.configCard)
+                .translateAnimationPercent(
+                    percents  = *floatArrayOf(1f, 0f),
+                    mainPoint = ValueAnimatorHelper.MainPoint.TOP_LEFT,
+                    animAxis  = ValueAnimatorHelper.AnimAxis.Y_AXIS,
+                    duration  = 700
+                ).build()
+        )
+
+        animation.addAnimation(
+            ValueAnimatorHelper.Builder(binding.configCard)
+                .alphaAnimation(
+                    floats = *floatArrayOf(0f, 1f),
+                    duration = 700
+                ).build()
+        )
+
+        animation.addAnimation(
+            ValueAnimatorHelper.Builder(binding.share)
+                .alphaAnimation(
+                    floats = *floatArrayOf(0f, 1f),
+                    duration = 700
+                ).build()
+        )
+
+        animation.playTogether()
     }
 
     companion object {

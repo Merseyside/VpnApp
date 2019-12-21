@@ -76,9 +76,10 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
 
         language.currentEntryValue = getLanguage()
         language.setOnValueChangeListener {
-            Logger.log(this, "here")
             setLanguage(it)
         }
+
+        updateLanguage(context)
 
         viewModel.getAllTokens()
     }

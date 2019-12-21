@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:bind="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <import type="android.view.View"/>
         <variable
                 name="viewModel"
                 type="com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletListViewModel"/>
@@ -25,7 +23,7 @@
                     android:layout_height="match_parent"
                     android:overScrollMode="never"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:visibility="@{viewModel.dropletsVisibility ? View.VISIBLE : View.GONE}">
+                    app:isVisibleOrGone="@{viewModel.dropletsVisibility}">
             </androidx.recyclerview.widget.RecyclerView>
 
             <TextView
@@ -36,7 +34,18 @@
                     android:textAlignment="center"
                     android:minLines="2"
                     android:text="@{viewModel.noItemsHintObservableFields}"
-                    android:visibility="@{viewModel.dropletsVisibility ? View.GONE : View.VISIBLE}"/>
+                    app:isVisibleOrGone="@{viewModel.dropletsVisibility}"/>
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:isVisibleOrGone="@{viewModel.inProgress}"
+                android:indeterminateTintMode="src_atop"
+                android:indeterminateTint="?attr/colorPrimary"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -48,16 +57,8 @@
                 app:srcCompat="@drawable/ic_plus"
                 android:layout_margin="@dimen/normal_spacing"
                 android:backgroundTint="?attr/colorPrimary"
-                android:onClick="@{view -> viewModel.onAddServerClick()}"
                 app:tint="@null"
                 style="@style/Widget.MaterialComponents.FloatingActionButton"/>
-
-        <com.merseyside.mvvmcleanarch.presentation.view.progressBar.TextProgressBar
-                android:id="@+id/progress"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                bind:visibility="@{viewModel.inProgress ? View.VISIBLE : View.GONE}"
-                bind:text="@{viewModel.progressText}"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

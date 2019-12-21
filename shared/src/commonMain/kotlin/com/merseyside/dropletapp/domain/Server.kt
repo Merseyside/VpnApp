@@ -12,6 +12,8 @@ data class Server(
     val providerId: Long,
     val providerName: String,
     val serverStatus: String,
+    val address: String,
+    val config: String?,
     val environmentStatus: SshManager.Status
 ) {
 
@@ -27,6 +29,8 @@ data class Server(
         if (providerId != other.providerId) return false
         if (providerName != other.providerName) return false
         if (serverStatus != other.serverStatus) return false
+        if (address != other.address) return false
+        if (config != other.config) return false
         if (environmentStatus != other.environmentStatus) return false
 
         return true
@@ -40,8 +44,9 @@ data class Server(
         result = 31 * result + providerId.hashCode()
         result = 31 * result + providerName.hashCode()
         result = 31 * result + serverStatus.hashCode()
+        result = 31 * result + address.hashCode()
+        result = 31 * result + (config?.hashCode() ?: 0)
         result = 31 * result + environmentStatus.hashCode()
         return result
     }
-
 }

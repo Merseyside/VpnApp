@@ -12,21 +12,12 @@ import com.merseyside.mvvmcleanarch.presentation.view.BaseViewHolder
 class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
 
     interface OnItemOptionsClickListener {
-        fun onConnect(server: Server)
 
         fun onDelete(server: Server)
-
-        fun onPrepare(server: Server)
-
-        fun onShareOvpn(server: Server)
     }
 
-    private var onShareClickListener: DropletItemViewModel.OnShareClickListener? = null
     private var onItemOptionsClickListener: OnItemOptionsClickListener? = null
 
-    fun setOnShareClickListener(listener: DropletItemViewModel.OnShareClickListener) {
-        onShareClickListener = listener
-    }
 
     override fun getLayoutIdForPosition(position: Int): Int {
         return R.layout.view_droplet
@@ -37,7 +28,7 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
     }
 
     override fun createItemViewModel(obj: Server): DropletItemViewModel {
-        return DropletItemViewModel(obj).apply { setOnShareClickListener(onShareClickListener) }
+        return DropletItemViewModel(obj)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
@@ -54,47 +45,10 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
             val popup = PopupMenu(holder.itemView.context, holder.itemView.findViewById(R.id.provider))
             popup.inflate(R.menu.menu_droplet_options)
 
-            when (item.environmentStatus) {
-                SshManager.Status.PENDING -> {
-                    popup.menu.findItem(R.id.connect_action).isVisible = false
-                    popup.menu.findItem(R.id.share_ovpn_action).isVisible = false
-                }
-                SshManager.Status.ERROR -> {
-                    popup.menu.findItem(R.id.connect_action).isVisible = false
-                    popup.menu.findItem(R.id.prepare_action).isVisible = false
-                    popup.menu.findItem(R.id.share_ovpn_action).isVisible = false
-                }
-                SshManager.Status.IN_PROCESS -> {
-                    popup.menu.findItem(R.id.prepare_action).isVisible = false
-                    popup.menu.findItem(R.id.share_ovpn_action).isVisible = false
-                }
-                else -> {
-                    popup.menu.findItem(R.id.prepare_action).isVisible = false
-
-//                    popup.menu.findItem(R.id.connect_action).title = if (item.connectStatus) {
-//                         VpnApplication.getInstance().getActualString(R.string.disconnect_action)
-//                    } else {
-//                        VpnApplication.getInstance().getActualString(R.string.connect_to_vpn_action)
-//                    }
-                }
-            }
-
             popup.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.delete_action -> {
                         onItemOptionsClickListener?.onDelete(item)
-                    }
-
-                    R.id.connect_action -> {
-                        onItemOptionsClickListener?.onConnect(item)
-                    }
-
-                    R.id.prepare_action -> {
-                        onItemOptionsClickListener?.onPrepare(item)
-                    }
-
-                    R.id.share_ovpn_action -> {
-                        onItemOptionsClickListener?.onShareOvpn(item)
                     }
 
                     else -> {
@@ -113,9 +67,5 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
 
     fun setOnItemOptionClickListener(onItemOptionsClickListener: OnItemOptionsClickListener?) {
         this.onItemOptionsClickListener = onItemOptionsClickListener
-    }
-
-    companion object {
-        private const val TAG = "DropletAdapter"
     }
 }

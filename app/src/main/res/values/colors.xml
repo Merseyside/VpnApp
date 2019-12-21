@@ -13,22 +13,22 @@
 
     <!--Purple theme-->
     <color name="blue_primary">#1E88E5</color>
-    <color name="purple_primary_variant">#3700B3</color>
+    <color name="blue_primary_variant">#3700B3</color>
     <color name="blue_primary_dark">#005BB2</color>
-    <color name="purple_light">#9e47ff</color>
-    <color name="purple_opacity">#186200ee</color>
+    <color name="blue_light">#9e47ff</color>
+    <color name="blue_opacity">#186200ee</color>
 
     <color name="cyan_secondary">#03dac6</color>
     <color name="cyan_secondary_variant">#018786</color>
     <color name="cyan_dark">#00a896</color>
     <color name="cyan_light">#66fff9</color>
 
-    <color name="background_purple">@color/grey</color>
+    <color name="background_blue_theme">@color/grey</color>
 
-    <color name="main_text_color_purple">@color/grey_dark</color>
-    <color name="secondary_text_color_purple">@color/white</color>
+    <color name="main_text_color_blue_theme">@color/grey_dark</color>
+    <color name="secondary_text_color_blue_theme">@color/white</color>
 
-    <color name="purple_pending_color">#E49100</color>
+    <color name="blue_theme_pending_color">#E49100</color>
 
     <color name="linode_color">#017C15</color>
     <color name="digital_ocean_color">#0C84C8</color>

@@ -12,7 +12,7 @@
                   android:gravity="center"
                   android:paddingStart="@dimen/small_spacing"
                   android:paddingEnd="@dimen/small_spacing"
-                  android:background="@color/purple_opacity">
+                  android:background="@color/blue_opacity">
 
         <TextView
                 android:layout_width="0dp"

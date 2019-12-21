@@ -5,25 +5,16 @@ import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.mvvmcleanarch.presentation.model.BaseComparableAdapterViewModel
+import com.merseyside.mvvmcleanarch.utils.Logger
 
 class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterViewModel<Server>(obj) {
 
-    interface OnShareClickListener {
-        fun onShareOvpn(server: Server)
-    }
-
-    private var onShareClickListener: OnShareClickListener? = null
-
-    fun setOnShareClickListener(listener: OnShareClickListener?) {
-        this.onShareClickListener = listener
-    }
-
     override fun areContentsTheSame(obj: Server): Boolean {
-        return (obj == this.obj)
+        return (this.obj == obj).also { Logger.log(this, it) }
     }
 
     override fun areItemsTheSame(obj: Server): Boolean {
-        return (obj.id == this.obj.id)
+        return obj.id == this.obj.id
     }
 
     override fun compareTo(obj: Server): Int {
@@ -46,5 +37,7 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
         return "${VpnApplication.getInstance().getActualString(R.string.region_prefix)} ${obj.regionName}"
     }
 
-    override fun notifyUpdate() {}
+    override fun notifyUpdate() {
+        Logger.log(this, "notify")
+    }
 }

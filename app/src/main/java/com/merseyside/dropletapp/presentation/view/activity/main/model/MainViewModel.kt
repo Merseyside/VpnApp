@@ -6,6 +6,7 @@ import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
+import com.merseyside.mvvmcleanarch.utils.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.FlowCollector
 import ru.terrakok.cicerone.Router
@@ -31,15 +32,20 @@ class MainViewModel(
         getDropletsUseCase.cancel()
     }
 
+    private var isInitialized = false
+
     private val dropletObserver = object : FlowCollector<List<Server>> {
+        var prevSize = 0
+
         override suspend fun emit(value: List<Server>) {
             if (value.isNotEmpty()) {
-                navigateToDropletListScreen()
+                if (!isInitialized || (value.size == 1 && prevSize == 0)) navigateToDropletListScreen()
+                prevSize = value.size
             } else {
                 navigateToAuthScreen()
             }
 
-            job.cancel()
+            isInitialized = true
         }
     }
 
@@ -47,10 +53,6 @@ class MainViewModel(
         launch {
             getDropletsUseCase.observe().collect(dropletObserver)
         }
-    }
-
-    fun navigateToTokenScreen() {
-        router.newRootScreen(Screens.TokenScreen())
     }
 
     fun navigateToDropletListScreen() {

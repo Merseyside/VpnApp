@@ -58,7 +58,7 @@ public class ProfileManager {
         return instance;
     }
 
-    public static void setConntectedVpnProfileDisconnected(Context c) {
+    public static void setConnectedVpnProfileDisconnected(Context c) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         Editor prefsedit = prefs.edit();
         prefsedit.putString(LAST_CONNECTED_PROFILE, null);
