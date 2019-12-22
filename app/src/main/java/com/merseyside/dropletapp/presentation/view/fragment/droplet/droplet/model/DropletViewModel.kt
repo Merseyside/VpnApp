@@ -7,17 +7,21 @@ import android.os.Looper
 import androidx.annotation.DrawableRes
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
-import com.merseyside.admin.merseylibrary.system.FileSystemHelper
+import com.merseyside.admin.merseylibrary.data.filemanager.FileManager
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.VpnApplication
+import com.merseyside.dropletapp.data.entity.TypedConfig
+import com.merseyside.dropletapp.data.exception.BannedAddressException
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
 import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
+import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.ssh.SshManager
+import com.merseyside.mvvmcleanarch.utils.Logger
 import com.merseyside.mvvmcleanarch.utils.SingleLiveEvent
 import de.blinkt.openvpn.VpnProfile
 import de.blinkt.openvpn.core.UpstreamConfigParser
@@ -29,7 +33,7 @@ import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 class DropletViewModel(
-    router: Router,
+    private val router: Router,
     private val getDropletsUseCase: GetDropletsInteractor,
     private val createServerUseCase: CreateServerInteractor,
     private val deleteServerUseCase: DeleteDropletInteractor
@@ -55,10 +59,15 @@ class DropletViewModel(
     val connectButtonColor = ObservableField<Int>()
     val connectButtonTitle = ObservableField<String>(getString(R.string.connect))
     val isConnectButtonEnable = ObservableField<Boolean>(true)
+    val isConnectButtonVisible = ObservableField<Boolean>(true)
+
+    val isQrVisible = ObservableField<Boolean>(false)
 
     val connectionLiveData = SingleLiveEvent<Boolean>()
-    val ovpnFileLiveData = MutableLiveData<File>()
+    val configFileLiveData = SingleLiveEvent<File>()
     val vpnProfileLiveData = MutableLiveData<VpnProfile>()
+    val openConfigFile = SingleLiveEvent<File>()
+    val storagePermissionsErrorLiveEvent = SingleLiveEvent<Any>()
 
     val serverConfigTitle = ObservableField<String>(getString(R.string.server_config))
     val serverConfig = ObservableField<String>()
@@ -109,31 +118,60 @@ class DropletViewModel(
     override fun updateLanguage(context: Context) {
         region.set(context.getString(R.string.region, server.regionName))
         address.set(context.getString(R.string.address, server.address))
+        type.set(context.getString(R.string.type, server.typedConfig.getName()))
 
         serverConfigTitle.set(context.getString(R.string.server_config))
-        //type.set()
     }
 
     fun onConnect() {
-        if (server.environmentStatus == SshManager.Status.READY) {
-            if (!isConnected) {
-                prepareVpn(server.config!!)
-            } else {
-                isConnected = false
+        if (server.typedConfig is TypedConfig.WireGuard && server.environmentStatus == SshManager.Status.READY) {
+            val externalStorage = FileManager.getStorageLocations(FileManager.STORAGE.SD_CARD)
+
+            if (externalStorage != null) {
+                val resultFile = FileManager.createFile("${externalStorage.path}/MyVpn", "${server.name}.conf", server.getConfig()!!)
+
+                if (resultFile != null) {
+                    showAlertDialog(
+                        title = getString(R.string.wireguard_title),
+                        message = getString(R.string.wireguard_description, resultFile.path),
+                        positiveButtonText = getString(R.string.wireguard_positive_text),
+                        isOneAction = true
+                    )
+                } else {
+                    storagePermissionsErrorLiveEvent.call()
+                }
             }
+
         } else {
-            when(server.environmentStatus) {
-                SshManager.Status.ERROR -> {
-                    deleteServer(server)
+            if (server.environmentStatus == SshManager.Status.READY) {
+                if (!isConnected) {
+                    prepareVpn(server.typedConfig.config!!)
+                } else {
+                    isConnected = false
                 }
-
-                SshManager.Status.PENDING -> {
-                    prepareServer(server)
+            } else {
+                when (server.environmentStatus) {
+                    SshManager.Status.ERROR -> {
+                        deleteServer(server)
+                    }
+                    SshManager.Status.PENDING -> {
+                        prepareServer(server)
+                    }
+                    else -> {
+                    }
                 }
-
-                else -> {}
             }
         }
+    }
+
+    fun onQrClick() {
+        if (server.getConfig() != null) {
+            navigateToQrScreen(server.getConfig()!!)
+        }
+    }
+
+    private fun navigateToQrScreen(config: String) {
+        router.navigateTo(Screens.QrScreen(config))
     }
 
     private fun loadVpnProfile(body: String): VpnProfile? {
@@ -179,6 +217,9 @@ class DropletViewModel(
                 loadServersJob = loadServers()
             },
             onError = { throwable ->
+                if (throwable is BannedAddressException) {
+                    goBack()
+                }
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
             },
             hideProgress = { hideProgress() }
@@ -199,8 +240,21 @@ class DropletViewModel(
         )
     }
 
-    fun shareOvpnFile() {
-        ovpnFileLiveData.value = FileSystemHelper.createTempFile(server.name, ".ovpn", server.config!!)
+    fun shareConfigFile() {
+        configFileLiveData.value = when(server.typedConfig) {
+            is TypedConfig.OpenVpn -> {
+                FileManager.createTempFile(server.name, ".ovpn", server.typedConfig.config!!)
+            }
+
+            is TypedConfig.WireGuard -> {
+                FileManager.createTempFile(server.name, ".conf", server.typedConfig.config!!)
+            }
+
+            else -> {
+                FileManager.createTempFile(server.name, ".txt", server.typedConfig.config!!)
+            }
+        }
+
     }
 
     fun setServer(server: Server) {
@@ -222,7 +276,17 @@ class DropletViewModel(
             loadServersJob = null
         }
 
-        serverConfig.set(server.config)
+        if (server.environmentStatus == SshManager.Status.READY) {
+            if (server.typedConfig is TypedConfig.PPTP || server.typedConfig is TypedConfig.L2TP) {
+                isConnectButtonVisible.set(false)
+            }
+        }
+
+        if (server.typedConfig is TypedConfig.WireGuard && server.environmentStatus == SshManager.Status.READY) {
+            isQrVisible.set(true)
+        }
+
+        serverConfig.set(server.getConfig())
 
         updateLanguage(VpnApplication.getInstance().context)
     }
@@ -364,7 +428,11 @@ class DropletViewModel(
             }
 
             SshManager.Status.READY -> {
-                getString(R.string.connect)
+                if (server.typedConfig is TypedConfig.WireGuard) {
+                    getString(R.string.save_config)
+                } else {
+                    getString(R.string.connect)
+                }
             }
         }
     }

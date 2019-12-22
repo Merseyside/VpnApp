@@ -7,6 +7,7 @@ import com.merseyside.dropletapp.presentation.view.fragment.authFragment.view.Au
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.view.AddDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.view.DropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view.DropletListFragment
+import com.merseyside.dropletapp.presentation.view.fragment.qr.QrFragment
 import com.merseyside.dropletapp.presentation.view.fragment.settings.view.SettingsFragment
 import com.merseyside.dropletapp.presentation.view.fragment.token.view.TokenFragment
 import com.merseyside.dropletapp.providerApi.Provider
@@ -47,6 +48,12 @@ class Screens {
     class DropletScreen(private val server: Server) : SupportAppScreen() {
         override fun getFragment(): Fragment {
             return DropletFragment.newInstance(server)
+        }
+    }
+
+    class QrScreen(private val config: String) : SupportAppScreen() {
+        override fun getFragment(): Fragment {
+            return QrFragment.newInstance(config)
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.merseyside.dropletapp.data.db.server
 
 import com.merseyside.dropletapp.data.db.VpnDatabase
-import com.merseyside.dropletapp.data.entity.Token
+import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.db.model.ServerModel
 import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.dropletapp.utils.asFlow
@@ -22,7 +22,8 @@ class ServerDao(database: VpnDatabase) {
         environmentStatus: String,
         createdAt: String,
         regionName: String,
-        address: String
+        address: String,
+        typedConfig: TypedConfig
     ) {
         db.insert(
             id = id,
@@ -34,7 +35,8 @@ class ServerDao(database: VpnDatabase) {
             environmentStatus = environmentStatus,
             createdAt = createdAt,
             regionName = regionName,
-            address = address
+            address = address,
+            typedConfig = typedConfig
         )
     }
 
@@ -60,7 +62,7 @@ class ServerDao(database: VpnDatabase) {
         return db.selectByEnvironmentStatus(status.toString()).executeAsList()
     }
 
-    internal fun addOvpnFile(dropletId: Long, providerId: Long, ovpnFile: String) {
-        db.addOvpnFile(ovpnFile, dropletId, providerId)
+    internal fun addTypedConfig(dropletId: Long, providerId: Long, typedConfig: TypedConfig) {
+        db.addConfigFile(typedConfig, dropletId, providerId)
     }
 }

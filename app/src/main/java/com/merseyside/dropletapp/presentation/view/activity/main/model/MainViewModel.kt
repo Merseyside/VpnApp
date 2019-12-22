@@ -42,7 +42,9 @@ class MainViewModel(
                 if (!isInitialized || (value.size == 1 && prevSize == 0)) navigateToDropletListScreen()
                 prevSize = value.size
             } else {
-                navigateToAuthScreen()
+                if (!isInitialized) {
+                    navigateToAuthScreen()
+                }
             }
 
             isInitialized = true

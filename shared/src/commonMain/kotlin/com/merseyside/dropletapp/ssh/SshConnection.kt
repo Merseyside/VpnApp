@@ -7,9 +7,9 @@ expect class SshConnection(
 
     fun openSshConnection(): Boolean
 
-    fun setupServer(): Boolean
+    fun setupServer(script: String): Boolean
 
-    fun getOvpnFile(): String?
+    fun getConfigFile(script: String): String?
 
     fun isConnected(): Boolean
 

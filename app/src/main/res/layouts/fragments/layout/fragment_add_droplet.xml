@@ -51,11 +51,22 @@
 
                 </LinearLayout>
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:overScrollMode="never"
+                    bind:types="@{viewModel.types}"
+                    bind:onTypeClick="@={viewModel.selectedType}"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
                 <Button
-                        android:id="@+id/apply"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@{viewModel.buttonTextObservableField}"/>
+                    android:id="@+id/apply"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/normal_spacing"
+                    android:text="@{viewModel.buttonTextObservableField}"/>
 
             </LinearLayout>
 

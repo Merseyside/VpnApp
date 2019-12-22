@@ -17,6 +17,7 @@ class CreateServerInteractor : CoroutineUseCase<Boolean, CreateServerInteractor.
             repository.createServer(
                 params.providerId,
                 params.regionSlug!!,
+                params.typedConfig!!,
                 params.logCallback
             )
         }
@@ -26,6 +27,7 @@ class CreateServerInteractor : CoroutineUseCase<Boolean, CreateServerInteractor.
         val dropletId: Long? = null,
         val providerId: Long,
         val regionSlug: String? = null,
+        val typedConfig: String? = null,
         val logCallback: ProviderRepositoryImpl.LogCallback? = null
     )
 }

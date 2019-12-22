@@ -1,7 +1,11 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.view
 
+import android.Manifest
 import android.app.Activity
 import android.content.*
+import android.content.Intent.ACTION_VIEW
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.pm.PackageManager
 import android.net.VpnService
 import android.os.Bundle
 import android.os.IBinder
@@ -10,8 +14,10 @@ import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
+import com.merseyside.admin.merseylibrary.system.PermissionsManager
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
+import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.databinding.FragmentDropletBinding
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.presentation.base.BaseVpnFragment
@@ -29,6 +35,7 @@ import de.blinkt.openvpn.core.VPNLaunchHelper
 import de.blinkt.openvpn.core.VpnStatus
 import java.io.File
 
+
 class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel>() {
 
 
@@ -38,8 +45,41 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
         }
     }
 
-    private val ovpnFileObserver = Observer<File> {
+    private val configFileObserver = Observer<File> {
         shareOvpn(it)
+    }
+
+    private val openConfigObserver = Observer<File> {
+        shareZip(it)
+    }
+
+    private val storagePermissionError = Observer<Any> {
+        val permission = arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+
+        if (!PermissionsManager.isPermissionsGranted(baseActivityView, permission)) {
+
+            PermissionsManager.verifyStoragePermissions(this, permission,
+                PERMISSION_ACCESS_CODE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            PERMISSION_ACCESS_CODE -> {
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    viewModel.onConnect()
+                } else {
+                    showErrorMsg(getString(R.string.grant_permissions))
+                }
+            }
+        }
     }
 
     private val serverStatus = Observer<SshManager.Status> {
@@ -125,8 +165,10 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
 
         viewModel.vpnProfileLiveData.observe(this, vpnProfileObserver)
         viewModel.connectionLiveData.observe(this, changeConnectionObserver)
-        viewModel.ovpnFileLiveData.observe(this, ovpnFileObserver)
+        viewModel.configFileLiveData.observe(this, configFileObserver)
         viewModel.serverStatusEvent.observe(this, serverStatus)
+        viewModel.openConfigFile.observe(this, openConfigObserver)
+        viewModel.storagePermissionsErrorLiveEvent.observe(this, storagePermissionError)
     }
 
     private fun doLayout() {
@@ -152,8 +194,10 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
 
         viewModel.connectionLiveData.removeObserver(changeConnectionObserver)
         viewModel.vpnProfileLiveData.removeObserver(vpnProfileObserver)
-        viewModel.ovpnFileLiveData.removeObserver(ovpnFileObserver)
+        viewModel.configFileLiveData.removeObserver(configFileObserver)
         viewModel.serverStatusEvent.removeObserver(serverStatus)
+        viewModel.openConfigFile.removeObserver(openConfigObserver)
+        viewModel.storagePermissionsErrorLiveEvent.removeObserver(storagePermissionError)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -223,6 +267,15 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
         startActivity(shareIntent)
     }
 
+    private fun shareZip(file: File) {
+        val newIntent = Intent(ACTION_VIEW)
+        val mimeType = "zip"
+        newIntent.setDataAndType(FileProvider.getUriForFile(context, context.applicationContext.packageName + ".fileprovider", file), mimeType)
+        newIntent.flags = FLAG_ACTIVITY_NEW_TASK
+
+        startActivity(newIntent)
+    }
+
     private fun startAnimation() {
         val animation = ValueAnimatorHelper()
 
@@ -252,6 +305,16 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
                 ).build()
         )
 
+        if (viewModel.server.typedConfig is TypedConfig.WireGuard) {
+            animation.addAnimation(
+                ValueAnimatorHelper.Builder(binding.qr)
+                    .alphaAnimation(
+                        floats = *floatArrayOf(0f, 1f),
+                        duration = 700
+                    ).build()
+            )
+        }
+
         animation.playTogether()
     }
 
@@ -260,6 +323,8 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
 
         private const val START_VPN_PROFILE = 70
         private const val BROADCAST_ACTION = "de.blinkt.openvpn.VPN_STATUS"
+
+        private const val PERMISSION_ACCESS_CODE = 15
 
         fun newInstance(server: Server): DropletFragment {
             val bundle = Bundle().apply {

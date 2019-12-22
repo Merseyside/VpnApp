@@ -18,7 +18,8 @@ actual data class OAuthConfig actual constructor(
     actual var authEndPoint: String,
     actual var tokenEndPoint: String,
     actual var clientId: String,
-    actual var redirectUrl: String
+    actual var redirectUrl: String,
+    actual var scopes: String
 ) {
 
     actual class Builder actual constructor(

@@ -88,15 +88,13 @@ android {
 ext {
     appcompat = '1.1.0-beta01'
     androidX = '1.1.0-alpha03'
-    materialDesign = '1.2.0-alpha02'
+    materialDesign = '1.2.0-alpha03'
     constraintLayout = '1.1.3'
     ktxCore = '1.1.0'
     lifecycleExtensions = '2.1.0'
     preferences = '1.1.0'
 
     coroutines = '1.3.0-RC'
-
-    materialDesign = '1.2.0-alpha02'
 
     dagger2 = '2.17'
     dagger2Compiler = '2.17'
@@ -107,6 +105,8 @@ ext {
 
     horizontalSelector = '1.13'
     mvvmCleanArchLibrary = '1.34'
+
+    qrgen = '2.6.0'
 
     auth = '0.7.1'
 }
@@ -144,6 +144,8 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization"
 
     implementation "net.openid:appauth:$auth"
+
+    implementation "com.github.kenglxn.QRGen:android:$qrgen"
 
     //implementation "com.github.Merseyside.mvvm-clean-arch-library:library:$mvvmCleanArchLibrary"
 

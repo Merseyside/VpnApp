@@ -27,13 +27,15 @@ expect class SshManager(timeoutMillis: Int) {
         username: String,
         host: String,
         keyPathPrivate: String,
+        connectionType: ConnectionType,
         logCallback: ProviderRepositoryImpl.LogCallback? = null
     ): Boolean
 
-    suspend fun getOvpnFile(
+    suspend fun getConfigFile(
         username: String,
         host: String,
-        keyPathPrivate: String
+        keyPathPrivate: String,
+        connectionType: ConnectionType
     ): String?
 
     fun closeConnection(connection: SshConnection)

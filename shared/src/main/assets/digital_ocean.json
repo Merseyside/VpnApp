@@ -2,5 +2,6 @@
   "authEndPoint": "https://cloud.digitalocean.com/v1/oauth/authorize",
   "tokenEndPoint": "",
   "clientId": "84c9f82e41e8bd02ed3d32b01c1b051c8fa2e7a92320b294a24ed9ab454db09b",
-  "redirectUrl": "https://com.merseyside.dropletapp/oauth2redirect"
+  "redirectUrl": "https://com.merseyside.dropletapp/oauth2redirect",
+  "scopes": "read write"
 }

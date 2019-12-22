@@ -43,7 +43,7 @@
                             android:layout_width="@dimen/provider_icon_size_large"
                             android:layout_height="@dimen/provider_icon_size_large"
                             android:adjustViewBounds="true"
-                            android:scaleType="fitXY"
+                            android:scaleType="fitCenter"
                             bind:vectorDrawable="@{viewModel.providerIcon}"
                             tools:ignore="ContentDescription" />
 
@@ -107,13 +107,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                        android:text="@{viewModel.region}"/>
+                        android:text="@{viewModel.address}"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                        android:text="@{viewModel.address}"/>
+                        android:text="@{viewModel.region}"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -124,7 +124,8 @@
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/small_spacing">
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/config_card"
@@ -180,6 +181,8 @@
                                     android:text="@{viewModel.serverConfig}"
                                     android:textColor="?attr/vpnTextColor"
                                     android:editable="false"
+                                    android:background="@null"
+                                    android:layout_marginTop="@dimen/small_spacing"
                                     android:textIsSelectable="true" />
 
 
@@ -209,40 +212,42 @@
                 android:layout_alignParentBottom="true">
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/qr"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/show_qr"/>
+                    android:text="@string/show_qr"
+                    android:onClick="@{view -> viewModel.onQrClick()}"
+                    app:isVisibleOrGone="@{viewModel.isQrVisible}"/>
 
-                <RelativeLayout
+                <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/connect"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_toStartOf="@+id/share"
-                        android:layout_centerVertical="true"
-                        android:enabled="@{viewModel.isConnectButtonEnable()}"
+                        android:layout_weight="0.65"
+                        android:layout_marginEnd="@dimen/normal_spacing"
+                        app:isVisibleOrGone="@{viewModel.isConnectButtonVisible}"
+                        android:enabled="@{viewModel.isConnectButtonEnable}"
                         android:text="@{viewModel.connectButtonTitle}"
                         bind:attrBackgroundColor="@{viewModel.connectButtonColor}"
                         android:onClick="@{view -> viewModel.onConnect()}"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/share"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="0.35"
                         android:background="?attr/colorPrimary"
                         android:text="@string/share"
                         app:icon="@drawable/ic_share"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
                         tools:ignore="ContentDescription"
-                        android:layout_marginStart="@dimen/normal_spacing"
-                        android:onClick="@{view -> viewModel.shareOvpnFile()}"
+                        android:onClick="@{view -> viewModel.shareConfigFile()}"
                         style="@style/Widget.MaterialComponents.Button.Icon"/>
-                </RelativeLayout>
+                </LinearLayout>
 
             </LinearLayout>
 

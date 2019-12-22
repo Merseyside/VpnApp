@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
                 name="viewModel"
@@ -16,6 +17,19 @@
                 android:layout_height="match_parent"
                 android:paddingTop="@dimen/small_spacing">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textAlignment="center"
+                android:minLines="2"
+                android:textColor="@color/grey_dark"
+                tools:visibility="visible"
+                tools:text="@string/no_servers"
+                android:text="@{viewModel.noItemsHintObservableFields}"
+                app:isVisibleOrGone="@{!viewModel.dropletsVisibility}"/>
+
             <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/droplet_list"
                     android:orientation="vertical"
@@ -25,16 +39,6 @@
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:isVisibleOrGone="@{viewModel.dropletsVisibility}">
             </androidx.recyclerview.widget.RecyclerView>
-
-            <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:textAlignment="center"
-                    android:minLines="2"
-                    android:text="@{viewModel.noItemsHintObservableFields}"
-                    app:isVisibleOrGone="@{viewModel.dropletsVisibility}"/>
 
             <ProgressBar
                 android:layout_width="wrap_content"

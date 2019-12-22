@@ -5,7 +5,6 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletItemViewModel
-import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.mvvmcleanarch.presentation.adapter.BaseSortedAdapter
 import com.merseyside.mvvmcleanarch.presentation.view.BaseViewHolder
 
@@ -42,7 +41,7 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
         holder.itemView.rootView.setOnLongClickListener {
             val item = getItemByPosition(holder.adapterPosition)
 
-            val popup = PopupMenu(holder.itemView.context, holder.itemView.findViewById(R.id.provider))
+            val popup = PopupMenu(holder.itemView.context, holder.itemView.findViewById(R.id.type))
             popup.inflate(R.menu.menu_droplet_options)
 
             popup.setOnMenuItemClickListener {

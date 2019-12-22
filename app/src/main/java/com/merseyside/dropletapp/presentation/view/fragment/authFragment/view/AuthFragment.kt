@@ -86,7 +86,7 @@ class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(), 
         manager = OAuthManager.Builder(baseActivityView)
             .setOAuthProvider(oAuthConfig)
             .setPostAuthorizationIntent(Intent(activity, MainActivity::class.java).apply { action = postAuthorizationAction })
-            .setScopes("read", "write")
+            .setScopes(oAuthConfig.scopes)
             .build()
 
         manager.startAuthFlow()

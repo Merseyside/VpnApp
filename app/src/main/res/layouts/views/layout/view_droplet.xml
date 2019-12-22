@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View"/>
         <variable
@@ -26,36 +27,100 @@
         android:onClick="@{view -> obj.onClick()}">
 
         <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.66">
+
+                <ImageView
+                    android:layout_width="@dimen/provider_icon_size_very_large"
+                    android:layout_height="@dimen/provider_icon_size_very_large"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    bind:vectorDrawable="@{obj.icon}"
+                    tools:ignore="ContentDescription" />
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/small_spacing">
+
+                    <TextView
+                        android:id="@+id/ip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:text="@{obj.serverIp}"
+                        android:ellipsize="marquee"
+                        android:singleLine="true" />
+
+                    <TextView
+                        android:id="@+id/type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:text="@{obj.connectionType}"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"/>
+
+                    <TextView
+                        android:id="@+id/region"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:text="@{obj.region}"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/status_container"
                 android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.33"
+                android:gravity="end">
 
-            <TextView
-                    android:id="@+id/name"
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    android:text="@{obj.serverName}"
-                    android:ellipsize="marquee"
-                    android:singleLine="true" />
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:padding="@dimen/small_spacing">
 
-            <TextView
-                    android:id="@+id/provider"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                    android:text="@{obj.providerName}"
-                    android:ellipsize="marquee"
-                    android:singleLine="true"/>
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:minWidth="@dimen/icon_size"
+                        android:minHeight="@dimen/icon_size"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop"
+                        android:background="@color/transparent"
+                        bind:vectorDrawable="@{obj.statusIcon}"
+                        tools:ignore="ContentDescription"/>
 
-            <TextView
-                    android:id="@+id/region"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                    android:text="@{obj.region}"
-                    android:ellipsize="marquee"
-                    android:singleLine="true"/>
+                    <TextView
+                        android:id="@+id/status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:text="@{obj.status}"
+                        bind:attrTextColor="@{obj.statusColor}"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 

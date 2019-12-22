@@ -96,7 +96,6 @@ class OAuthManager private constructor(private val activity: Activity) {
                 throw IllegalArgumentException("Need more arguments")
             }
         }
-
     }
 
     fun startAuthFlow() {

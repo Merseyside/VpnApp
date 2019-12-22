@@ -46,8 +46,8 @@ class OAuthProviderRepositoryImpl(
 
     private fun getConfigFileName(provider: Provider): String {
         return when(provider) {
-            is Provider.Linode -> ""
-            is Provider.CryptoServers -> ""
+            is Provider.Linode -> "linode.json"
+            is Provider.CryptoServers -> "crypto_servers.json"
             is Provider.DigitalOcean -> "digital_ocean.json"
         }
     }

@@ -77,13 +77,19 @@
     
     <string name="region">Region: %1$s</string>
     <string name="address">IP Address: %1$s</string>
-    <string name="type">Connection type: %1$s</string>
+    <string name="type">VPN Type: %1$s</string>
 
     <string name="show_qr">Show QR Code</string>
     <string name="connect">Connect</string>
     <string name="connecting">Connecting</string>
 
     <string name="server_config">Server config</string>
+    <string name="qr_code">QR Code</string>
+    <string name="save_config">Save *.conf</string>
+
+    <string name="wireguard_title">WireGuard</string>
+    <string name="wireguard_description">Your config file saved in\n%1$s\nOpen WireGuard application, press create from file or archive and choose this file in file manager</string>
+    <string name="wireguard_positive_text">I See</string>
 
     <string name="digital_ocean_client_id">5ac7fe6563469c85ed75f4375779d6656a67f721442f61bdfd616955e6778bad</string>
 

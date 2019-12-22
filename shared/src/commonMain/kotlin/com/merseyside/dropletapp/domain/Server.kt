@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.domain
 
+import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.ssh.SshManager
 import kotlinx.serialization.Serializable
 
@@ -13,7 +14,7 @@ data class Server(
     val providerName: String,
     val serverStatus: String,
     val address: String,
-    val config: String?,
+    val typedConfig: TypedConfig,
     val environmentStatus: SshManager.Status
 ) {
 
@@ -30,7 +31,7 @@ data class Server(
         if (providerName != other.providerName) return false
         if (serverStatus != other.serverStatus) return false
         if (address != other.address) return false
-        if (config != other.config) return false
+        if (typedConfig != other.typedConfig) return false
         if (environmentStatus != other.environmentStatus) return false
 
         return true
@@ -45,8 +46,18 @@ data class Server(
         result = 31 * result + providerName.hashCode()
         result = 31 * result + serverStatus.hashCode()
         result = 31 * result + address.hashCode()
-        result = 31 * result + (config?.hashCode() ?: 0)
+        result = 31 * result + (typedConfig?.hashCode() ?: 0)
         result = 31 * result + environmentStatus.hashCode()
         return result
+    }
+
+    fun getConfig(): String? {
+        return when(typedConfig) {
+            is TypedConfig.L2TP, is TypedConfig.PPTP -> {
+                "${typedConfig.config}\nIP Address=$address"
+            }
+
+            else -> typedConfig.config
+        }
     }
 }

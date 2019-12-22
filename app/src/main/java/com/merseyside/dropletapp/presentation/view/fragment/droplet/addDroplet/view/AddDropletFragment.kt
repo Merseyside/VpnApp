@@ -99,9 +99,7 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
             )
 
             if (PermissionsManager.isPermissionsGranted(baseActivityView, permission)) {
-                if (viewModel.createServer()) {
-
-                }
+                viewModel.createServer()
             } else {
                 PermissionsManager.verifyStoragePermissions(this, permission, PERMISSION_ACCESS_CODE)
             }

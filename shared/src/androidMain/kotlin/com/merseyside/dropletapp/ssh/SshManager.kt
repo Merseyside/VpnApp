@@ -100,23 +100,25 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
         username: String,
         host: String,
         keyPathPrivate: String,
+        connectionType: ConnectionType,
         logCallback: ProviderRepositoryImpl.LogCallback?
     ): Boolean {
         val connection = openSshConnection(username, host, keyPathPrivate, logCallback) ?: return false
 
         logCallback?.onLog("Setting up server")
 
-        return connection.setupServer()
+        return connection.setupServer(connectionType.getSetupScript())
     }
 
-    actual suspend fun getOvpnFile(
+    actual suspend fun getConfigFile(
         username: String,
         host: String,
-        keyPathPrivate: String
+        keyPathPrivate: String,
+        connectionType: ConnectionType
     ): String? {
         val connection = openSshConnection(username, host, keyPathPrivate, null) ?: throw ConnectException("Can not connect to server")
 
-        return connection.getOvpnFile()?.also { Log.d(TAG, it) }
+        return connection.getConfigFile(connectionType.getConfigFileScript())?.also { Log.d(TAG, it) }
     }
 
     actual fun closeConnection(connection: SshConnection) {

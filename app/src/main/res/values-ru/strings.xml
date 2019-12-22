@@ -20,7 +20,7 @@
     <string name="complete_msg">Удачно выполнено</string>
     <string name="fill_fields_msg">Пожалуйста, заполните все поля правильно. Имя должно быть от 3-х символов</string>
     <string name="unknown_error_msg">Неизвестная ошибка</string>
-    <string name="grant_permissions">необходимо получить данное разрешение чтобы пользоваться приложением</string>
+    <string name="grant_permissions">Необходимо получить данное разрешение чтобы пользоваться приложением</string>
     <string name="no_servers">Серверы не добавлены\nНажмите + чтобы добавить</string>
 
     <string name="delete_action">Удалить</string>
@@ -74,12 +74,17 @@
 
     <string name="region">Регион: %1$s</string>
     <string name="address">IP адрес: %1$s</string>
-    <string name="type">Тип подключения: %1$s</string>
+    <string name="type">Тип VPN: %1$s</string>
 
     <string name="show_qr">Показать QR Code</string>
     <string name="connect">Подключиться</string>
     <string name="connecting">Идет подключение</string>
 
     <string name="server_config">Конфигурация сервера</string>
+    <string name="save_config">Сохранить *.conf</string>
+
+    <string name="wireguard_title">WireGuard</string>
+    <string name="wireguard_description">Ваш конфигурационный файл сохранен в\n%1$s\nОткройте приложение WireGuard на своем смартфоне, нажмите "create from file or archive" и выберите созданный файл</string>
+    <string name="wireguard_positive_text">Я понял</string>
 
 </resources>

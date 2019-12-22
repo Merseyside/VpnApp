@@ -37,12 +37,10 @@ abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel
         inputMethodManager.hideSoftInputFromWindow(view!!.windowToken, 0)
     }
 
-    override fun getToolbar(): Toolbar? {
-        return null
-    }
-
     protected fun goBack() {
-        viewModel.goBack()
+        if (fragmentManager != null) {
+            if (fragmentManager!!.backStackEntryCount > 0) viewModel.goBack()
+        }
     }
 
     open fun hasTitleBackButton(): Boolean {

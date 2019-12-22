@@ -28,17 +28,8 @@ class AddDropletModule(
     }
 
     @Provides
-    internal fun provideAddProviderFragmentViewModelProvider(
-        router: Router,
-        getRegionsByProviderUseCase: GetRegionsByProviderInteractor,
-        createServerUseCase: CreateServerInteractor
-    ): ViewModelProvider.Factory {
-        return AddProviderFragmentViewModelProviderFactory(
-            bundle,
-            router,
-            getRegionsByProviderUseCase,
-            createServerUseCase
-        )
+    internal fun provideGetTypedConfigsInteractor(): GetTypedConfigNamesInteractor {
+        return GetTypedConfigNamesInteractor()
     }
 
     @Provides
@@ -46,18 +37,37 @@ class AddDropletModule(
         return ViewModelProviders.of(fragment, factory).get(AddDropletViewModel::class.java)
     }
 
+    @Provides
+    internal fun provideAddProviderFragmentViewModelProvider(
+        router: Router,
+        getRegionsByProviderUseCase: GetRegionsByProviderInteractor,
+        createServerUseCase: CreateServerInteractor,
+        getTypedConfigNamesUseCase: GetTypedConfigNamesInteractor
+    ): ViewModelProvider.Factory {
+        return AddProviderFragmentViewModelProviderFactory(
+            bundle,
+            router,
+            getRegionsByProviderUseCase,
+            createServerUseCase,
+            getTypedConfigNamesUseCase
+        )
+    }
+
     class AddProviderFragmentViewModelProviderFactory(
         bundle: Bundle?,
         private val router: Router,
         private val getRegionsByProviderUseCase: GetRegionsByProviderInteractor,
-        private val createServerUseCase: CreateServerInteractor
+        private val createServerUseCase: CreateServerInteractor,
+        private val getTypedConfigNamesUseCase: GetTypedConfigNamesInteractor
     ): BundleAwareViewModelFactory<AddDropletViewModel>(bundle) {
 
         override fun getViewModel(): AddDropletViewModel {
             return AddDropletViewModel(
                 router,
                 getRegionsByProviderUseCase,
-                createServerUseCase)
+                createServerUseCase,
+                getTypedConfigNamesUseCase
+            )
         }
     }
 }

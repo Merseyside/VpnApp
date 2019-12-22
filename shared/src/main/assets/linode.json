@@ -1,0 +1,7 @@
+{
+  "authEndPoint": "https://login.linode.com/oauth/authorize",
+  "tokenEndPoint": "",
+  "clientId": "d9fdeeeb3582e62dd670",
+  "redirectUrl": "https://com.merseyside.dropletapp/oauth2redirect",
+  "scopes": "linodes:read_write"
+}

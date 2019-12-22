@@ -14,7 +14,7 @@ abstract class BaseDropletViewModel(private val router: Router? = null) : Parcel
         router?.exit()
     }
 
-    protected fun getString(@StringRes id: Int): String {
-        return VpnApplication.getInstance().getActualString(id)
+    protected fun getString(@StringRes id: Int, vararg args: String): String {
+        return getString(VpnApplication.getInstance(), id, *args)
     }
 }

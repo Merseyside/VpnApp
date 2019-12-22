@@ -32,7 +32,7 @@ class DropletListViewModel(
     val dropletsVisibility = ObservableField<Boolean>(true)
     val dropletLiveData = MutableLiveData<List<Server>>()
 
-    val noItemsHintObservableFields = ObservableField<String>()
+    val noItemsHintObservableFields = ObservableField<String>(getString(R.string.no_servers))
 
 
     override fun readFrom(bundle: Bundle) {}
@@ -40,8 +40,6 @@ class DropletListViewModel(
     override fun writeTo(bundle: Bundle) {}
 
     override fun dispose() {
-        Logger.log(this, "dispose")
-
         getDropletsUseCase.cancel()
         deleteDropletUseCase.cancel()
         job.cancel()
@@ -60,8 +58,6 @@ class DropletListViewModel(
 
     private val dropletObserver = object : FlowCollector<List<Server>> {
         override suspend fun emit(value: List<Server>) {
-
-            Logger.log(this, "emit")
 
             if (value.isEmpty()) {
                 dropletsVisibility.set(false)

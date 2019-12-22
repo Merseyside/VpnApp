@@ -1,0 +1,7 @@
+{
+  "authEndPoint": "https://cryptoservers.net/oauth/authorize",
+  "tokenEndPoint": "",
+  "clientId": "176",
+  "redirectUrl": "https://com.merseyside.dropletapp/oauth2redirect",
+  "scopes": "*"
+}

@@ -1,14 +1,19 @@
 package com.merseyside.dropletapp.domain.repository
 
+import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
+import com.merseyside.dropletapp.db.model.ServerModel
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
+import com.merseyside.dropletapp.ssh.ConnectionType
 import kotlinx.coroutines.flow.Flow
 
 interface ProviderRepository {
 
     suspend fun getProviders(): List<Provider>
+
+    suspend fun getTypedConfigNames(): List<String>
 
     suspend fun getProvidersWithToken(): List<Provider>
 
@@ -17,6 +22,7 @@ interface ProviderRepository {
     suspend fun createServer(
         providerId: Long,
         regionSlug: String,
+        typeName: String,
         logCallback: ProviderRepositoryImpl.LogCallback? = null
     ): Boolean
 
@@ -30,5 +36,7 @@ interface ProviderRepository {
 
     suspend fun deleteDroplet(providerId: Long, dropletId: Long): Boolean
 
-    suspend fun getOvpnFile(dropletId: Long, providerId: Long): String
+    suspend fun getTypedConfig(server: ServerModel): TypedConfig
+
+
 }
