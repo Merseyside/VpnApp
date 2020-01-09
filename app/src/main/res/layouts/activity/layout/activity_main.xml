@@ -10,32 +10,38 @@
                 type="com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewModel"/>
     </data>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBar"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="match_parent"
             android:layout_width="match_parent">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appBar"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:theme="@style/ToolbarTheme"
+                    app:popupTheme="@style/ToolbarTheme.Popup"
+                    app:navigationIcon="@drawable/ic_arrow"/>
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <FrameLayout
+                android:id="@+id/container"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:theme="@style/ToolbarTheme"
-                app:popupTheme="@style/ToolbarTheme.Popup"
-                app:navigationIcon="@drawable/ic_arrow"/>
+                android:layout_height="match_parent"
+                android:background="@color/transparent" />
 
-        </com.google.android.material.appbar.AppBarLayout>
+        </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/transparent" />
-
-    </LinearLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

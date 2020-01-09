@@ -1,7 +1,7 @@
 {
   "authEndPoint": "https://cryptoservers.net/oauth/authorize",
-  "tokenEndPoint": "",
+  "host": "myvpn.run",
   "clientId": "176",
-  "redirectUrl": "https://com.merseyside.dropletapp/oauth2redirect",
+  "redirectUrl": "https://myvpn.run/",
   "scopes": "*"
 }

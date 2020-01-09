@@ -36,8 +36,10 @@ class ProviderRepositoryImpl(
     private val oAuthProviderRepository: OAuthProviderRepository
 ) : ProviderRepository, CoroutineScope {
 
+    enum class LogStatus {SSH_KEYS, CREATING_SERVER, CHECKING_STATUS, CONNECTING, SETUP}
+
     interface LogCallback {
-        fun onLog(log: String)
+        fun onLog(log: LogStatus)
     }
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { context, throwable ->
@@ -68,13 +70,14 @@ class ProviderRepositoryImpl(
     }
 
     init {
-        startCheckingStatus()
+        startCheckingConfigFile()
+        startCheckingServerStatus()
     }
 
-    private fun startCheckingStatus() {
+    private fun startCheckingConfigFile() {
         launch {
             while(true) {
-                delay(15000)
+                delay(10000)
                 val inProcessServers = serverDao.getByStatus(SshManager.Status.IN_PROCESS)
 
                 inProcessServers.forEach { server ->
@@ -85,6 +88,28 @@ class ProviderRepositoryImpl(
                             server.id,
                             server.providerId,
                             SshManager.Status.ERROR.toString()
+                        )
+                    }
+                }
+
+                yield()
+            }
+        }
+    }
+
+    private fun startCheckingServerStatus() {
+        launch {
+            while(true) {
+                delay(10000)
+                val inProcessServers = serverDao.getByStatus(SshManager.Status.STARTING)
+
+                inProcessServers.forEach { server ->
+
+                    if (isServerAlive(getToken(server.providerId), server.providerId, server.id)) {
+                        serverDao.updateStatus(
+                            server.id,
+                            server.providerId,
+                            SshManager.Status.PENDING.toString()
                         )
                     }
                 }
@@ -128,7 +153,7 @@ class ProviderRepositoryImpl(
 
 
     override suspend fun createServer(dropletId: Long, providerId: Long, logCallback: LogCallback?): Boolean {
-        logCallback?.onLog("Checking server status...")
+        logCallback?.onLog(LogStatus.CHECKING_STATUS)
 
         val server = serverDao.getDropletByIds(dropletId, providerId)
 
@@ -137,6 +162,7 @@ class ProviderRepositoryImpl(
 
             val connectionType = getConnectionType(server.typedConfig)
             val result = setupServer(
+                providerId = providerId,
                 username = server.username,
                 ipAddress = server.address,
                 keyPathPrivate = keys?.privateKeyPath ?: throw NoDataException(),
@@ -152,9 +178,11 @@ class ProviderRepositoryImpl(
                 }
                 serverDao.updateStatus(dropletId, providerId, status)
             } else {
-                deleteDroplet(providerId, server.id)
-
-                throw BannedAddressException()
+                serverDao.updateStatus(
+                    server.id,
+                    server.providerId,
+                    SshManager.Status.ERROR.toString()
+                )
             }
 
             return result
@@ -178,7 +206,7 @@ class ProviderRepositoryImpl(
         logCallback: LogCallback?
     ): Boolean {
 
-        logCallback?.onLog("Generating ssh keys...")
+        logCallback?.onLog(LogStatus.SSH_KEYS)
 
         val token = getToken(providerId)
 
@@ -187,7 +215,7 @@ class ProviderRepositoryImpl(
         val providerApi = providerApiFactory.getProvider(providerId)
         val keyResponse = providerApi.importKey(token, "My VPN ssh key", keyPair.first.key)
 
-        logCallback?.onLog("Creating a new server...")
+        logCallback?.onLog(LogStatus.CREATING_SERVER)
 
         val createDropletResponse = providerApi.createDroplet(
             token = token,
@@ -214,7 +242,7 @@ class ProviderRepositoryImpl(
                     name = info.name,
                     sshKeyId = keyResponse.id,
                     serverStatus = info.status,
-                    environmentStatus = SshManager.Status.PENDING.toString(),
+                    environmentStatus = SshManager.Status.STARTING.toString(),
                     createdAt = info.createdAt,
                     regionName = info.regionName,
                     address = address,
@@ -222,35 +250,33 @@ class ProviderRepositoryImpl(
                 )
             }
 
-            logCallback?.onLog("Server is valid")
-
             keyDao.insert(keyResponse.id, keyPair.first.keyPath, keyPair.second.keyPath, token)
 
-            logCallback?.onLog("Connecting to server by SSH...")
-
-
-            val connectionType = getConnectionType(typeConfig)
-            val result = setupServer(
-                username = username,
-                ipAddress = address,
-                keyPathPrivate = keyPair.second.keyPath,
-                connectionType = connectionType,
-                logCallback = logCallback
-            )
-
-            if (result) {
-                val status = if (connectionType.isNeedsConfig()) {
-                    SshManager.Status.IN_PROCESS.toString()
-                } else {
-                    SshManager.Status.READY.toString()
-                }
-                serverDao.updateStatus(createDropletResponse.id, providerId, status)
-            } else {
-                deleteDroplet(providerId, createDropletResponse.id)
-
-                throw BannedAddressException()
-            }
-
+//            logCallback?.onLog("Connecting to server by SSH...")
+//
+//            val connectionType = getConnectionType(typeConfig)
+//            val result = setupServer(
+//                providerId = providerId,
+//                username = username,
+//                ipAddress = address,
+//                keyPathPrivate = keyPair.second.keyPath,
+//                connectionType = connectionType,
+//                logCallback = logCallback
+//            )
+//
+//            if (result) {
+//                val status = if (connectionType.isNeedsConfig()) {
+//                    SshManager.Status.IN_PROCESS.toString()
+//                } else {
+//                    SshManager.Status.READY.toString()
+//                }
+//                serverDao.updateStatus(createDropletResponse.id, providerId, status)
+//            } else {
+//                deleteDroplet(providerId, createDropletResponse.id)
+//
+//                throw BannedAddressException()
+//            }
+//
             return true
         }
 
@@ -258,17 +284,26 @@ class ProviderRepositoryImpl(
     }
 
     private suspend fun setupServer(
+        providerId: Long,
         username: String,
         ipAddress: String,
         keyPathPrivate: String,
         connectionType: ConnectionType,
         logCallback: LogCallback? = null): Boolean {
+        val provider = Provider.getProviderById(providerId)
+
+        val preScriptTimeSeconds = if (provider is Provider.CryptoServers) {
+            30
+        } else {
+            null
+        }
 
         return sshManager.setupServer(
             username,
             ipAddress,
             keyPathPrivate,
             connectionType,
+            preScriptTimeSeconds,
             logCallback
         )
     }
@@ -311,48 +346,38 @@ class ProviderRepositoryImpl(
 
     override suspend fun getTypedConfig(server: ServerModel): TypedConfig {
 
-        if (isServerAlive(server.providerId, server.id)) {
+        val keys = keyDao.selectById(server.sshKeyId)
 
-            val keys = keyDao.selectById(server.sshKeyId)
+        if (server.typedConfig.config.isNullOrEmpty()) {
 
-            if (server.typedConfig.config.isNullOrEmpty()) {
+            val file = sshManager.getConfigFile(
+                server.username,
+                server.address,
+                keys?.privateKeyPath ?: throw NoDataException(),
+                getConnectionType(server.typedConfig)
+            )
 
-                val file = sshManager.getConfigFile(
-                    server.username,
-                    server.address,
-                    keys?.privateKeyPath ?: throw NoDataException(),
-                    getConnectionType(server.typedConfig)
+            server.typedConfig.config = file
+
+            if (file != null && file.length > 200) {
+                serverDao.updateStatus(
+                    server.id,
+                    server.providerId,
+                    SshManager.Status.READY.toString()
                 )
+                serverDao.addTypedConfig(server.id, server.providerId, server.typedConfig)
+            } else throw NoDataException("No ovpn file found")
 
-                server.typedConfig.config = file
-
-                if (file != null && file.length > 200) {
-                    serverDao.updateStatus(
-                        server.id,
-                        server.providerId,
-                        SshManager.Status.READY.toString()
-                    )
-                    serverDao.addTypedConfig(server.id, server.providerId, server.typedConfig)
-                } else throw NoDataException("No ovpn file found")
-
-                return server.typedConfig
-            } else {
-                return server.typedConfig
-            }
+            return server.typedConfig
         } else {
-            deleteDroplet(server.id, server.providerId)
+            return server.typedConfig
         }
-
-
-        throw NoDataException("No droplet with passed id")
     }
 
-    private suspend fun isServerAlive(providerId: Long, dropletId: Long): Boolean {
-//        val provider = providerApiFactory.getProvider(providerId)
-//
-//        return provider.isServerAlive(token, dropletId)
+    private suspend fun isServerAlive(token: String, providerId: Long, dropletId: Long): Boolean {
+        val provider = providerApiFactory.getProvider(providerId)
 
-        return true
+        return provider.isServerAlive(token, dropletId)
     }
 
     private fun generateRandomString(): String {

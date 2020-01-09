@@ -10,8 +10,12 @@ abstract class BaseDropletViewModel(private val router: Router? = null) : Parcel
 
     protected val errorMsgCreator = ErrorMessageFactory()
 
+    protected var isNavigationEnable = true
+
     fun goBack() {
-        router?.exit()
+        if (isNavigationEnable) {
+            router?.exit()
+        }
     }
 
     protected fun getString(@StringRes id: Int, vararg args: String): String {

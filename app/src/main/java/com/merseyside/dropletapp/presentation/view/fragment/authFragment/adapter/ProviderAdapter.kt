@@ -17,6 +17,6 @@ class ProviderAdapter : BaseSortedAdapter<OAuthProvider, ProviderItemModel>() {
     }
 
     override fun getLayoutIdForPosition(position: Int): Int {
-        return R.layout.view_provider1
+        return R.layout.view_provider
     }
 }

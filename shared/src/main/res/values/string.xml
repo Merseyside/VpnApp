@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="kek">123</string>
+    <string name="connecting">Connecting to the server</string>
 </resources>

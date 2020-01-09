@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
     <application
             android:allowBackup="false"
@@ -24,8 +23,7 @@
 
         <activity
             android:name=".presentation.view.activity.main.view.MainActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleInstance">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -36,18 +34,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="net.openid.appauth.RedirectUriReceiverActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="com.merseyside.dropletapp"
-                    android:scheme="https"
-                    android:path="/oauth2redirect"/>
-            </intent-filter>
-        </activity>
+        <activity android:name=".presentation.view.activity.browser.BrowserActivity"
+            android:screenOrientation="portrait" />
 
         <service
                 android:name="de.blinkt.openvpn.core.OpenVPNService"
@@ -68,7 +56,5 @@
         </provider>
 
     </application>
-
-
 
 </manifest>

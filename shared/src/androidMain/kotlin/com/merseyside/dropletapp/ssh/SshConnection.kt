@@ -67,7 +67,6 @@ actual class SshConnection actual constructor(
                 return cmd.exitStatus to output
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.d(TAG, IOUtils.readFully(cmd.inputStream).toString())
 
                 return 1 to ""
             } finally {
@@ -80,7 +79,6 @@ actual class SshConnection actual constructor(
 
     actual fun setupServer(script: String): Boolean {
         Log.d(TAG, "setupServer")
-        Thread.sleep(30000)
 
         val pair = execCommand(script)
 

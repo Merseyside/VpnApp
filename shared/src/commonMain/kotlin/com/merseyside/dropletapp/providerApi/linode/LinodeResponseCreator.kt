@@ -129,6 +129,22 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
     }
 
+    @UseExperimental(ImplicitReflectionSerializer::class)
+    suspend fun getLinode(
+        token: String,
+        linodeId: Long
+    ): LinodeCreateDropletResponse {
+        val apiMethod = "linode/instances/$linodeId"
+
+        val call = client.get<String> {
+            url.takeFrom(getRoute(apiMethod))
+
+            header(AUTHORIZATION_KEY, getAuthHeader(token))
+        }
+
+        return json.parse(call)
+    }
+
     suspend fun deleteLinode(token: String, linodeId: Long) {
         val apiMethod = "linode/instances/$linodeId"
 

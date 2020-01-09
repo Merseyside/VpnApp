@@ -53,12 +53,26 @@ class LinodeProvider private constructor(httpClientEngine: HttpClientEngine): Pr
 
     override suspend fun getRegions(token: String): List<RegionPoint> {
         val response = responseCreator.getRegions()
+        val regionMap = HashMap<String, Int>()
 
         return response.regionPoint.mapNotNull {
             if (it.capabilities.contains("Linodes")) {
+
+                var country = getHumanReadeableRegion(it.name)
+
+                country = if (regionMap.containsKey(country)) {
+                    regionMap[country] = regionMap[country]!!.plus(1)
+
+                    "$country ${regionMap[country]}"
+                } else {
+                    regionMap[country] = 1
+
+                    "$country 1"
+                }
+
                 RegionPoint(
                     slug = it.slug,
-                    name = it.name,
+                    name = country,
                     isAvailable = true
                 )
             } else {
@@ -82,8 +96,10 @@ class LinodeProvider private constructor(httpClientEngine: HttpClientEngine): Pr
     }
 
     override suspend fun isServerAlive(token: String, serverId: Long): Boolean {
-        return true
+        return responseCreator.getLinode(token, serverId).status == "running"
     }
+
+
 
     companion object {
 
@@ -96,6 +112,25 @@ class LinodeProvider private constructor(httpClientEngine: HttpClientEngine): Pr
             }
 
             return instance!!
+        }
+
+        private val regionMap = mapOf(
+            "in" to "India",
+            "ca" to "Canada",
+            "us" to "United States",
+            "au" to "Australia",
+            "uk" to "United Kingdom",
+            "sg" to "Singapore",
+            "de" to "Germany",
+            "jp" to "Japan"
+        )
+
+        private fun getHumanReadeableRegion(country: String): String {
+            return if (regionMap.containsKey(country)) {
+                regionMap[country] ?: error("")
+            } else {
+                country
+            }
         }
     }
 }

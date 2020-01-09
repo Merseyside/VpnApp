@@ -25,41 +25,76 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent">
 
-
-
                 <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/normal_spacing">
 
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                             android:text="@{viewModel.regionHintObservableField}"
                             android:layout_marginBottom="@dimen/very_small_spacing"/>
 
-                    <androidx.appcompat.widget.AppCompatSpinner
-                            android:id="@+id/region_spinner"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/spinner_size"
-                            android:overlapAnchor="false"
-                            android:scrollbars="none"
-                            android:minWidth="@dimen/spinner_size"
-                            android:background="@drawable/spinner_ripple"
-                            android:backgroundTint="@color/grey_dark"/>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                                android:id="@+id/region_spinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/spinner_size"
+                                android:overlapAnchor="false"
+                                android:scrollbars="none"
+                                android:minWidth="@dimen/spinner_size"
+                                android:background="@drawable/spinner_ripple"
+                                android:backgroundTint="@color/grey_dark"/>
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentRight="true"
+                            app:srcCompat="@drawable/ic_arrow_drop_down"
+                            android:layout_marginEnd="@dimen/small_spacing"/>
+
+                    </RelativeLayout>
 
                 </LinearLayout>
+                
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey_dark"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:overScrollMode="never"
-                    bind:types="@{viewModel.types}"
-                    bind:onTypeClick="@={viewModel.selectedType}"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+                    android:layout_marginTop="@dimen/normal_spacing">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                        android:text="@{viewModel.vpnTypeObservableField}"
+                        android:layout_marginBottom="@dimen/very_small_spacing"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:overScrollMode="never"
+                        android:layout_marginTop="@dimen/small_spacing"
+                        bind:types="@{viewModel.types}"
+                        bind:onTypeClick="@={viewModel.selectedType}"
+
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/apply"

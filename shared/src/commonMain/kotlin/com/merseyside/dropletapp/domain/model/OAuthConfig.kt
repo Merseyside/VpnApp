@@ -2,14 +2,14 @@ package com.merseyside.dropletapp.domain.model
 
 expect class OAuthConfig(
     authEndPoint: String,
-    tokenEndPoint: String,
+    host: String,
     clientId: String,
     redirectUrl: String,
     scopes: String
 ) {
 
     var authEndPoint: String
-    var tokenEndPoint: String
+    var host: String
     var clientId: String
     var redirectUrl: String
     var scopes: String

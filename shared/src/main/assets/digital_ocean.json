@@ -1,7 +1,7 @@
 {
   "authEndPoint": "https://cloud.digitalocean.com/v1/oauth/authorize",
-  "tokenEndPoint": "",
-  "clientId": "84c9f82e41e8bd02ed3d32b01c1b051c8fa2e7a92320b294a24ed9ab454db09b",
-  "redirectUrl": "https://com.merseyside.dropletapp/oauth2redirect",
+  "host": "localhost",
+  "clientId": "a018284aebda94528eb1fdb00e5f53803590f3dd050a1da64a9e549e2eb1c309",
+  "redirectUrl": "https://localhost",
   "scopes": "read write"
 }

@@ -26,7 +26,7 @@
                 android:layout_marginBottom="@dimen/normal_spacing"
                 android:layout_above="@+id/action_container">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
@@ -34,10 +34,10 @@
 
                     <LinearLayout
                         android:orientation="horizontal"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.66"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:layout_toStartOf="@+id/status_container">
 
                         <ImageView
                             android:layout_width="@dimen/provider_icon_size_large"
@@ -60,10 +60,9 @@
                     <LinearLayout
                         android:id="@+id/status_container"
                         android:orientation="vertical"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.33"
-                        android:gravity="end">
+                        android:layout_alignParentEnd="true">
 
                         <LinearLayout
                             android:orientation="vertical"
@@ -95,7 +94,7 @@
 
                     </LinearLayout>
 
-                </LinearLayout>
+                </RelativeLayout>
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -215,7 +214,7 @@
                     android:id="@+id/qr"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/show_qr"
+                    android:text="@{viewModel.qrTitleText}"
                     android:onClick="@{view -> viewModel.onQrClick()}"
                     app:isVisibleOrGone="@{viewModel.isQrVisible}"/>
 

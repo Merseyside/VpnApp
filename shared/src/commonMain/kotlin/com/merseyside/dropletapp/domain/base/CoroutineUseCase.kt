@@ -10,25 +10,25 @@ abstract class CoroutineUseCase<T, Params> : CoroutineScope by CoroutineScope(Di
     protected abstract suspend fun executeOnBackground(params: Params?): T
 
     fun execute(
+        onPreExecute: () -> Unit = {},
         onComplete: (T) -> Unit = {},
         onError: (Throwable) -> Unit = {},
-        params: Params? = null,
-        showProgress: () -> Unit = {},
-        hideProgress: () -> Unit = {}
+        onPostExecute: () -> Unit = {},
+        params: Params? = null
     ) {
         launch {
+            onPreExecute()
             try {
-                showProgress()
                 val result = withContext(backgroundContext) {
                     executeOnBackground(params)
                 }
                 onComplete.invoke(result)
-                hideProgress()
+                onPostExecute()
             } catch (e: CancellationException) {
-                hideProgress()
+                onPostExecute()
             } catch (e: Throwable) {
                 onError(e)
-                hideProgress()
+                onPostExecute()
             }
         }
     }

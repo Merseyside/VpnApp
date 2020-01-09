@@ -8,6 +8,7 @@ import android.view.View
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.dropletapp.R
+import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
@@ -17,6 +18,7 @@ import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
+import com.merseyside.dropletapp.utils.getLogByStatus
 import kotlinx.coroutines.cancel
 import ru.terrakok.cicerone.Router
 
@@ -27,6 +29,7 @@ class AddDropletViewModel(
     private val getTypedConfigNamesUseCase: GetTypedConfigNamesInteractor
 ) : BaseDropletViewModel(router) {
 
+    val vpnTypeObservableField = ObservableField<String>(getString(R.string.vpn_type))
     val regionHintObservableField = ObservableField<String>(getString(R.string.hint_region_summary))
     val buttonTextObservableField = ObservableField<String>(getString(R.string.create_server))
 
@@ -34,9 +37,9 @@ class AddDropletViewModel(
     val selectedType = ObservableField<String>()
 
     private var provider: Provider? = null
-    private var isNavigationEnable = true
 
     override fun updateLanguage(context: Context) {
+        vpnTypeObservableField.set(context.getString(R.string.vpn_type))
         regionHintObservableField.set(context.getString(R.string.hint_region_summary))
         buttonTextObservableField.set(context.getString(R.string.create_server))
     }
@@ -71,8 +74,8 @@ class AddDropletViewModel(
             }, onError = {throwable ->
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
             },
-            showProgress = { showProgress(getString(R.string.loading_regions_msg)) },
-            hideProgress = { hideProgress() }
+            onPreExecute = { showProgress(getString(R.string.loading_regions_msg)) },
+            onPostExecute = { hideProgress() }
         )
     }
 
@@ -100,13 +103,9 @@ class AddDropletViewModel(
                         regionSlug = currentRegion?.slug ?: throw IllegalArgumentException(),
                         typedConfig = selectedType.get(),
                         logCallback = object : ProviderRepositoryImpl.LogCallback {
-                            override fun onLog(log: String) {
+                            override fun onLog(log: ProviderRepositoryImpl.LogStatus) {
                                 Handler(Looper.getMainLooper()).post {
-                                    showProgress(log)
-
-                                    if (log == "Server is valid") {
-                                        isNavigationEnable = true
-                                    }
+                                    showProgress(getLogByStatus(VpnApplication.getInstance().context, log))
                                 }
                             }
                         }
@@ -125,11 +124,11 @@ class AddDropletViewModel(
                                 createServer()
                             })
                     },
-                    showProgress = {
+                    onPreExecute = {
                         isNavigationEnable = false
                         showProgress(getString(R.string.setup_server_msg))
                     },
-                    hideProgress = { hideProgress() }
+                    onPostExecute = { hideProgress() }
                 )
             } catch (e: Exception) {
                 return false

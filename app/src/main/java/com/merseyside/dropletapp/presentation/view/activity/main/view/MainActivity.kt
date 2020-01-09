@@ -1,6 +1,5 @@
 package com.merseyside.dropletapp.presentation.view.activity.main.view
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -15,8 +14,9 @@ import com.merseyside.dropletapp.presentation.base.BaseDropletActivity
 import com.merseyside.dropletapp.presentation.di.component.DaggerMainComponent
 import com.merseyside.dropletapp.presentation.di.module.MainModule
 import com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewModel
-import com.merseyside.dropletapp.presentation.view.fragment.authFragment.view.IAuthFragment
+import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view.DropletListFragment
 import com.merseyside.dropletapp.presentation.view.fragment.settings.view.SettingsFragment
+import com.merseyside.mvvmcleanarch.utils.Logger
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -73,14 +73,6 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
         super.onCreate(savedInstanceState)
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-
-        if (savedInstanceState == null) {
-            init()
-        }
-    }
-
-    private fun init() {
-        getMsgTextColor()
     }
 
     override fun onResumeFragments() {
@@ -101,15 +93,6 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
         return binding.toolbar
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-
-        val fragment = getCurrentFragment()
-        if (fragment is IAuthFragment) {
-            fragment.checkIntent(intent)
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
@@ -121,6 +104,12 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
             R.id.action_settings -> {
                 if (getCurrentFragment() !is SettingsFragment) {
                     viewModel.navigateToSettings()
+                }
+            }
+
+            R.id.action_servers -> {
+                if (getCurrentFragment() !is DropletListFragment) {
+                    viewModel.navigateToDropletListScreen()
                 }
             }
         }

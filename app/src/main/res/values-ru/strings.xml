@@ -17,7 +17,7 @@
     <string name="hint_region_summary">Выберите регион</string>
     <string name="hint_server_name_summary">Имя сервера</string>
 
-    <string name="complete_msg">Удачно выполнено</string>
+    <string name="complete_msg">Выполнено</string>
     <string name="fill_fields_msg">Пожалуйста, заполните все поля правильно. Имя должно быть от 3-х символов</string>
     <string name="unknown_error_msg">Неизвестная ошибка</string>
     <string name="grant_permissions">Необходимо получить данное разрешение чтобы пользоваться приложением</string>
@@ -36,10 +36,11 @@
     <string name="loading_regions_msg">Загрузка регионов, пожалуйста, подождите…</string>
 
     <string name="connected">Подключено</string>
+    <string name="starting">Запускается</string>
     <string name="ready">Готов</string>
     <string name="error">Ошибка</string>
     <string name="in_process">В процессе</string>
-    <string name="pending">Ожидается</string>
+    <string name="pending">Настроить</string>
     <string name="server_prefix">Сервер:</string>
     <string name="provider_prefix">Провайдер:</string>
     <string name="region_prefix">Регион:</string>
@@ -47,7 +48,7 @@
     <string name="no_data_msg">Нет данных</string>
     <string name="already_added_msg">Уже добавлено</string>
     <string name="banned_msg">IP адрес созданного сервера заблокирован надзорными инстанциями в Вашей стране</string>
-    <string name="successfully_deleted">Усапешно удалено</string>
+    <string name="successfully_deleted">Успешно удалено</string>
 
     <string name="access_key">Ключ доступа</string>
     <string name="secret_key">Секретный ключ</string>
@@ -75,6 +76,7 @@
     <string name="region">Регион: %1$s</string>
     <string name="address">IP адрес: %1$s</string>
     <string name="type">Тип VPN: %1$s</string>
+    <string name="vpn_type">Тип VPN</string>
 
     <string name="show_qr">Показать QR Code</string>
     <string name="connect">Подключиться</string>
@@ -86,5 +88,18 @@
     <string name="wireguard_title">WireGuard</string>
     <string name="wireguard_description">Ваш конфигурационный файл сохранен в\n%1$s\nОткройте приложение WireGuard на своем смартфоне, нажмите "create from file or archive" и выберите созданный файл</string>
     <string name="wireguard_positive_text">Я понял</string>
+
+    <string name="delete_server">Удалить сервер?</string>
+    <string name="delete_token">Удалить ключ?</string>
+    <string name="delete_token_msg">При удалении ключа вы потеряете контроль над серверами у данного провайдера</string>
+
+    <string name="choose_provider_hint">Выберите хостинг провайдера</string>
+    <string name="provider_unavailable">Провайдер недоступен</string>
+
+    <string name="setting_server">Идет настройка сервера</string>
+    <string name="connecting_to_server">Подключение к серверу</string>
+    <string name="checking_server">Проверка статуса сервера</string>
+    <string name="creating_server">Создание нового сервера</string>
+    <string name="ssh_keys">Генерация ssh ключей</string>
 
 </resources>

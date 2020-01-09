@@ -46,7 +46,7 @@ data class Server(
         result = 31 * result + providerName.hashCode()
         result = 31 * result + serverStatus.hashCode()
         result = 31 * result + address.hashCode()
-        result = 31 * result + (typedConfig?.hashCode() ?: 0)
+        result = 31 * result + typedConfig.hashCode()
         result = 31 * result + environmentStatus.hashCode()
         return result
     }

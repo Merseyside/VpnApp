@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.fragment.authFragment.view
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,20 +14,16 @@ import com.merseyside.dropletapp.domain.model.OAuthProvider
 import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
 import com.merseyside.dropletapp.presentation.di.component.DaggerAuthComponent
 import com.merseyside.dropletapp.presentation.di.module.AuthModule
-import com.merseyside.dropletapp.presentation.view.activity.main.view.MainActivity
+import com.merseyside.dropletapp.presentation.view.activity.browser.BrowserActivity
 import com.merseyside.dropletapp.presentation.view.fragment.authFragment.adapter.ProviderAdapter
 import com.merseyside.dropletapp.presentation.view.fragment.authFragment.model.AuthViewModel
-import com.merseyside.dropletapp.utils.OAuthManager
+import com.merseyside.dropletapp.utils.OAuthBehaviour
 import com.merseyside.mvvmcleanarch.presentation.adapter.BaseAdapter
-import net.openid.appauth.AuthState
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.AuthorizationService
+import com.merseyside.mvvmcleanarch.utils.Logger
 
-class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(), IAuthFragment {
+class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(){
 
     private var adapter: ProviderAdapter? = null
-    private lateinit var manager: OAuthManager
 
     override fun getBindingVariable(): Int {
         return BR.viewModel
@@ -83,13 +80,28 @@ class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(), 
     private fun startAuthFlow(oAuthConfig: OAuthConfig) {
         Log.d(TAG, "$oAuthConfig")
 
-        manager = OAuthManager.Builder(baseActivityView)
-            .setOAuthProvider(oAuthConfig)
-            .setPostAuthorizationIntent(Intent(activity, MainActivity::class.java).apply { action = postAuthorizationAction })
-            .setScopes(oAuthConfig.scopes)
-            .build()
+        val manager = OAuthBehaviour.Builder(baseActivityView, this, REQUEST_CODE).apply {
+            setOAuthConfig(oAuthConfig)
 
-        manager.startAuthFlow()
+        }.build()
+
+        manager.start()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                val token = data?.extras?.getString(BrowserActivity.TOKEN_KEY, "") ?: ""
+
+                Logger.log(this, token)
+
+                if (token.isNotEmpty()) {
+                    viewModel.saveToken(token)
+                }
+            } else if (resultCode == 2) {
+                showErrorMsg(getString(R.string.provider_unavailable))
+            }
+        }
     }
 
 
@@ -97,39 +109,13 @@ class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(), 
         return AuthModule(this, bundle)
     }
 
-    override fun checkIntent(intent: Intent?) {
-        Log.d(TAG, "new intent")
-
-        if (intent != null) {
-            when (intent.action) {
-                postAuthorizationAction -> if (!intent.hasExtra(
-                        USED_INTENT
-                    )
-                ) {
-                    handleAuthorizationResponse(intent)
-                    manager.dispose()
-                }
-                else -> {}
-            }
-        }
-    }
-
-    private fun handleAuthorizationResponse(intent: Intent) {
-        Log.d(TAG, "${intent.data}")
-        val splits = intent.data.toString().split("access_token=")
-
-        val accessToken = splits[1].split("&")[0]
-
-        viewModel.saveToken(accessToken)
-    }
-
     companion object {
         fun newInstance(): AuthFragment {
             return AuthFragment()
         }
 
+        private const val REQUEST_CODE = 1253
+
         private const val TAG = "AuthFragment"
-        private const val postAuthorizationAction = "com.merseyside.dropletapp.action.AUTH"
-        private const val USED_INTENT = "USED_INTENT"
     }
 }

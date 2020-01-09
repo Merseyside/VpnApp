@@ -17,7 +17,7 @@ import java.net.ConnectException
 actual class SshManager actual constructor(private val timeoutMillis: Int) {
 
     actual enum class Status(val status: String) {
-        PENDING("Pending"), IN_PROCESS("In Process"), READY("Ready"), ERROR("Error");
+        STARTING("Staring"), PENDING("Pending"), IN_PROCESS("In Process"), READY("Ready"), ERROR("Error");
 
         override fun toString(): String {
             return status
@@ -69,7 +69,7 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
         keyPathPrivate: String,
         logCallback: ProviderRepositoryImpl.LogCallback?
     ): SshConnection? {
-        logCallback?.onLog("Connecting to root@$host")
+        logCallback?.onLog(ProviderRepositoryImpl.LogStatus.CONNECTING)
 
         val connection = activeConnections.firstOrNull {
             it.host == host
@@ -80,9 +80,7 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
             return connection
         }
 
-        repeat(12) {
-
-            logCallback?.onLog("Connecting to root@$host attempt ${it+1}...")
+        repeat(4) {
 
             if (connection.openSshConnection()) {
                 return connection.also {
@@ -90,7 +88,7 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
                 }
             }
 
-            delay(3000)
+            delay(5000)
         }
 
         return null
@@ -101,11 +99,16 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
         host: String,
         keyPathPrivate: String,
         connectionType: ConnectionType,
+        preScriptTimeSeconds: Int?,
         logCallback: ProviderRepositoryImpl.LogCallback?
     ): Boolean {
         val connection = openSshConnection(username, host, keyPathPrivate, logCallback) ?: return false
 
-        logCallback?.onLog("Setting up server")
+        logCallback?.onLog(ProviderRepositoryImpl.LogStatus.SETUP)
+
+        if (preScriptTimeSeconds != null) {
+            Thread.sleep(preScriptTimeSeconds * 1000L)
+        }
 
         return connection.setupServer(connectionType.getSetupScript())
     }

@@ -40,7 +40,7 @@ sealed class TypedConfig {
         get() {
             return if (field != null) {
                 val interfaceStr = "[Interface]\n"
-                val split = field!!.split(interfaceStr)
+                var split = field!!.split(interfaceStr)
 
                 interfaceStr + split[1]
             } else field

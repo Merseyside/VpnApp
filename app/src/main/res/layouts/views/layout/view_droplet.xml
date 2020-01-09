@@ -26,17 +26,18 @@
         style="@style/MyCardView"
         android:onClick="@{view -> obj.onClick()}">
 
-        <LinearLayout
+        <RelativeLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
             android:baselineAligned="false">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.66">
+                android:layout_toStartOf="@+id/status_container"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical">
 
                 <ImageView
                     android:layout_width="@dimen/provider_icon_size_very_large"
@@ -87,10 +88,10 @@
             <LinearLayout
                 android:id="@+id/status_container"
                 android:orientation="vertical"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.33"
-                android:gravity="end">
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true">
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -122,7 +123,7 @@
 
             </LinearLayout>
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </com.google.android.material.card.MaterialCardView>
 

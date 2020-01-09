@@ -5,7 +5,6 @@ import com.merseyside.dropletapp.providerApi.base.entity.point.NetworkPoint
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoResponse
 import com.merseyside.dropletapp.providerApi.base.entity.response.ImportSshKeyResponse
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.point.DropletInfoPoint
 import com.merseyside.dropletapp.utils.Logger
 import com.merseyside.dropletapp.utils.isDropletValid
 import io.ktor.client.engine.HttpClientEngine
@@ -51,7 +50,7 @@ class CryptoServersProvider private constructor(httpClientEngine: HttpClientEngi
     }
 
     private suspend fun getDropletInfo(token: String, dropletId: Long): DropletInfoResponse {
-        val response = responseCreator.getDropletInfo(token, dropletId)
+        val response = responseCreator.getDroplet(token, dropletId)
 
         return response.let {
             DropletInfoResponse(
@@ -97,8 +96,7 @@ class CryptoServersProvider private constructor(httpClientEngine: HttpClientEngi
     }
 
     override suspend fun isServerAlive(token: String, serverId: Long): Boolean {
-        Logger.logMsg(TAG, serverId)
-        return responseCreator.getServerList(token).find { it.id == serverId } != null
+        return getDropletInfo(token, serverId).status == "active"
     }
 
     companion object {

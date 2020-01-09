@@ -10,6 +10,7 @@ import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
+import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.mvvmcleanarch.utils.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.FlowCollector
@@ -73,7 +74,7 @@ class DropletListViewModel(
         router.navigateTo(Screens.AuthScreen())
     }
 
-    fun navigateToDropletScreen(server: Server) {
+    private fun navigateToDropletScreen(server: Server) {
         router.navigateTo(Screens.DropletScreen(server))
     }
 
@@ -86,12 +87,14 @@ class DropletListViewModel(
             onError = { throwable ->
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
             },
-            showProgress = { showProgress() },
-            hideProgress = { hideProgress() }
+            onPreExecute = { showProgress() },
+            onPostExecute = { hideProgress() }
         )
     }
 
     fun onServerClick(server: Server) {
-        navigateToDropletScreen(server)
+        if (server.environmentStatus != SshManager.Status.STARTING) {
+            navigateToDropletScreen(server)
+        }
     }
 }

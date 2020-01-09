@@ -21,6 +21,7 @@ import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.ssh.SshManager
+import com.merseyside.dropletapp.utils.getLogByStatus
 import com.merseyside.mvvmcleanarch.utils.Logger
 import com.merseyside.mvvmcleanarch.utils.SingleLiveEvent
 import de.blinkt.openvpn.VpnProfile
@@ -30,6 +31,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.FlowCollector
 import ru.terrakok.cicerone.Router
 import java.io.File
+import java.lang.IllegalStateException
 import kotlin.coroutines.CoroutineContext
 
 class DropletViewModel(
@@ -62,6 +64,7 @@ class DropletViewModel(
     val isConnectButtonVisible = ObservableField<Boolean>(true)
 
     val isQrVisible = ObservableField<Boolean>(false)
+    val qrTitleText = ObservableField<String>(getString(R.string.show_qr))
 
     val connectionLiveData = SingleLiveEvent<Boolean>()
     val configFileLiveData = SingleLiveEvent<File>()
@@ -74,6 +77,16 @@ class DropletViewModel(
 
     lateinit var server: Server
         private set
+
+    var isInitialized: Boolean = false
+    get() {
+        return try {
+            server.id
+            true
+        } catch (e: UninitializedPropertyAccessException) {
+            false
+        }
+    }
 
     private var isConnected = false
     set(value) {
@@ -121,6 +134,7 @@ class DropletViewModel(
         type.set(context.getString(R.string.type, server.typedConfig.getName()))
 
         serverConfigTitle.set(context.getString(R.string.server_config))
+        qrTitleText.set(context.getString(R.string.show_qr))
     }
 
     fun onConnect() {
@@ -152,10 +166,10 @@ class DropletViewModel(
             } else {
                 when (server.environmentStatus) {
                     SshManager.Status.ERROR -> {
-                        deleteServer(server)
+                        deleteServer()
                     }
                     SshManager.Status.PENDING -> {
-                        prepareServer(server)
+                        prepareServer()
                     }
                     else -> {
                     }
@@ -201,18 +215,21 @@ class DropletViewModel(
         }
     }
 
-    private fun prepareServer(server: Server) {
+    private fun prepareServer() {
         createServerUseCase.execute(
             params = CreateServerInteractor.Params(
                 dropletId = server.id,
                 providerId = server.providerId,
                 logCallback = object: ProviderRepositoryImpl.LogCallback {
-                    override fun onLog(log: String) {
+                    override fun onLog(log: ProviderRepositoryImpl.LogStatus) {
                         Handler(Looper.getMainLooper()).post {
-                            showProgress(log)
+                            showProgress(getLogByStatus(VpnApplication.getInstance().context, log))
                         }
                     }
                 }),
+            onPreExecute = {
+                isNavigationEnable = false
+            },
             onComplete = {
                 loadServersJob = loadServers()
             },
@@ -222,11 +239,14 @@ class DropletViewModel(
                 }
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
             },
-            hideProgress = { hideProgress() }
+            onPostExecute = {
+                hideProgress()
+                isNavigationEnable = true
+            }
         )
     }
 
-    private fun deleteServer(server: Server) {
+    private fun deleteServer() {
         deleteServerUseCase.execute(
             params = DeleteDropletInteractor.Params(server.providerId, server.id),
             onComplete = {
@@ -235,8 +255,8 @@ class DropletViewModel(
             onError = { throwable ->
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
             },
-            showProgress = { showProgress() },
-            hideProgress = { hideProgress() }
+            onPreExecute = { showProgress() },
+            onPostExecute = { hideProgress() }
         )
     }
 
@@ -274,6 +294,20 @@ class DropletViewModel(
         if (server.environmentStatus == SshManager.Status.READY && loadServersJob != null) {
             loadServersJob?.cancel()
             loadServersJob = null
+        } else if (server.environmentStatus == SshManager.Status.IN_PROCESS && loadServersJob == null) {
+            loadServersJob = loadServers()
+        } else if (server.environmentStatus == SshManager.Status.ERROR) {
+            Logger.log(this, "here")
+            showAlertDialog(
+                context = VpnApplication.getInstance().context,
+                titleRes = R.string.delete_server,
+                messageRes = R.string.banned_msg,
+                positiveButtonTextRes = R.string.delete_action,
+                negativeButtonTextRes = R.string.error_dialog_negative,
+                onPositiveClick = {
+                    deleteServer()
+                }
+            )
         }
 
         if (server.environmentStatus == SshManager.Status.READY) {
@@ -284,6 +318,8 @@ class DropletViewModel(
 
         if (server.typedConfig is TypedConfig.WireGuard && server.environmentStatus == SshManager.Status.READY) {
             isQrVisible.set(true)
+        } else {
+            isQrVisible.set(false)
         }
 
         serverConfig.set(server.getConfig())
@@ -294,6 +330,7 @@ class DropletViewModel(
     private fun getStatus(): String {
 
         return when (server.environmentStatus) {
+            SshManager.Status.STARTING -> VpnApplication.getInstance().getActualString(R.string.starting)
             SshManager.Status.READY -> VpnApplication.getInstance().getActualString(R.string.ready)
             SshManager.Status.ERROR -> VpnApplication.getInstance().getActualString(R.string.error)
             SshManager.Status.IN_PROCESS -> VpnApplication.getInstance().getActualString(R.string.in_process)
@@ -304,6 +341,9 @@ class DropletViewModel(
     private fun getStatusColor(): Int {
 
         return when(server.environmentStatus) {
+            SshManager.Status.STARTING -> {
+                R.attr.colorPrimary
+            }
             SshManager.Status.PENDING -> {
                 R.attr.pendingColor
             }
@@ -323,6 +363,9 @@ class DropletViewModel(
     fun getStatusIcon(): Int {
 
         return when(server.environmentStatus) {
+            SshManager.Status.STARTING -> {
+                R.drawable.ic_start
+            }
             SshManager.Status.PENDING -> {
                 R.drawable.ic_pending
             }
@@ -410,6 +453,7 @@ class DropletViewModel(
             SshManager.Status.READY -> {
                 R.attr.colorPrimary
             }
+            else -> { throw IllegalStateException() }
         }
     }
 
@@ -434,6 +478,7 @@ class DropletViewModel(
                     getString(R.string.connect)
                 }
             }
+            else -> { throw IllegalStateException() }
         }
     }
 
@@ -452,5 +497,9 @@ class DropletViewModel(
 
     fun getTitle(): String {
         return server.providerName
+    }
+
+    override fun onBackPressed(): Boolean {
+        return isNavigationEnable
     }
 }

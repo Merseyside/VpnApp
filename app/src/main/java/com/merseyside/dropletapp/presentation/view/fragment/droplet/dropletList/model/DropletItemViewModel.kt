@@ -57,6 +57,9 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
     fun getStatusColor(): Int {
 
         return when(obj.environmentStatus) {
+            SshManager.Status.STARTING -> {
+                R.attr.colorPrimary
+            }
             SshManager.Status.PENDING -> {
                 R.attr.pendingColor
             }
@@ -77,6 +80,9 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
     fun getStatusIcon(): Int {
 
         return when(obj.environmentStatus) {
+            SshManager.Status.STARTING -> {
+                R.drawable.ic_start
+            }
             SshManager.Status.PENDING -> {
                 R.drawable.ic_pending
             }
@@ -96,6 +102,7 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
     fun getStatus(): String {
 
         return when (obj.environmentStatus) {
+            SshManager.Status.STARTING -> VpnApplication.getInstance().getActualString(R.string.starting)
             SshManager.Status.READY -> VpnApplication.getInstance().getActualString(R.string.ready)
             SshManager.Status.ERROR -> VpnApplication.getInstance().getActualString(R.string.error)
             SshManager.Status.IN_PROCESS -> VpnApplication.getInstance().getActualString(R.string.in_process)

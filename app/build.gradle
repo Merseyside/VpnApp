@@ -8,10 +8,10 @@ android {
     defaultConfig {
         applicationId "com.merseyside.dropletapp"
         minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.compileSdkVersion
-        versionCode 22
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode 100
         multiDexEnabled true
-        versionName "0.22"
+        versionName "1.00"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -86,8 +86,7 @@ android {
 }
 
 ext {
-    appcompat = '1.1.0-beta01'
-    androidX = '1.1.0-alpha03'
+    appcompat = '1.0.2'
     materialDesign = '1.2.0-alpha03'
     constraintLayout = '1.1.3'
     ktxCore = '1.1.0'
@@ -108,7 +107,7 @@ ext {
 
     qrgen = '2.6.0'
 
-    auth = '0.7.1'
+    firebase = '17.2.1'
 }
 
 dependencies {
@@ -143,13 +142,13 @@ dependencies {
     implementation "com.github.Merseyside.horizontal-selector-view:HorizontalSelectorView:$horizontalSelector"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization"
 
-    implementation "net.openid:appauth:$auth"
-
     implementation "com.github.kenglxn.QRGen:android:$qrgen"
 
-    //implementation "com.github.Merseyside.mvvm-clean-arch-library:library:$mvvmCleanArchLibrary"
+    implementation "com.google.firebase:firebase-core:$firebase"
+    implementation "com.google.firebase:firebase-analytics:$firebase"
+    implementation "com.google.firebase:firebase-config:19.1.0"
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    implementation("com.squareup.okhttp3:okhttp:4.2.2")
 }
+
+apply plugin: 'com.google.gms.google-services'

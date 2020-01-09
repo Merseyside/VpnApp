@@ -132,7 +132,7 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
     }
 
     @UseExperimental(ImplicitReflectionSerializer::class)
-    suspend fun getDropletInfo(token: String, dropletId: Long): CryptoDropletInfoPoint {
+    suspend fun getDroplet(token: String, dropletId: Long): CryptoDropletInfoPoint {
         val apiMethod = "droplet/check/$dropletId"
 
         val call = client.get<String> {

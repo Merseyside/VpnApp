@@ -1,8 +1,9 @@
 package com.merseyside.dropletapp.presentation.view.fragment.settings.view
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.BR
@@ -14,8 +15,9 @@ import com.merseyside.dropletapp.presentation.di.component.DaggerSettingsCompone
 import com.merseyside.dropletapp.presentation.di.module.SettingsModule
 import com.merseyside.dropletapp.presentation.view.fragment.settings.adapter.TokenAdapter
 import com.merseyside.dropletapp.presentation.view.fragment.settings.model.SettingsViewModel
+import com.merseyside.dropletapp.providerApi.Provider
+import com.merseyside.dropletapp.utils.LogoutBehavior
 import com.merseyside.mvvmcleanarch.presentation.adapter.BaseAdapter
-import com.merseyside.mvvmcleanarch.utils.Logger
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 
@@ -65,10 +67,25 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
         adapter.setOnItemClickListener(object : BaseAdapter.OnItemClickListener<TokenEntity> {
             override fun onItemClicked(obj: TokenEntity) {
                 viewModel.deleteToken(obj)
+
+                //logout(obj)
             }
         })
 
         viewModel.tokenLiveData.observe(this, tokenObserver)
+    }
+
+    private fun logout(token: TokenEntity) {
+        val provider = Provider.getProviderById(providerId = token.providerId)
+
+        val uri = when(provider) {
+            is Provider.DigitalOcean -> "https://cloud.digitalocean.com/logout"
+            is Provider.CryptoServers -> "https://cryptoservers.net/logout"
+            is Provider.Linode -> "https://cloud.linode.com/logout"
+            else -> ""
+        }
+
+        LogoutBehavior(baseActivityView, uri).start()
     }
 
     private fun doLayout() {
@@ -87,6 +104,8 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
     override fun updateLanguage(context: Context) {
         super.updateLanguage(context)
         language.updateLanguage(context)
+
+        adapter.notifyUpdateAll()
     }
 
     override fun getTitle(context: Context): String? {

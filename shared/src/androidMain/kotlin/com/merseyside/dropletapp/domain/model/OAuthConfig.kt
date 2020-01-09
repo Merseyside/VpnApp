@@ -16,7 +16,7 @@ import kotlinx.serialization.parse
 @Serializable
 actual data class OAuthConfig actual constructor(
     actual var authEndPoint: String,
-    actual var tokenEndPoint: String,
+    actual var host: String,
     actual var clientId: String,
     actual var redirectUrl: String,
     actual var scopes: String
@@ -57,7 +57,7 @@ actual data class OAuthConfig actual constructor(
     }
 
     override fun toString(): String {
-        return "OAuthConfig(authEndPoint='$authEndPoint', tokenEndPoint='$tokenEndPoint', clientId='$clientId', redirectUrl='$redirectUrl')"
+        return "OAuthConfig(authEndPoint='$authEndPoint', host='$host', clientId='$clientId', redirectUrl='$redirectUrl')"
     }
 
 

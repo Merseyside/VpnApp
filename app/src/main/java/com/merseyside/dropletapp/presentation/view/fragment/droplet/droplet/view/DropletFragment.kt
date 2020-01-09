@@ -27,6 +27,7 @@ import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.mode
 import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.mvvmcleanarch.data.deserialize
 import com.merseyside.mvvmcleanarch.data.serialize
+import com.merseyside.mvvmcleanarch.presentation.view.OnBackPressedListener
 import com.merseyside.mvvmcleanarch.utils.Logger
 import com.merseyside.mvvmcleanarch.utils.ValueAnimatorHelper
 import de.blinkt.openvpn.VpnProfile
@@ -36,7 +37,7 @@ import de.blinkt.openvpn.core.VpnStatus
 import java.io.File
 
 
-class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel>() {
+class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel>(), OnBackPressedListener {
 
 
     private val vpnProfileObserver = Observer<VpnProfile> {
@@ -114,7 +115,8 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
         Logger.log(this, it)
         if (it) {
             if (vpnService!!.server != null) {
-                if (vpnService!!.server != viewModel.server) {
+                val currentServer = vpnService!!.server as Server
+                if (currentServer.id != viewModel.server.id) {
                     turnOffVpn()
                 }
             }
@@ -172,7 +174,7 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
     }
 
     private fun doLayout() {
-        if (arguments?.containsKey(SERVER_KEY) == true) {
+        if (arguments?.containsKey(SERVER_KEY) == true && !viewModel.isInitialized) {
             viewModel.setServer(arguments!!.getString(SERVER_KEY)!!.deserialize())
         }
 
@@ -240,9 +242,13 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
             Logger.log(this@DropletFragment, "on service connected")
 
             if (VpnStatus.isVPNActive() && vpnService!!.server != null) {
+
+                val currentServer = vpnService!!.server as Server
                 Logger.log(this@DropletFragment, "show connected server")
 
-                if (vpnService!!.server == viewModel.server) {
+                Logger.log(this@DropletFragment, vpnService!!.server!!)
+                Logger.log(this@DropletFragment, viewModel.server)
+                if (currentServer.id == viewModel.server.id) {
                     viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.LEVEL_CONNECTED)
                 }
             }
@@ -333,5 +339,9 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
 
             return DropletFragment().also { it.arguments = bundle }
         }
+    }
+
+    override fun onBackPressed(): Boolean {
+        return viewModel.onBackPressed()
     }
 }

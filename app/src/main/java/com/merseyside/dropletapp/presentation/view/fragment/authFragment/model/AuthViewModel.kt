@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.databinding.ObservableField
+import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.model.OAuthProvider
 import com.merseyside.dropletapp.domain.interactor.GetOAuthProvidersInteractor
 import com.merseyside.dropletapp.domain.interactor.GetProvidersWithTokenInteractor
@@ -24,6 +25,7 @@ class AuthViewModel(
     private var provider: OAuthProvider? = null
 
     val oAuthProviders = ObservableField<List<OAuthProvider>>()
+    val providersHint = ObservableField<String>(getString(R.string.choose_provider_hint))
 
     override fun dispose() {
         getOAuthProvidersUseCase.cancel()
@@ -32,7 +34,9 @@ class AuthViewModel(
 
     override fun readFrom(bundle: Bundle) {}
 
-    override fun updateLanguage(context: Context) {}
+    override fun updateLanguage(context: Context) {
+        providersHint.set(context.getString(R.string.choose_provider_hint))
+    }
 
     override fun writeTo(bundle: Bundle) {}
 
