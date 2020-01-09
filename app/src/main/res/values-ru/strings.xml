@@ -4,8 +4,10 @@
 
     <string name="nav_new_token">Новый ключ</string>
     <string name="nav_tokens">Ключи</string>
-    <string name="nav_droplets">Серверы</string>
+    <string name="nav_droplets">Список серверов</string>
     <string name="nav_settings">Настройки</string>
+    <string name="nav_add_server">Добавить сервер</string>
+    <string name="nav_server">Сервер</string>
 
     <string name="hint_token">API ключ</string>
     <string name="hint_token_name">Имя ключа</string>
@@ -15,15 +17,17 @@
     <string name="hint_region_summary">Выберите регион</string>
     <string name="hint_server_name_summary">Имя сервера</string>
 
-    <string name="complete_msg">Удачно выполнено</string>
+    <string name="complete_msg">Выполнено</string>
     <string name="fill_fields_msg">Пожалуйста, заполните все поля правильно. Имя должно быть от 3-х символов</string>
     <string name="unknown_error_msg">Неизвестная ошибка</string>
-    <string name="grant_permissions">необходимо получить данное разрешение чтобы пользоваться приложением</string>
+    <string name="grant_permissions">Необходимо получить данное разрешение чтобы пользоваться приложением</string>
     <string name="no_servers">Серверы не добавлены\nНажмите + чтобы добавить</string>
 
     <string name="delete_action">Удалить</string>
+    <string name="setting_up">Идет настройка</string>
+    <string name="setup_server">Настроить сервер</string>
     <string name="connect_to_vpn_action">Подключить по VPN</string>
-    <string name="disconnect_action">Отключиться от VPN</string>
+    <string name="disconnect_action">Отключиться</string>
     <string name="prepare_vpn_action">Подготовка VPN сервера</string>
 
     <string name="create_server" >Создание сервера и получение VPN доступа</string>
@@ -32,10 +36,11 @@
     <string name="loading_regions_msg">Загрузка регионов, пожалуйста, подождите…</string>
 
     <string name="connected">Подключено</string>
-    <string name="connect">Соединиться</string>
+    <string name="starting">Запускается</string>
+    <string name="ready">Готов</string>
     <string name="error">Ошибка</string>
     <string name="in_process">В процессе</string>
-    <string name="pending">Ожидается</string>
+    <string name="pending">Настроить</string>
     <string name="server_prefix">Сервер:</string>
     <string name="provider_prefix">Провайдер:</string>
     <string name="region_prefix">Регион:</string>
@@ -43,7 +48,7 @@
     <string name="no_data_msg">Нет данных</string>
     <string name="already_added_msg">Уже добавлено</string>
     <string name="banned_msg">IP адрес созданного сервера заблокирован надзорными инстанциями в Вашей стране</string>
-    <string name="successfully_deleted">Усапешно удалено</string>
+    <string name="successfully_deleted">Успешно удалено</string>
 
     <string name="access_key">Ключ доступа</string>
     <string name="secret_key">Секретный ключ</string>
@@ -65,5 +70,36 @@
     <string name="add_server_without_vpn_message">Для создания нового сервера необходимо прямое подключение к провайдеру</string>
     <string name="add_server_positive">Отключить VPN</string>
     <string name="add_server_negative">Отмена</string>
+
+    <string name="choose_provider">Выберите провайдера</string>
+
+    <string name="region">Регион: %1$s</string>
+    <string name="address">IP адрес: %1$s</string>
+    <string name="type">Тип VPN: %1$s</string>
+    <string name="vpn_type">Тип VPN</string>
+
+    <string name="show_qr">Показать QR Code</string>
+    <string name="connect">Подключиться</string>
+    <string name="connecting">Идет подключение</string>
+
+    <string name="server_config">Конфигурация сервера</string>
+    <string name="save_config">Сохранить *.conf</string>
+
+    <string name="wireguard_title">WireGuard</string>
+    <string name="wireguard_description">Ваш конфигурационный файл сохранен в\n%1$s\nОткройте приложение WireGuard на своем смартфоне, нажмите "create from file or archive" и выберите созданный файл</string>
+    <string name="wireguard_positive_text">Я понял</string>
+
+    <string name="delete_server">Удалить сервер?</string>
+    <string name="delete_token">Удалить ключ?</string>
+    <string name="delete_token_msg">При удалении ключа вы потеряете контроль над серверами у данного провайдера</string>
+
+    <string name="choose_provider_hint">Выберите хостинг провайдера</string>
+    <string name="provider_unavailable">Провайдер недоступен</string>
+
+    <string name="setting_server">Идет настройка сервера</string>
+    <string name="connecting_to_server">Подключение к серверу</string>
+    <string name="checking_server">Проверка статуса сервера</string>
+    <string name="creating_server">Создание нового сервера</string>
+    <string name="ssh_keys">Генерация ssh ключей</string>
 
 </resources>

@@ -8,7 +8,7 @@ interface TokenRepository {
 
     suspend fun getTokensByProviderId(providerId: Long): List<TokenEntity>
 
-    suspend fun addToken(token: Token, name: String, providerId: Long): Boolean
+    suspend fun addToken(token: Token, providerId: Long): Boolean
 
     suspend fun getRegions(token: Token, providerId: Long): List<RegionPoint>
 

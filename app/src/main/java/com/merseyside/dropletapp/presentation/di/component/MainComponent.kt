@@ -2,7 +2,7 @@ package com.merseyside.dropletapp.presentation.di.component
 
 import com.merseyside.dropletapp.presentation.di.module.MainModule
 import com.merseyside.dropletapp.presentation.view.activity.main.view.MainActivity
-import com.upstream.basemvvmimpl.presentation.di.qualifiers.ActivityScope
+import com.merseyside.mvvmcleanarch.presentation.di.qualifiers.ActivityScope
 import dagger.Component
 
 @ActivityScope

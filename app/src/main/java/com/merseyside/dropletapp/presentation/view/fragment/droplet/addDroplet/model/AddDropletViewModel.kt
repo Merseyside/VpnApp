@@ -8,118 +8,85 @@ import android.view.View
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.dropletapp.R
-import com.merseyside.dropletapp.data.db.token.TokenEntity
-import com.merseyside.dropletapp.data.entity.Token
+import com.merseyside.dropletapp.VpnApplication
+import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
-import com.merseyside.dropletapp.domain.interactor.*
+import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
+import com.merseyside.dropletapp.domain.interactor.GetRegionsByProviderInteractor
+import com.merseyside.dropletapp.domain.interactor.GetTypedConfigNamesInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
+import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
-import com.merseyside.dropletapp.utils.isServerNameValid
-import com.upstream.basemvvmimpl.utils.SingleLiveEvent
+import com.merseyside.dropletapp.utils.getLogByStatus
 import kotlinx.coroutines.cancel
 import ru.terrakok.cicerone.Router
 
 class AddDropletViewModel(
-    router: Router,
-    private val getProvidersUseCase: GetProvidersWithTokenInteractor,
-    private val getTokensByProviderIdUseCase: GetTokensByProviderIdInteractor,
-    private val getRegionsByTokenUseCase: GetRegionsByTokenInteractor,
-    private val createServerUseCase: CreateServerInteractor
+    private val router: Router,
+    private val getRegionsByProviderUseCase: GetRegionsByProviderInteractor,
+    private val createServerUseCase: CreateServerInteractor,
+    private val getTypedConfigNamesUseCase: GetTypedConfigNamesInteractor
 ) : BaseDropletViewModel(router) {
 
-    val providerHintObservableField = ObservableField<String>()
-    val keyHintObservableField = ObservableField<String>()
-    val regionHintObservableField = ObservableField<String>()
-    val nameHintObservableField = ObservableField<String>()
-    val buttonTextObservableField = ObservableField<String>()
+    val vpnTypeObservableField = ObservableField<String>(getString(R.string.vpn_type))
+    val regionHintObservableField = ObservableField<String>(getString(R.string.hint_region_summary))
+    val buttonTextObservableField = ObservableField<String>(getString(R.string.create_server))
 
-    val serverNameVisibility = ObservableField<Boolean>(true)
-
-    val navigationEnableLiveData = SingleLiveEvent<Boolean>()
+    val types = ObservableField<List<String>>()
+    val selectedType = ObservableField<String>()
 
     private var provider: Provider? = null
 
     override fun updateLanguage(context: Context) {
-        providerHintObservableField.set(context.getString(R.string.hint_provider_summary))
-        keyHintObservableField.set(context.getString(R.string.hint_token_summary))
+        vpnTypeObservableField.set(context.getString(R.string.vpn_type))
         regionHintObservableField.set(context.getString(R.string.hint_region_summary))
-        nameHintObservableField.set(context.getString(R.string.hint_server_name_summary))
         buttonTextObservableField.set(context.getString(R.string.create_server))
     }
 
-    val providerLiveData = MutableLiveData<List<Provider>>()
-    val tokenLiveData = MutableLiveData<List<TokenEntity>>()
     val regionLiveData = MutableLiveData<List<RegionPoint>>()
 
-    private var currentProvider: Long = 0
-    private var currentToken: Token = ""
     private var currentRegion: RegionPoint? = null
 
-    val serverNameObservableField = ObservableField<String>()
+    override fun readFrom(bundle: Bundle) {}
 
-    init {
-        getProviders()
-    }
-
-    override fun readFrom(bundle: Bundle) {
-    }
-
-    override fun writeTo(bundle: Bundle) {
-    }
+    override fun writeTo(bundle: Bundle) {}
 
     override fun dispose() {
-        getProvidersUseCase.cancel()
-        getTokensByProviderIdUseCase.cancel()
-        getRegionsByTokenUseCase.cancel()
+        getRegionsByProviderUseCase.cancel()
         createServerUseCase.cancel()
-    }
-
-    private fun getProviders() {
-        getProvidersUseCase.execute(
-            onComplete = {
-                setProvider(it.first())
-                providerLiveData.value = it
-            },
-            onError = {
-
-            }
-        )
+        getTypedConfigNamesUseCase.cancel()
     }
 
     fun setProvider(provider: Provider) {
         this.provider = provider
 
-        serverNameVisibility.set(provider !is Provider.CryptoServers)
+        getRegions(provider)
+        getTypedConfigs()
     }
 
-    fun getTokens(providerId: Long) {
-        currentProvider = providerId
+    private fun getRegions(provider: Provider) {
 
-        getTokensByProviderIdUseCase.execute(
-            params = GetTokensByProviderIdInteractor.Params(providerId),
-            onComplete = {
-                tokenLiveData.value = it
-            },
-
-            onError = {throwable ->
-                showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
-            }
-        )
-    }
-
-    fun getRegions(token: Token) {
-        currentToken = token
-
-        getRegionsByTokenUseCase.execute(
-            params = GetRegionsByTokenInteractor.Params(token, currentProvider),
+        getRegionsByProviderUseCase.execute(
+            params = GetRegionsByProviderInteractor.Params(provider.getId()),
             onComplete = {
                 regionLiveData.value = it
             }, onError = {throwable ->
                 showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
             },
-            showProgress = { showProgress(getString(R.string.loading_regions_msg)) },
-            hideProgress = { hideProgress() }
+            onPreExecute = { showProgress(getString(R.string.loading_regions_msg)) },
+            onPostExecute = { hideProgress() }
+        )
+    }
+
+    private fun getTypedConfigs() {
+        getTypedConfigNamesUseCase.execute(
+            onComplete = {
+                if (!it.isNullOrEmpty()) {
+                    types.set(it)
+                    selectedType.set(types.get()!!.first())
+                }
+            }
         )
     }
 
@@ -128,61 +95,56 @@ class AddDropletViewModel(
     }
 
     fun createServer(): Boolean {
-
-        try {
-            createServerUseCase.execute(
-                params = CreateServerInteractor.Params(
-                    token = currentToken,
-                    providerId = currentProvider,
-                    regionSlug = currentRegion?.slug ?: throw IllegalArgumentException(),
-                    serverName = serverNameObservableField.get().let {
-                        if (provider !is Provider.CryptoServers) {
-                            if (!isServerNameValid(serverNameObservableField.get())) throw IllegalArgumentException()
-                                .also { showErrorMsg(getString(R.string.wrong_server_name)) }
-                            else {
-                                it
-                            }
-                        } else {
-                            "default"
-                        }
-                    },
-                    logCallback = object: ProviderRepositoryImpl.LogCallback {
-                        override fun onLog(log: String) {
-                            Handler(Looper.getMainLooper()).post {
-                                showProgress(log)
-
-                                if (log == "Server is valid") {
-                                    navigationEnableLiveData.value = true
+        if (selectedType.get() != null) {
+            try {
+                createServerUseCase.execute(
+                    params = CreateServerInteractor.Params(
+                        providerId = provider!!.getId(),
+                        regionSlug = currentRegion?.slug ?: throw IllegalArgumentException(),
+                        typedConfig = selectedType.get(),
+                        logCallback = object : ProviderRepositoryImpl.LogCallback {
+                            override fun onLog(log: ProviderRepositoryImpl.LogStatus) {
+                                Handler(Looper.getMainLooper()).post {
+                                    showProgress(getLogByStatus(VpnApplication.getInstance().context, log))
                                 }
                             }
                         }
-                    }
-                ),
-                onComplete = {
-                    back()
-                },
-                onError = {throwable ->
-                    if (navigationEnableLiveData. value == false) {
-                        navigationEnableLiveData.value = true
-                    }
-                    showErrorMsg(errorMsgCreator.createErrorMsg(throwable), getString(R.string.retry), View.OnClickListener {
-                        createServer()
-                    })
-                },
-                showProgress = {
-                    navigationEnableLiveData.value = false
-                    showProgress(getString(R.string.setup_server_msg))
-                },
-                hideProgress = { hideProgress() }
-            )
-        } catch(e: Exception) {
-            return false
+                    ),
+                    onComplete = {
+                        newRootDropletListScreen()
+                    },
+                    onError = { throwable ->
+                        if (!isNavigationEnable) {
+                            isNavigationEnable = true
+                        }
+                        showErrorMsg(
+                            errorMsgCreator.createErrorMsg(throwable),
+                            getString(R.string.retry),
+                            View.OnClickListener {
+                                createServer()
+                            })
+                    },
+                    onPreExecute = {
+                        isNavigationEnable = false
+                        showProgress(getString(R.string.setup_server_msg))
+                    },
+                    onPostExecute = { hideProgress() }
+                )
+            } catch (e: Exception) {
+                return false
+            }
+
+            return true
         }
 
-        return true
+        return false
+    }
+
+    private fun newRootDropletListScreen() {
+        router.newRootScreen(Screens.DropletListScreen())
     }
 
     override fun onBackPressed(): Boolean {
-        return navigationEnableLiveData.value ?: true
+        return isNavigationEnable
     }
 }

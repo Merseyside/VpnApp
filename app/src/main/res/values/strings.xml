@@ -4,8 +4,12 @@
 
     <string name="nav_new_token">New token</string>
     <string name="nav_tokens">Tokens</string>
-    <string name="nav_droplets">Droplets</string>
+    <string name="nav_droplets">Server list</string>
     <string name="nav_settings">Settings</string>
+    <string name="nav_servers">Servers</string>
+    <string name="nav_add_server">Add server</string>
+    <string name="nav_server">Server</string>
+
 
     <string name="hint_token">API key</string>
     <string name="hint_token_name">Key name</string>
@@ -15,15 +19,17 @@
     <string name="hint_region_summary">Choose region</string>
     <string name="hint_server_name_summary">Server name</string>
 
-    <string name="complete_msg">Successfully completed</string>
+    <string name="complete_msg">Completed</string>
     <string name="fill_fields_msg">Please fill all fields correctly</string>
     <string name="unknown_error_msg">Unknown error</string>
     <string name="grant_permissions">You have to access thi permission in order to you app</string>
     <string name="no_servers">No servers\nPress + to add server</string>
 
     <string name="delete_action">Delete</string>
+    <string name="setting_up">Setting up in progress</string>
+    <string name="setup_server">Setup server</string>
     <string name="connect_to_vpn_action">Connect to VPN</string>
-    <string name="disconnect_action">Disconnect from VPN</string>
+    <string name="disconnect_action">Disconnect</string>
     <string name="prepare_vpn_action">Prepare VPN server</string>
 
     <string name="create_server" >Create server and get vpn access</string>
@@ -32,10 +38,11 @@
     <string name="loading_regions_msg">Loading regions, please wait…</string>
 
     <string name="connected">Connected</string>
-    <string name="connect">Connect</string>
+    <string name="starting">Starting</string>
+    <string name="ready">Ready</string>
     <string name="error">Error</string>
     <string name="in_process">In process</string>
-    <string name="pending">Pending</string>
+    <string name="pending">Set up</string>
     <string name="server_prefix">Server:</string>
     <string name="provider_prefix">Provider:</string>
     <string name="region_prefix">Region:</string>
@@ -58,6 +65,7 @@
 
     <string name="share_ovpn_action">Share OVPN file</string>
     <string name="share_ovpn_to">Share ovpn file to&#8230;</string>
+    <string name="share" translatable="false">Share</string>
 
     <string name="error_dialog_message">An error occurred while configuring the server, delete it and try again</string>
     <string name="error_dialog_positive">Delete server</string>
@@ -66,6 +74,40 @@
     <string name="add_server_without_vpn_message">To create a new server, you need a direct connection to the provider</string>
     <string name="add_server_positive">Turn VPN off</string>
     <string name="add_server_negative">Cancel</string>
+
+    <string name="choose_provider">Choose provider</string>
+    
+    <string name="region">Region: %1$s</string>
+    <string name="address">IP Address: %1$s</string>
+    <string name="type">VPN Type: %1$s</string>
+    <string name="vpn_type">Vpn Type</string>
+
+    <string name="show_qr">Show QR Code</string>
+    <string name="connect">Connect</string>
+    <string name="connecting">Connecting</string>
+
+    <string name="server_config">Server config</string>
+    <string name="qr_code">QR Code</string>
+    <string name="save_config">Save *.conf</string>
+
+    <string name="wireguard_title">WireGuard</string>
+    <string name="wireguard_description">Your config file saved in\n%1$s\nOpen WireGuard application, press create from file or archive and choose this file in file manager</string>
+    <string name="wireguard_positive_text">I See</string>
+
+    <string name="delete_server">Delete server?</string>
+    <string name="delete_token">Delete key?</string>
+    <string name="delete_token_msg">In case of deleting provider\'s access key you will lose control under all your servers</string>
+
+    <string name="choose_provider_hint">Choose hosting provider</string>
+    <string name="provider_unavailable">Provider is not available</string>
+    
+    <string name="setting_server">Setting up server</string>
+    <string name="connecting_to_server">Connecting to server</string>
+    <string name="checking_server">Checking server status</string>
+    <string name="creating_server">Creating a new server</string>
+    <string name="ssh_keys">Generating ssh keys</string>
+
+    <string name="digital_ocean_client_id">5ac7fe6563469c85ed75f4375779d6656a67f721442f61bdfd616955e6778bad</string>
 
     <string-array name="language_entries">
         <item>ic_english</item>

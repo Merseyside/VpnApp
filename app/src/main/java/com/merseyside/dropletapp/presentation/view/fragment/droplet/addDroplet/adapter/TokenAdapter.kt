@@ -27,10 +27,6 @@ class TokenAdapter(
 
         val view: View = convertView ?: inflater.inflate(resourceId, parent, false)
 
-        val name: TextView = view.findViewById(R.id.name)
-
-        name.text = token.name
-
         return view
     }
 

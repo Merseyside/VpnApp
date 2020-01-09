@@ -12,10 +12,9 @@ class TokenDao(database: VpnDatabase) {
 
     internal fun insert(
         token: Token,
-        name: String,
         provider: Provider
     ) {
-        db.insertItem(token, name, provider.getId())
+        db.insertItem(token, provider.getId())
     }
 
     internal fun selectByServiceId(providerId: Long): List<TokenEntity> {

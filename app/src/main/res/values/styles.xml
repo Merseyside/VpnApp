@@ -1,13 +1,13 @@
 <resources>
 
-    <style name="Theme.VpnApp.Purple.Base" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="Theme.VpnApp.Blue.Base" parent="Theme.MaterialComponents.NoActionBar">
 
-        <item name="colorAccent">@color/purple_primary</item>
+        <item name="colorAccent">@color/blue_primary</item>
 
-        <item name="colorPrimary">@color/purple_primary</item>
-        <item name="colorPrimaryDark">@color/purple_dark</item>
+        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="colorPrimaryDark">@color/blue_primary_dark</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorPrimaryVariant">@color/purple_primary_variant</item>
+        <item name="colorPrimaryVariant">@color/blue_primary</item>
 
         <item name="colorSecondary">@color/cyan_secondary</item>
         <item name="colorSecondaryVariant">@color/cyan_secondary_variant</item>
@@ -19,33 +19,33 @@
         <item name="colorSurface">@color/white</item>
         <item name="colorOnSurface">@color/black</item>
 
-        <item name="android:colorBackground">@color/background_purple</item>
-        <item name="colorOnBackground">@color/main_text_color_purple</item>
+        <item name="android:colorBackground">@color/background_blue_theme</item>
+        <item name="colorOnBackground">@color/main_text_color_blue_theme</item>
 
-        <item name="android:textColor">@color/main_text_color_purple</item>
+        <item name="android:textColor">@color/main_text_color_blue_theme</item>
 
         <item name="materialCardViewStyle">@style/MyCardView</item>
         <item name="buttonStyle">@style/ButtonStyle</item>
-        <item name="bottomNavigationStyle">@style/BottomNavigationStyle</item>
 
         <item name="dividerHorizontal">@style/DividerStyle</item>
 
-        <item name="pendingColor">@color/purple_pending_color</item>
+        <item name="vpnTextColor">@color/main_text_color_blue_theme</item>
+        <item name="pendingColor">@color/blue_theme_pending_color</item>
+        <item name="inactiveColor">@color/grey</item>
+
+        <item name="vpnHeadlineTextColor">?attr/colorOnPrimary</item>
+
 
         <!--<item groupName="inputLayoutStrokeColor">@color/text_input_box_stroke</item>-->
 
     </style>
 
     <!--Public styles-->
-    <style name="Theme.VpnApp.Purple" parent="Theme.VpnApp.Purple.Base"/>
+    <style name="Theme.VpnApp.Blue" parent="Theme.VpnApp.Blue.Base"/>
 
-    <style name="Theme.VpnApp.Purple.OppositeStatusBar" parent="Theme.VpnApp.Purple"/>
+    <style name="Theme.VpnApp.Blue.OppositeStatusBar" parent="Theme.VpnApp.Blue"/>
 
     <!--END OF Blue theme-->
-
-    <style name="ToolbarTheme">
-        <item name="android:background">?attr/colorPrimary</item>
-    </style>
 
     <style name="TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -109,7 +109,16 @@
         <item name="cornerRadius">@dimen/button_corner_radius</item>
     </style>
 
-    <style name="BottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+    <style name="ToolbarTheme.Popup" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:background">@null</item>
+        <item name="android:textColorSecondary">@color/white</item>
+    </style>
+
+    <style name="ToolbarTheme">
+        <item name="android:textColor">?attr/vpnHeadlineTextColor</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:textColorSecondary">@color/white</item>
     </style>
 
 </resources>

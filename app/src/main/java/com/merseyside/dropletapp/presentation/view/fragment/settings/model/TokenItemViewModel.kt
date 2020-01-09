@@ -1,16 +1,16 @@
 package com.merseyside.dropletapp.presentation.view.fragment.settings.model
 
 import androidx.databinding.Bindable
+import com.merseyside.dropletapp.BR
+import com.merseyside.dropletapp.R
+import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.providerApi.Provider
-import com.upstream.basemvvmimpl.presentation.model.BaseAdapterViewModel
+import com.merseyside.mvvmcleanarch.presentation.model.BaseAdapterViewModel
 
 class TokenItemViewModel(override var obj: TokenEntity) : BaseAdapterViewModel<TokenEntity>(obj) {
 
-    @Bindable
-    fun getName(): String {
-        return obj.name
-    }
+    private var isLastItem: Boolean = false
 
     @Bindable
     fun getProviderName(): String {
@@ -21,5 +21,24 @@ class TokenItemViewModel(override var obj: TokenEntity) : BaseAdapterViewModel<T
         return obj.token == this.obj.token
     }
 
-    override fun notifyUpdate() {}
+    @Bindable
+    fun isLast(): Boolean {
+        return isLastItem
+    }
+
+    fun setLast(isLast: Boolean) {
+        isLastItem = isLast
+
+        notifyUpdate()
+    }
+
+    @Bindable
+    fun getDeleteText(): String {
+        return VpnApplication.getInstance().getActualString(R.string.delete_action)
+    }
+
+    override fun notifyUpdate() {
+        notifyPropertyChanged(BR.last)
+        notifyPropertyChanged(BR.deleteText)
+    }
 }

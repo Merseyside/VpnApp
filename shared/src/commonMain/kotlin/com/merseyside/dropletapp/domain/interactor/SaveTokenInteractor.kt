@@ -11,12 +11,11 @@ class SaveTokenInteractor : CoroutineUseCase<Boolean, SaveTokenInteractor.Params
     private val repository: TokenRepository by tokenComponent.instance()
 
     override suspend fun executeOnBackground(params: Params?): Boolean {
-        return repository.addToken(params!!.token, params.name, params.providerId)
+        return repository.addToken(params!!.token, params.providerId)
     }
 
     data class Params(
         val token: Token,
-        val name: String,
         val providerId: Long
     )
 }

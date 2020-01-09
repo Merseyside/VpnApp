@@ -6,37 +6,47 @@
                 type="com.merseyside.dropletapp.presentation.view.fragment.settings.model.TokenItemViewModel"/>
     </data>
 
-    <LinearLayout android:orientation="horizontal"
-                  android:layout_width="match_parent"
-                  android:layout_height="32dp"
-                  android:gravity="center"
-                  android:paddingStart="@dimen/small_spacing"
-                  android:paddingEnd="@dimen/small_spacing">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="7"
-                android:text="@{obj.name}"
-                android:ellipsize="marquee"
-                android:singleLine="true"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{view -> obj.onClick()}">
 
-        <TextView
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="7"
                 android:text="@{obj.providerName}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                 android:ellipsize="marquee"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:padding="@dimen/normal_spacing"/>
 
-        <ImageButton
+            <TextView
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:background="@color/transparent"
-                app:srcCompat="@drawable/ic_error"
-                android:onClick="@{view -> obj.onClick()}"
-                tools:ignore="ContentDescription"/>
+                android:text="@{obj.deleteText}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                android:textAllCaps="true"
+                android:textAlignment="center"
+                android:textColor="?attr/colorError"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/grey_dark"
+            app:isVisibleOrGone="@{!obj.last}"/>
 
     </LinearLayout>
 

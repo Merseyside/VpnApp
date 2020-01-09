@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.dropletapp.R
+import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.domain.interactor.DeleteTokenInteractor
 import com.merseyside.dropletapp.domain.interactor.GetAllTokensInteractor
@@ -56,15 +57,24 @@ class SettingsViewModel(
     }
 
     fun deleteToken(tokenEntity: TokenEntity) {
-        deleteTokenUseCase.execute(
-            params = DeleteTokenInteractor.Params(tokenEntity.token),
-            onComplete = {
-                showMsg(getString(R.string.successfully_deleted))
+        showAlertDialog(
+            context = VpnApplication.getInstance().context,
+            titleRes = R.string.delete_token,
+            messageRes = R.string.delete_token_msg,
+            positiveButtonTextRes = R.string.delete_action,
+            negativeButtonTextRes = R.string.error_dialog_negative,
+            onPositiveClick = {
+                deleteTokenUseCase.execute(
+                    params = DeleteTokenInteractor.Params(tokenEntity.token),
+                    onComplete = {
+                        showMsg(getString(R.string.successfully_deleted))
 
-                getAllTokens()
-            },
-            onError = {throwable ->
-                showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
+                        getAllTokens()
+                    },
+                    onError = {throwable ->
+                        showErrorMsg(errorMsgCreator.createErrorMsg(throwable))
+                    }
+                )
             }
         )
     }

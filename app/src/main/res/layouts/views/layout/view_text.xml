@@ -10,5 +10,5 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/token_view_size"
             android:gravity="center_vertical"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"/>
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
 </LinearLayout>

@@ -56,7 +56,7 @@ actual class SshConnection actual constructor(
             val cmd = session!!.exec(command)
 
             try {
-                cmd.join(50, TimeUnit.SECONDS)
+                cmd.join(135, TimeUnit.SECONDS)
 
                 Log.d(TAG, "exit = ${cmd.exitStatus}")
 
@@ -67,7 +67,6 @@ actual class SshConnection actual constructor(
                 return cmd.exitStatus to output
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.d(TAG, IOUtils.readFully(cmd.inputStream).toString())
 
                 return 1 to ""
             } finally {
@@ -78,17 +77,16 @@ actual class SshConnection actual constructor(
         throw ConnectException("Can not connect to server")
     }
 
-    actual fun setupServer(): Boolean {
+    actual fun setupServer(script: String): Boolean {
         Log.d(TAG, "setupServer")
-        Thread.sleep(30000)
 
-        val pair = execCommand(getSetupScript())
+        val pair = execCommand(script)
 
         return pair.first == OK
     }
 
-    actual fun getOvpnFile(): String? {
-        val pair = execCommand(getOvpnFileScript())
+    actual fun getConfigFile(script: String): String? {
+        val pair = execCommand(script)
 
         return if (pair.first == OK) {
             pair.second
@@ -109,17 +107,6 @@ actual class SshConnection actual constructor(
 
     actual fun setTimeout(timeout: Int) {
         ssh.connectTimeout = timeout
-    }
-
-    private fun getSetupScript(): String {
-        return "export CLIENT=$username" +
-                " && bash -c " +
-                "\"$(wget https://gist.githubusercontent.com/myvpn-run/ab573e451a7b44991fb3a45" +
-                "66496d0f0/raw/4b9aa9f10049f1350fd81e1d1e4350b5bb227c7e/openvpn.sh -O -)\""
-    }
-
-    private fun getOvpnFileScript(): String {
-        return "cat /root/$username.ovpn"
     }
 
     companion object {

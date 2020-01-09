@@ -4,7 +4,8 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.presentation.view.fragment.settings.model.TokenItemViewModel
-import com.upstream.basemvvmimpl.presentation.adapter.BaseAdapter
+import com.merseyside.mvvmcleanarch.presentation.adapter.BaseAdapter
+import com.merseyside.mvvmcleanarch.presentation.view.BaseViewHolder
 
 class TokenAdapter : BaseAdapter<TokenEntity, TokenItemViewModel>() {
 
@@ -24,5 +25,11 @@ class TokenAdapter : BaseAdapter<TokenEntity, TokenItemViewModel>() {
         }
     }
 
-    override fun setFilter(query: String) {}
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        super.onBindViewHolder(holder, position)
+
+        getModelByPosition(position).apply {
+            setLast(position == itemCount - 1)
+        }
+    }
 }

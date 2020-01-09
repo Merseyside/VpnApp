@@ -9,6 +9,7 @@ import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoRes
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.point.DropletInfoPoint
 import com.merseyside.dropletapp.providerApi.exception.InvalidTokenException
+import com.merseyside.dropletapp.utils.Logger
 import com.merseyside.dropletapp.utils.isDropletValid
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.coroutines.delay
@@ -44,6 +45,8 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
         repeat(REPEAT_COUNT) {
             val infoResponse = getDropletInfo(token, response.dropletPoint.id)
 
+            //Logger.logMsg(TAG, )
+
             if (isDropletValid(infoResponse)) {
                 return infoResponse
             } else {
@@ -75,6 +78,8 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
 
     private suspend fun getDropletInfo(token: String, dropletId: Long): DropletInfoResponse {
         val response = responseCreator.getDropletInfo(token, dropletId)
+
+        Logger.logMsg(TAG, response.toString())
 
         return response.dropletInfoPoint.let {
             DropletInfoResponse(
@@ -109,10 +114,12 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
     }
 
     override suspend fun isServerAlive(token: String, serverId: Long): Boolean {
-        return true
+        return getDropletInfo(token, serverId).status == "active"
     }
 
     companion object {
+
+        const private val TAG = "DigitalOceanProvider"
 
         private var instance: DigitalOceanProvider? = null
 

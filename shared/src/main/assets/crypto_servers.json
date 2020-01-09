@@ -1,0 +1,7 @@
+{
+  "authEndPoint": "https://cryptoservers.net/oauth/authorize",
+  "host": "myvpn.run",
+  "clientId": "176",
+  "redirectUrl": "https://myvpn.run/",
+  "scopes": "*"
+}

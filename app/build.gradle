@@ -4,16 +4,20 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion rootProject.compileSdkVersion
     defaultConfig {
         applicationId "com.merseyside.dropletapp"
-        minSdkVersion 19
-        targetSdkVersion 29
-        versionCode 22
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode 100
         multiDexEnabled true
-        versionName "0.22"
+        versionName "1.00"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        android.defaultConfig.manifestPlaceholders = [
+                appAuthRedirectScheme: ""
+        ]
     }
 
     buildTypes {
@@ -82,17 +86,14 @@ android {
 }
 
 ext {
-    appcompat = '1.1.0-beta01'
-    androidX = '1.1.0-alpha03'
-    materialDesign = '1.2.0-alpha02'
+    appcompat = '1.0.2'
+    materialDesign = '1.2.0-alpha03'
     constraintLayout = '1.1.3'
     ktxCore = '1.1.0'
     lifecycleExtensions = '2.1.0'
     preferences = '1.1.0'
 
     coroutines = '1.3.0-RC'
-
-    materialDesign = '1.2.0-alpha02'
 
     dagger2 = '2.17'
     dagger2Compiler = '2.17'
@@ -103,6 +104,10 @@ ext {
 
     horizontalSelector = '1.13'
     mvvmCleanArchLibrary = '1.34'
+
+    qrgen = '2.6.0'
+
+    firebase = '17.2.1'
 }
 
 dependencies {
@@ -111,6 +116,7 @@ dependencies {
     implementation project(':merseylibrary')
     implementation project(":shared")
     implementation project(':openvpn-core')
+    implementation project(':library')
 
     implementation "com.squareup.sqldelight:android-driver:$sqlDriver"
 
@@ -134,10 +140,15 @@ dependencies {
 
     implementation "ru.terrakok.cicerone:cicerone:$cicerone"
     implementation "com.github.Merseyside.horizontal-selector-view:HorizontalSelectorView:$horizontalSelector"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization"
 
-    implementation "com.github.Merseyside.mvvm-clean-arch-library:library:$mvvmCleanArchLibrary"
+    implementation "com.github.kenglxn.QRGen:android:$qrgen"
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    implementation "com.google.firebase:firebase-core:$firebase"
+    implementation "com.google.firebase:firebase-analytics:$firebase"
+    implementation "com.google.firebase:firebase-config:19.1.0"
+
+    implementation("com.squareup.okhttp3:okhttp:4.2.2")
 }
+
+apply plugin: 'com.google.gms.google-services'

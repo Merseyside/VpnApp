@@ -4,10 +4,13 @@ import com.merseyside.dropletapp.data.entity.PrivateKey
 import com.merseyside.dropletapp.data.entity.PublicKey
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 
-expect class SshManager(timeoutMillis: Int) {
+expect class SshManager(
+    timeoutMillis: Int
+
+) {
 
     enum class Status{
-        PENDING, IN_PROCESS, READY, ERROR;
+        STARTING, PENDING, IN_PROCESS, READY, ERROR;
 
         companion object {
             fun getStatusByString(status: String): Status?
@@ -27,13 +30,16 @@ expect class SshManager(timeoutMillis: Int) {
         username: String,
         host: String,
         keyPathPrivate: String,
+        connectionType: ConnectionType,
+        preScriptTimeSeconds: Int? = null,
         logCallback: ProviderRepositoryImpl.LogCallback? = null
     ): Boolean
 
-    suspend fun getOvpnFile(
+    suspend fun getConfigFile(
         username: String,
         host: String,
-        keyPathPrivate: String
+        keyPathPrivate: String,
+        connectionType: ConnectionType
     ): String?
 
     fun closeConnection(connection: SshConnection)

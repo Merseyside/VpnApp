@@ -1,17 +1,18 @@
 package com.merseyside.dropletapp
 
-import android.util.Log
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import com.merseyside.dropletapp.data.db.VpnDatabase
+import com.merseyside.dropletapp.di.accountManager
+import com.merseyside.dropletapp.di.appContext
 import com.merseyside.dropletapp.di.sqlDriver
 import com.merseyside.dropletapp.presentation.di.component.AppComponent
 import com.merseyside.dropletapp.presentation.di.component.DaggerAppComponent
 import com.merseyside.dropletapp.presentation.di.module.AppModule
+import com.merseyside.dropletapp.utils.AccountManagerAndroid
+import com.merseyside.mvvmcleanarch.BaseApplication
 import com.squareup.sqldelight.android.AndroidSqliteDriver
-import com.upstream.basemvvmimpl.BaseApplication
-import java.util.*
 import javax.inject.Inject
 
 class VpnApplication : BaseApplication() {
@@ -31,6 +32,8 @@ class VpnApplication : BaseApplication() {
         appComponent.inject(this)
 
         initDB()
+        initAccountManager()
+        appContext = this
     }
 
     private fun buildComponent() =
@@ -58,18 +61,8 @@ class VpnApplication : BaseApplication() {
         sqlDriver = AndroidSqliteDriver(sqlHelper)
     }
 
-    override fun getBaseLanguage(): String {
-        val systemLanguage = Locale.getDefault().language
-
-        Log.d(TAG, systemLanguage)
-
-        val supportedLanguages = listOf("en", "ru")
-
-        return if (supportedLanguages.contains(systemLanguage)) {
-            systemLanguage
-        } else {
-            "en"
-        }
+    private fun initAccountManager() {
+        accountManager = AccountManagerAndroid(this)
     }
 
     companion object {

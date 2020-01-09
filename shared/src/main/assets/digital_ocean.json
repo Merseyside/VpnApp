@@ -1,0 +1,7 @@
+{
+  "authEndPoint": "https://cloud.digitalocean.com/v1/oauth/authorize",
+  "host": "localhost",
+  "clientId": "a018284aebda94528eb1fdb00e5f53803590f3dd050a1da64a9e549e2eb1c309",
+  "redirectUrl": "https://localhost",
+  "scopes": "read write"
+}

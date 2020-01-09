@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "177502417724",
+    "firebase_url": "https://vpnapp-88bf6.firebaseio.com",
+    "project_id": "vpnapp-88bf6",
+    "storage_bucket": "vpnapp-88bf6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177502417724:android:31a43e935d8c9fad862439",
+        "android_client_info": {
+          "package_name": "com.merseyside.dropletapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "177502417724-1jku61cn28ghcl1sg8npfvcato7oilua.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjd4RlaIYTMDarrYFPUG-vamtMVTX5ooI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "177502417724-1jku61cn28ghcl1sg8npfvcato7oilua.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

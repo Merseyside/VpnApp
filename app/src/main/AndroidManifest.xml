@@ -16,8 +16,9 @@
             android:label="@string/app_name"
             android:supportsRtl="true"
             android:usesCleartextTraffic="true"
-            android:theme="@style/Theme.VpnApp.Purple"
+            android:theme="@style/Theme.VpnApp.Blue"
             android:name=".VpnApplication"
+            tools:replace="android:allowBackup"
             tools:ignore="GoogleAppIndexingWarning">
 
         <activity
@@ -25,10 +26,16 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="com.merseyside.dropletapp.action.AUTH"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
         </activity>
+
+        <activity android:name=".presentation.view.activity.browser.BrowserActivity"
+            android:screenOrientation="portrait" />
 
         <service
                 android:name="de.blinkt.openvpn.core.OpenVPNService"
@@ -49,7 +56,5 @@
         </provider>
 
     </application>
-
-
 
 </manifest>
