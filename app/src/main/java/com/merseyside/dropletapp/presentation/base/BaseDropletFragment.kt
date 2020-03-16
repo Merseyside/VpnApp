@@ -8,16 +8,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.CallSuper
-import androidx.appcompat.widget.Toolbar
 import androidx.databinding.ViewDataBinding
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.view.AddDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.view.DropletFragment
-import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view.DropletListFragment
 import com.merseyside.mvvmcleanarch.presentation.fragment.BaseMvvmFragment
 import com.merseyside.mvvmcleanarch.presentation.view.IFocusManager
-import com.merseyside.mvvmcleanarch.presentation.view.OnBackPressedListener
-import com.merseyside.mvvmcleanarch.utils.Logger
 
 abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel>
     : BaseMvvmFragment<B, M>(), HasAppComponent, IFocusManager {

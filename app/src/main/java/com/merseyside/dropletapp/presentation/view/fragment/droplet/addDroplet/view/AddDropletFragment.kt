@@ -140,7 +140,10 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
                 putString(PROVIDER_KEY, provider.serialize())
             }
 
-            return AddDropletFragment().also { it.arguments = bundle }
+            return AddDropletFragment().also {
+                it.arguments = bundle
+                it.setRequestCode(23)
+            }
         }
     }
 

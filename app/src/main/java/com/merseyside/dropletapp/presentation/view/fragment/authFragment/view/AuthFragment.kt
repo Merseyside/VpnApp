@@ -88,6 +88,12 @@ class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(){
         manager.start()
     }
 
+    override fun onFragmentResult(resultCode: Int, requestCode: Int, bundle: Bundle?) {
+        super.onFragmentResult(resultCode, requestCode, bundle)
+
+        Logger.log(this, "on fragment result")
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
@@ -98,7 +104,7 @@ class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(){
                 if (token.isNotEmpty()) {
                     viewModel.saveToken(token)
                 }
-            } else if (resultCode == 2) {
+            } else if (resultCode == BrowserActivity.PROVIDER_UNAVAILABLE) {
                 showErrorMsg(getString(R.string.provider_unavailable))
             }
         }

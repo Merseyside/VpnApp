@@ -73,7 +73,7 @@ class BrowserActivity : BaseActivity() {
                             putExtra(ERROR_KEY, errorCode)
                         }
 
-                        setResult(2, intent)
+                        setResult(PROVIDER_UNAVAILABLE, intent)
                         finish()
                     }
 
@@ -112,6 +112,7 @@ class BrowserActivity : BaseActivity() {
         private const val HOST_KEY = "host"
         private const val URI_KEY = "uri"
 
+        const val PROVIDER_UNAVAILABLE = 2
 
         const val TOKEN_KEY = "token"
         const val ERROR_KEY = "error"

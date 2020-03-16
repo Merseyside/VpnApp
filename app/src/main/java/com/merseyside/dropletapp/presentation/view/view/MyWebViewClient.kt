@@ -40,11 +40,11 @@ class MyWebViewClient: WebViewClient() {
                 if (getHost(url).contains(host!!)) {
                     getAccessToken(url)
                 } else {
-                    makeRequest(url)
+                    //makeRequest(url)
                     view?.loadUrl(url)
                 }
             } else {
-                makeRequest(url)
+                //makeRequest(url)
                 view?.loadUrl(url)
             }
 
@@ -65,11 +65,11 @@ class MyWebViewClient: WebViewClient() {
                 if (getHost(request.url).contains(host!!)) {
                     getAccessToken(url)
                 } else {
-                    makeRequest(url)
+                    //makeRequest(url)
                     view?.loadUrl(url)
                 }
             } else {
-                makeRequest(url)
+                //makeRequest(url)
                 view?.loadUrl(url)
             }
 
@@ -98,74 +98,55 @@ class MyWebViewClient: WebViewClient() {
         return uri.host.toString().also { Logger.log(TAG, "host = $it") }
     }
 
-    override fun onReceivedError(
-        view: WebView?,
-        errorCode: Int,
-        description: String?,
-        failingUrl: String?
-    ) {
-        super.onReceivedError(view, errorCode, description, failingUrl)
-
-        onAccessTokenCallback?.onError(errorCode)
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    override fun onReceivedError(
-        view: WebView?,
-        request: WebResourceRequest?,
-        error: WebResourceError?
-    ) {
-        super.onReceivedError(view, request, error)
-
-        if (error != null) {
-            onAccessTokenCallback?.onError(error.errorCode)
-            return
-        }
-
-        onAccessTokenCallback?.onError(404)
-    }
-
-    private fun makeRequest(url: String) {
-        Thread {
-            val client = OkHttpClient()
-
-            val request: Request = Request.Builder()
-                .url(url)
-                .build()
-
-            try {
-
-                val response = client.newCall(request).execute()
-
-                Log.i(TAG, "response = $response")
-
-//                if (response.code >= 400) {
-//                    Handler(Looper.getMainLooper()).post {
-//                        onAccessTokenCallback?.onError(response.code)
-//                    }
-//                }
-            } catch (e: Exception) {
-                val msg = e.message
-                e.printStackTrace()
-            }
-        }.start()
-    }
-
-    private fun getValidUrl(url: String): String {
-        return url
-//        val splitPattern = "redirect_uri=https:/"
-//        val splits = url.split(splitPattern)
+//    override fun onReceivedError(
+//        view: WebView?,
+//        errorCode: Int,
+//        description: String?,
+//        failingUrl: String?
+//    ) {
+//        super.onReceivedError(view, errorCode, description, failingUrl)
 //
-//        return if (splits.isNotEmpty() && splits.size == 2) {
-//            if (splits[1].startsWith("/")) {
-//                url
-//            } else {
-//                "${splits[0]}$splitPattern/${splits[1]}"
-//            }
-//        } else {
-//            url
+//        onAccessTokenCallback?.onError(errorCode)
+//    }
+//
+//    @TargetApi(Build.VERSION_CODES.M)
+//    override fun onReceivedError(
+//        view: WebView?,
+//        request: WebResourceRequest?,
+//        error: WebResourceError?
+//    ) {
+//        super.onReceivedError(view, request, error)
+//
+//        if (error != null) {
+//            onAccessTokenCallback?.onError(error.errorCode)
+//            return
 //        }
-    }
+//
+//        onAccessTokenCallback?.onError(404)
+//    }
+
+//    private fun makeRequest(url: String) {
+//        Thread {
+//            val client = OkHttpClient()
+//
+//            val request: Request = Request.Builder()
+//                .url(url)
+//                .build()
+//
+//            try {
+//
+//                val response = client.newCall(request).execute()
+//
+//            } catch (e: Exception) {
+//                val msg = e.message
+//                e.printStackTrace()
+//            }
+//        }.start()
+//    }
+
+//    private fun getValidUrl(url: String): String {
+//        return url
+//    }
 
 
     companion object {

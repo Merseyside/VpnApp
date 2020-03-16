@@ -21,6 +21,7 @@ import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.ssh.SshManager
+import com.merseyside.dropletapp.utils.generateRandomString
 import com.merseyside.dropletapp.utils.getLogByStatus
 import com.merseyside.mvvmcleanarch.utils.Logger
 import com.merseyside.mvvmcleanarch.utils.SingleLiveEvent
@@ -142,7 +143,7 @@ class DropletViewModel(
             val externalStorage = FileManager.getStorageLocations(FileManager.STORAGE.SD_CARD)
 
             if (externalStorage != null) {
-                val resultFile = FileManager.createFile("${externalStorage.path}/MyVpn", "${server.name}.conf", server.getConfig()!!)
+                val resultFile = FileManager.createFile("${externalStorage.path}/MyVpn", "${generateRandomString(8)}.conf", server.getConfig()!!)
 
                 if (resultFile != null) {
                     showAlertDialog(

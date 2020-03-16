@@ -40,8 +40,9 @@ sealed class ConnectionType {
     @Serializable
     class WireGuardType : ConnectionType() {
         override fun getSetupScript(): String {
-            return "bash -c \"$(wget https://gist.githubusercontent.com/my0419/e5adf8d1d1102d214bd5c0af8fad3529/" +
-                    "raw/2d2fb800086d3dafe4654d506a4960275428d626/wireguard.sh -O -)\" > ~/wireguard-client.conf"
+            return "export VPN_CLIENT_CONFIG_FILE=/tmp/client.conf && bash -c " +
+                    "\"$(wget https://gist.githubusercontent.com/my0419/dd0111d60375dc756c19a70e0907e32b/" +
+                    "raw/05ca85bf110199ab35421e7702bf6bc184323603/wireguard.sh -O -)\""
         }
 
         override fun isNeedsConfig(): Boolean {
@@ -49,7 +50,7 @@ sealed class ConnectionType {
         }
 
         override fun getConfigFileScript(): String {
-            return "cat ~/wireguard-client.conf"
+            return "cat /tmp/client.conf"
         }
 
         override fun equals(other: Any?): Boolean {
