@@ -21,6 +21,7 @@ import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.ssh.SshManager
+import com.merseyside.dropletapp.utils.generateRandomString
 import com.merseyside.dropletapp.utils.getLogByStatus
 import com.merseyside.mvvmcleanarch.utils.Logger
 import com.merseyside.mvvmcleanarch.utils.SingleLiveEvent
@@ -142,7 +143,7 @@ class DropletViewModel(
             val externalStorage = FileManager.getStorageLocations(FileManager.STORAGE.SD_CARD)
 
             if (externalStorage != null) {
-                val resultFile = FileManager.createFile("${externalStorage.path}/MyVpn", "${server.name}.conf", server.getConfig()!!)
+                val resultFile = FileManager.createFile("${externalStorage.path}/MyVpn", "${generateRandomString(8)}.conf", server.getConfig()!!)
 
                 if (resultFile != null) {
                     showAlertDialog(
@@ -297,9 +298,7 @@ class DropletViewModel(
         } else if (server.environmentStatus == SshManager.Status.IN_PROCESS && loadServersJob == null) {
             loadServersJob = loadServers()
         } else if (server.environmentStatus == SshManager.Status.ERROR) {
-            Logger.log(this, "here")
             showAlertDialog(
-                context = VpnApplication.getInstance().context,
                 titleRes = R.string.delete_server,
                 messageRes = R.string.banned_msg,
                 positiveButtonTextRes = R.string.delete_action,

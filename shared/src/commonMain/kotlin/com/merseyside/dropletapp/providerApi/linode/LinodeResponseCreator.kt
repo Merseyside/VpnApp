@@ -5,6 +5,7 @@ import com.merseyside.dropletapp.providerApi.linode.entity.response.LinodeAccoun
 import com.merseyside.dropletapp.providerApi.linode.entity.response.LinodeCreateDropletResponse
 import com.merseyside.dropletapp.providerApi.linode.entity.response.LinodeImportKeyResponse
 import com.merseyside.dropletapp.providerApi.linode.entity.response.LinodeRegionsResponse
+import com.merseyside.dropletapp.utils.jsonContent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.features.defaultRequest
@@ -12,6 +13,7 @@ import io.ktor.client.request.*
 import io.ktor.http.ContentType
 import io.ktor.http.takeFrom
 import kotlinx.serialization.ImplicitReflectionSerializer
+import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -20,9 +22,11 @@ import kotlinx.serialization.parse
 
 class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
-    private val json = Json.nonstrict
-    private val serializer = io.ktor.client.features.json.defaultSerializer()
-
+    @OptIn(UnstableDefault::class)
+    private val json = Json {
+        isLenient = true
+        ignoreUnknownKeys = true
+    }
     private val baseUrl = "https://api.linode.com/v4"
 
     private fun getRoute(method: String): String{
@@ -35,12 +39,6 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
     private val client by lazy {
         HttpClient(httpClientEngine) {
-            engine {
-                response.apply {
-                    //defaultCharset = Charsets.UTF_8
-                }
-            }
-
             defaultRequest {
                 accept(ContentType.Application.Json)
             }
@@ -49,7 +47,7 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
         }
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getAccountInfo(token: String): LinodeAccountResponse {
 
         val apiMethod = "account"
@@ -63,7 +61,7 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
         return json.parse(call)
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getRegions(): LinodeRegionsResponse {
 
         val apiMethod = "regions"
@@ -76,7 +74,7 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun importSshKey(token: String, label: String, publicKey: String): LinodeImportKeyResponse {
         val apiMethod = "profile/sshkeys"
 
@@ -90,13 +88,13 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
                 SSH_KEY to JsonPrimitive(publicKey)
             ))
 
-            body = serializer.write(json)
+            body = json.jsonContent()
         }
 
         return json.parse(call)
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun createLinode(
         token: String,
         label: String,
@@ -122,14 +120,14 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
                 TAG_KEY to JsonArray(listOf(JsonPrimitive(tag)))
             ))
 
-            body = serializer.write(json)
+            body = json.jsonContent()
         }
 
         return json.parse(call)
 
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getLinode(
         token: String,
         linodeId: Long

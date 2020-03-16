@@ -1,7 +1,10 @@
 package com.merseyside.dropletapp.providerApi.cryptoServers
 
 import com.merseyside.dropletapp.data.exception.IllegalResponseCode
-import com.merseyside.dropletapp.providerApi.*
+import com.merseyside.dropletapp.providerApi.AUTHORIZATION_KEY
+import com.merseyside.dropletapp.providerApi.KEY
+import com.merseyside.dropletapp.providerApi.REGION_KEY
+import com.merseyside.dropletapp.providerApi.SSH_KEY_ID
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.providerApi.base.entity.response.ErrorResponse
 import com.merseyside.dropletapp.providerApi.cryptoServers.entity.point.CryptoDropletInfoPoint
@@ -10,36 +13,39 @@ import com.merseyside.dropletapp.providerApi.cryptoServers.entity.response.Crypt
 import com.merseyside.dropletapp.providerApi.cryptoServers.entity.response.CryptoIsTokenValidResponse
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.DigitalOceanCreateDropletResponse
 import com.merseyside.dropletapp.utils.Logger
+import com.merseyside.dropletapp.utils.jsonContent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
-import io.ktor.client.features.BadResponseStatusException
+import io.ktor.client.features.ResponseException
 import io.ktor.client.features.defaultRequest
-import io.ktor.client.request.*
-import io.ktor.client.response.HttpResponse
-import io.ktor.client.response.readText
+import io.ktor.client.request.accept
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.statement.HttpStatement
+import io.ktor.client.statement.readText
 import io.ktor.http.ContentType
 import io.ktor.http.takeFrom
 import kotlinx.serialization.ImplicitReflectionSerializer
+import kotlinx.serialization.UnstableDefault
+import kotlinx.serialization.builtins.list
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.list
 import kotlinx.serialization.parse
 
 class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
-    private val json = Json.nonstrict
-    private val serializer = io.ktor.client.features.json.defaultSerializer()
+    @OptIn(UnstableDefault::class)
+    private val json = Json {
+        isLenient = true
+        ignoreUnknownKeys = true
+    }
 
     private val baseUrl = "https://cryptoservers.net/api/v1"
 
     private val client by lazy {
         HttpClient(httpClientEngine) {
-            engine {
-                response.apply {
-                    //defaultCharset = Charsets.UTF_8
-                }
-            }
 
             defaultRequest {
                 accept(ContentType.Application.Json)
@@ -57,7 +63,7 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
         return "$token"
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getAccountInfo(token: String): CryptoIsTokenValidResponse {
         val apiMethod = "account"
 
@@ -70,24 +76,27 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
         return json.parse(call)
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
     suspend fun getRegions(token: String): List<RegionPoint> {
         val apiMethod = "regions"
 
-        val call = client.get<HttpResponse> {
+        val call = client.get<HttpStatement> {
             url.takeFrom(getRoute(apiMethod))
 
             header(AUTHORIZATION_KEY, getAuthHeader(token))
         }
 
-        if (call.status.value > 300) {
-            throw IllegalResponseCode(call.status.value, json.parse(ErrorResponse.serializer(), call.readText()).error)
-        } else {
-            return json.parse(RegionPoint.serializer().list, call.readText())
+        return call.execute { response ->
+            if (response.status.value > 300) {
+                throw IllegalResponseCode(
+                    response.status.value,
+                    json.parse(ErrorResponse.serializer(), response.readText()).error)
+            } else {
+                json.parse(RegionPoint.serializer().list, response.readText())
+            }
         }
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun createKey(token: String, publicKey: String): CryptoCreateSshKeyResponse {
         val apiMethod = "ssh/create"
 
@@ -100,13 +109,13 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
                 KEY to JsonPrimitive(publicKey)
             ))
 
-            body = serializer.write(obj)
+            body = obj.jsonContent()
         }
 
         return json.parse(call)
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun createDroplet(
         token: String,
         regionSlut: String,
@@ -124,14 +133,14 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
                 SSH_KEY_ID to JsonPrimitive(sshKeyId)
             ))
 
-            body = serializer.write(obj)
+            body = obj.jsonContent()
         }
 
         Logger.logMsg(TAG, call)
         return json.parse(call)
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getDroplet(token: String, dropletId: Long): CryptoDropletInfoPoint {
         val apiMethod = "droplet/check/$dropletId"
 
@@ -155,7 +164,7 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
             }
 
             Logger.logMsg(TAG, call)
-        } catch (e: BadResponseStatusException) {}
+        } catch (e: ResponseException) {}
     }
 
     suspend fun deleteSshKey(token: String, dropletId: Long, sshKeyId: Long) {
@@ -170,7 +179,6 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
         Logger.logMsg(TAG, call)
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
     suspend fun getServerList(token: String): List<CryptoServerPoint> {
 
         val apiMethod = "droplet/list"
@@ -181,7 +189,6 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
             header(AUTHORIZATION_KEY, getAuthHeader(token))
         }
 
-        Logger.logMsg(TAG, call)
         return json.parse(CryptoServerPoint.serializer().list, call)
     }
 

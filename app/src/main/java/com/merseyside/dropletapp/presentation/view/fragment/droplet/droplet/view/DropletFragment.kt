@@ -25,20 +25,24 @@ import com.merseyside.dropletapp.presentation.di.component.DaggerDropletComponen
 import com.merseyside.dropletapp.presentation.di.module.DropletModule
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.model.DropletViewModel
 import com.merseyside.dropletapp.ssh.SshManager
-import com.merseyside.mvvmcleanarch.data.deserialize
-import com.merseyside.mvvmcleanarch.data.serialize
+import com.merseyside.mvvmcleanarch.data.serialization.deserialize
+import com.merseyside.mvvmcleanarch.data.serialization.serialize
 import com.merseyside.mvvmcleanarch.presentation.view.OnBackPressedListener
 import com.merseyside.mvvmcleanarch.utils.Logger
-import com.merseyside.mvvmcleanarch.utils.ValueAnimatorHelper
+import com.merseyside.mvvmcleanarch.utils.animation.AnimatorList
+import com.merseyside.mvvmcleanarch.utils.animation.Approach
+import com.merseyside.mvvmcleanarch.utils.animation.Axis
+import com.merseyside.mvvmcleanarch.utils.animation.MainPoint
+import com.merseyside.mvvmcleanarch.utils.animation.animator.AlphaAnimator
+import com.merseyside.mvvmcleanarch.utils.animation.animator.TransitionAnimator
+import com.merseyside.mvvmcleanarch.utils.time.Millis
 import de.blinkt.openvpn.VpnProfile
 import de.blinkt.openvpn.core.OpenVPNService
 import de.blinkt.openvpn.core.VPNLaunchHelper
 import de.blinkt.openvpn.core.VpnStatus
 import java.io.File
 
-
 class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel>(), OnBackPressedListener {
-
 
     private val vpnProfileObserver = Observer<VpnProfile> {
         if (it != null) {
@@ -165,12 +169,12 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
 
         doLayout()
 
-        viewModel.vpnProfileLiveData.observe(this, vpnProfileObserver)
-        viewModel.connectionLiveData.observe(this, changeConnectionObserver)
-        viewModel.configFileLiveData.observe(this, configFileObserver)
-        viewModel.serverStatusEvent.observe(this, serverStatus)
-        viewModel.openConfigFile.observe(this, openConfigObserver)
-        viewModel.storagePermissionsErrorLiveEvent.observe(this, storagePermissionError)
+        viewModel.vpnProfileLiveData.observe(viewLifecycleOwner, vpnProfileObserver)
+        viewModel.connectionLiveData.observe(viewLifecycleOwner, changeConnectionObserver)
+        viewModel.configFileLiveData.observe(viewLifecycleOwner, configFileObserver)
+        viewModel.serverStatusEvent.observe(viewLifecycleOwner, serverStatus)
+        viewModel.openConfigFile.observe(viewLifecycleOwner, openConfigObserver)
+        viewModel.storagePermissionsErrorLiveEvent.observe(viewLifecycleOwner, storagePermissionError)
     }
 
     private fun doLayout() {
@@ -283,45 +287,54 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
     }
 
     private fun startAnimation() {
-        val animation = ValueAnimatorHelper()
+        val animation = AnimatorList(Approach.TOGETHER)
 
-        animation.addAnimation(
-            ValueAnimatorHelper.Builder(binding.configCard)
-                .translateAnimationPercent(
-                    percents  = *floatArrayOf(1f, 0f),
-                    mainPoint = ValueAnimatorHelper.MainPoint.TOP_LEFT,
-                    animAxis  = ValueAnimatorHelper.AnimAxis.Y_AXIS,
-                    duration  = 700
-                ).build()
-        )
+        animation.apply {
+            addAnimator(
+                TransitionAnimator(TransitionAnimator.Builder(
+                    binding.configCard,
+                    DURATION
+                ).apply {
+                    setInPercents(
+                        1f to MainPoint.TOP_LEFT,
+                        0f to MainPoint.TOP_LEFT,
+                        axis = Axis.Y
+                    )
+                }
+            ))
 
-        animation.addAnimation(
-            ValueAnimatorHelper.Builder(binding.configCard)
-                .alphaAnimation(
-                    floats = *floatArrayOf(0f, 1f),
-                    duration = 700
-                ).build()
-        )
-
-        animation.addAnimation(
-            ValueAnimatorHelper.Builder(binding.share)
-                .alphaAnimation(
-                    floats = *floatArrayOf(0f, 1f),
-                    duration = 700
-                ).build()
-        )
-
-        if (viewModel.server.typedConfig is TypedConfig.WireGuard) {
-            animation.addAnimation(
-                ValueAnimatorHelper.Builder(binding.qr)
-                    .alphaAnimation(
-                        floats = *floatArrayOf(0f, 1f),
-                        duration = 700
-                    ).build()
+            addAnimator(
+                AlphaAnimator(AlphaAnimator.Builder(
+                    binding.configCard,
+                    DURATION
+                    ).apply {
+                    values(0f, 1f)
+                })
             )
+
+            addAnimator(
+                AlphaAnimator(AlphaAnimator.Builder(
+                    binding.share,
+                    DURATION
+                ).apply {
+                    values(0f, 1f)
+                })
+            )
+
+            if (viewModel.server.typedConfig is TypedConfig.WireGuard) {
+
+                addAnimator(
+                    AlphaAnimator(AlphaAnimator.Builder(
+                        binding.qr,
+                        DURATION
+                    ).apply {
+                        values(0f, 1f)
+                    })
+                )
+            }
         }
 
-        animation.playTogether()
+        animation.start()
     }
 
     companion object {
@@ -331,6 +344,8 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
         private const val BROADCAST_ACTION = "de.blinkt.openvpn.VPN_STATUS"
 
         private const val PERMISSION_ACCESS_CODE = 15
+
+        private val DURATION = Millis(700)
 
         fun newInstance(server: Server): DropletFragment {
             val bundle = Bundle().apply {
@@ -344,4 +359,5 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
     override fun onBackPressed(): Boolean {
         return viewModel.onBackPressed()
     }
+
 }

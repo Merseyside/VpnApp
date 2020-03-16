@@ -10,21 +10,16 @@ import androidx.lifecycle.Observer
 import com.merseyside.admin.merseylibrary.system.PermissionsManager
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
-import com.merseyside.dropletapp.data.db.token.TokenEntity
-import com.merseyside.dropletapp.providerApi.Provider
-import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
-import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel
 import com.merseyside.dropletapp.databinding.FragmentAddDropletBinding
-import com.merseyside.dropletapp.domain.model.OAuthProvider
+import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
 import com.merseyside.dropletapp.presentation.di.component.DaggerAddDropletComponent
 import com.merseyside.dropletapp.presentation.di.module.AddDropletModule
-import com.merseyside.dropletapp.presentation.view.activity.main.adapter.ProviderAdapter
-import com.merseyside.dropletapp.presentation.view.activity.main.view.MainActivity
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter.RegionAdapter
-import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter.TokenAdapter
+import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel
+import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
-import com.merseyside.mvvmcleanarch.data.deserialize
-import com.merseyside.mvvmcleanarch.data.serialize
+import com.merseyside.mvvmcleanarch.data.serialization.deserialize
+import com.merseyside.mvvmcleanarch.data.serialization.serialize
 import com.merseyside.mvvmcleanarch.presentation.view.OnBackPressedListener
 
 class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDropletViewModel>(),
@@ -140,7 +135,10 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
                 putString(PROVIDER_KEY, provider.serialize())
             }
 
-            return AddDropletFragment().also { it.arguments = bundle }
+            return AddDropletFragment().also {
+                it.arguments = bundle
+                it.setRequestCode(23)
+            }
         }
     }
 

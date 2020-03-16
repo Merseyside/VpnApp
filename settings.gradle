@@ -16,4 +16,4 @@ include ':merseylibrary'
 project(':merseylibrary').projectDir = new File(settingsDir, '../merseylibrary')
 
 include ':library'
-project(':library').projectDir = new File(settingsDir, '../../mvvm-clean-arch-library/library')
+project(':library').projectDir = new File(settingsDir, '../mvvm-clean-arch-library/library')

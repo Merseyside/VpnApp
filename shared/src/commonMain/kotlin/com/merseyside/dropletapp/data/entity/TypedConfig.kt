@@ -37,14 +37,6 @@ sealed class TypedConfig {
     class WireGuard: TypedConfig() {
 
         override var config: String? = null
-        get() {
-            return if (field != null) {
-                val interfaceStr = "[Interface]\n"
-                var split = field!!.split(interfaceStr)
-
-                interfaceStr + split[1]
-            } else field
-        }
 
         override fun equals(other: Any?): Boolean {
             return this === other

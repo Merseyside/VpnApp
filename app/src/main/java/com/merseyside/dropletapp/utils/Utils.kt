@@ -44,3 +44,16 @@ fun getLogByStatus(context: Context, status: ProviderRepositoryImpl.LogStatus): 
         ProviderRepositoryImpl.LogStatus.SSH_KEYS -> context.getString(R.string.ssh_keys)
     }
 }
+
+fun generateRandomString(length: Int): String {
+    if (length > 0) {
+        val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+
+        return (1..length)
+            .map { kotlin.random.Random.nextInt(0, charPool.size) }
+            .map(charPool::get)
+            .joinToString("")
+    }
+
+    return ""
+}

@@ -73,7 +73,7 @@ class BrowserActivity : BaseActivity() {
                             putExtra(ERROR_KEY, errorCode)
                         }
 
-                        setResult(2, intent)
+                        setResult(PROVIDER_UNAVAILABLE, intent)
                         finish()
                     }
 
@@ -94,24 +94,15 @@ class BrowserActivity : BaseActivity() {
     }
 
     private fun clearCookie() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            CookieManager.getInstance().removeAllCookies(null)
-            CookieManager.getInstance().flush()
-        } else {
-            val cookieSyncMngr: CookieSyncManager = CookieSyncManager.createInstance(context)
-            cookieSyncMngr.startSync()
-            val cookieManager: CookieManager = CookieManager.getInstance()
-            cookieManager.removeAllCookie()
-            cookieManager.removeSessionCookie()
-            cookieSyncMngr.stopSync()
-            cookieSyncMngr.sync()
-        }
+        CookieManager.getInstance().removeAllCookies(null)
+        CookieManager.getInstance().flush()
     }
 
     companion object {
         private const val HOST_KEY = "host"
         private const val URI_KEY = "uri"
 
+        const val PROVIDER_UNAVAILABLE = 2
 
         const val TOKEN_KEY = "token"
         const val ERROR_KEY = "error"

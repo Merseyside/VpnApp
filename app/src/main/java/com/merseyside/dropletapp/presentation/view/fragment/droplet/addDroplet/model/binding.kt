@@ -35,7 +35,7 @@ fun setSelectedMembersListener(recyclerView: RecyclerView, listener: InverseBind
         }
 
         adapter.setOnItemSelectedListener(object : BaseSelectableAdapter.OnItemSelectedListener<String> {
-            override fun onSelected(isSelected: Boolean, item: String) {
+            override fun onSelected(item: String, isSelected: Boolean, isSelectedByUser: Boolean) {
                 if (isSelected) {
                     listener.onChange()
                 }

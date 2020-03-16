@@ -2,7 +2,6 @@ package com.merseyside.dropletapp.presentation.di.module
 
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.merseyside.dropletapp.domain.interactor.*
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel
 import com.merseyside.mvvmcleanarch.presentation.fragment.BaseFragment
@@ -34,7 +33,7 @@ class AddDropletModule(
 
     @Provides
     internal fun provideAddProviderFragmentViewModel(factory: ViewModelProvider.Factory): AddDropletViewModel {
-        return ViewModelProviders.of(fragment, factory).get(AddDropletViewModel::class.java)
+        return ViewModelProvider(fragment, factory).get(AddDropletViewModel::class.java)
     }
 
     @Provides
