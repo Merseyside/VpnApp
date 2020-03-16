@@ -29,7 +29,7 @@ class DropletListFragment : BaseVpnFragment<FragmentDropletListBinding, DropletL
     private val dropletObserver = Observer<List<Server>> {
 
         if (it.isEmpty()) {
-            adapter.removeAll()
+            adapter.clear()
         } else {
             if (adapter.isEmpty()) {
 

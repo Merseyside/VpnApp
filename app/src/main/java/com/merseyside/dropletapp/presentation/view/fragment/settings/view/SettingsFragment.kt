@@ -27,14 +27,13 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
 
     private val tokenObserver = Observer<List<TokenEntity>> {
         if (!adapter.isEmpty()) {
-            adapter.removeAll()
+            adapter.clear()
         }
 
         adapter.add(it)
     }
 
-    override fun loadingObserver(isLoading: Boolean) {
-    }
+    override fun loadingObserver(isLoading: Boolean) {}
 
     override fun performInjection(bundle: Bundle?) {
         DaggerSettingsComponent.builder()
@@ -67,8 +66,6 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
         adapter.setOnItemClickListener(object : BaseAdapter.OnItemClickListener<TokenEntity> {
             override fun onItemClicked(obj: TokenEntity) {
                 viewModel.deleteToken(obj)
-
-                //logout(obj)
             }
         })
 

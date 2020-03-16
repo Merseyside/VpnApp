@@ -58,7 +58,6 @@ class SettingsViewModel(
 
     fun deleteToken(tokenEntity: TokenEntity) {
         showAlertDialog(
-            context = VpnApplication.getInstance().context,
             titleRes = R.string.delete_token,
             messageRes = R.string.delete_token_msg,
             positiveButtonTextRes = R.string.delete_action,

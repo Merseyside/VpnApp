@@ -298,9 +298,7 @@ class DropletViewModel(
         } else if (server.environmentStatus == SshManager.Status.IN_PROCESS && loadServersJob == null) {
             loadServersJob = loadServers()
         } else if (server.environmentStatus == SshManager.Status.ERROR) {
-            Logger.log(this, "here")
             showAlertDialog(
-                context = VpnApplication.getInstance().context,
                 titleRes = R.string.delete_server,
                 messageRes = R.string.banned_msg,
                 positiveButtonTextRes = R.string.delete_action,

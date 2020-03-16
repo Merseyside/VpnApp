@@ -2,16 +2,14 @@ package com.merseyside.dropletapp.domain.model
 
 import android.content.Context
 import android.content.res.AssetManager
-import android.content.res.Resources
-import com.github.florent37.preferences.Preferences
 import com.merseyside.dropletapp.di.appContext
-import com.merseyside.shared.R
-import kotlinx.io.IOException
 import kotlinx.io.InputStream
 import kotlinx.serialization.ImplicitReflectionSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.parse
+import java.io.IOException
 
 @Serializable
 actual data class OAuthConfig actual constructor(
@@ -26,14 +24,14 @@ actual data class OAuthConfig actual constructor(
         private val jsonFilename: String
     ) {
 
-        @UseExperimental(ImplicitReflectionSerializer::class)
+        @OptIn(ImplicitReflectionSerializer::class)
         actual fun build(): OAuthConfig? {
-
-
             val strConfig = getJsonFromAssets(jsonFilename, appContext!!)
 
             if (!strConfig.isNullOrEmpty()) {
-                val json = Json.nonstrict
+                val json = Json {
+                    isLenient = true
+                }
 
                 return json.parse(strConfig)
             }
@@ -41,6 +39,7 @@ actual data class OAuthConfig actual constructor(
             return null
         }
 
+        @OptIn(InternalSerializationApi::class)
         private fun getJsonFromAssets(filename: String, context: Context): String? {
             val manager: AssetManager = context.assets
 
@@ -59,6 +58,4 @@ actual data class OAuthConfig actual constructor(
     override fun toString(): String {
         return "OAuthConfig(authEndPoint='$authEndPoint', host='$host', clientId='$clientId', redirectUrl='$redirectUrl')"
     }
-
-
 }

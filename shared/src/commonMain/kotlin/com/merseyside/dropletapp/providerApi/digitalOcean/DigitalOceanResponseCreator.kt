@@ -2,38 +2,34 @@ package com.merseyside.dropletapp.providerApi.digitalOcean
 
 import com.merseyside.dropletapp.providerApi.*
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.*
+import com.merseyside.dropletapp.utils.jsonContent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.features.defaultRequest
+import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.*
 import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import io.ktor.http.takeFrom
-import kotlinx.io.charsets.Charsets
 import kotlinx.serialization.ImplicitReflectionSerializer
+import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.parse
-import kotlinx.serialization.stringify
 
 class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
-    private val json = Json.nonstrict
+    @OptIn(UnstableDefault::class)
+    private val json = Json {
+        isLenient = false
+        ignoreUnknownKeys = true
+    }
 
     private val baseUrl = "https://api.digitalocean.com/v2"
 
-    private val serializer = io.ktor.client.features.json.defaultSerializer()
-
     private val client by lazy {
         HttpClient(httpClientEngine) {
-            engine {
-                response.apply {
-                    defaultCharset = Charsets.UTF_8
-                }
-            }
-
             defaultRequest {
                 accept(ContentType.Application.Json)
             }
@@ -46,7 +42,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
         return "$baseUrl/$method"
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getAccountInfo(token: String): IsTokenValidResponse {
         val apiMethod = "account"
 
@@ -59,7 +55,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
         return json.parse(call)
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getRegions(token: String): RegionResponse {
         val apiMethod = "regions"
 
@@ -76,7 +72,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
         return "Bearer $token"
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun createKey(token: String, name: String, publicKey: String): CreateSshKeyDigitalOceanResponse {
         val apiMethod = "account/keys"
 
@@ -90,13 +86,13 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
                 PUBLIC_KEY to JsonPrimitive(publicKey)
             ))
 
-            body = serializer.write(obj)
+            body = obj.jsonContent()
         }
 
         return json.parse(call)
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun createDroplet(
         token: String,
         name: String,
@@ -125,13 +121,13 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
                 ))
             ))
 
-            body = serializer.write(obj)
+            body = obj.jsonContent()
         }
 
         return json.parse(call)
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getDropletInfo(token: String, dropletId: Long): DigitalOceanDropletInfoResponse {
         val apiMethod = "droplets/$dropletId"
 
@@ -154,7 +150,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
         }
     }
 
-    @UseExperimental(ImplicitReflectionSerializer::class)
+    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun addFloatingAddress(token: String, dropletId: Long): FloatingAddressResponse {
         val apiMethod = "floating_ips"
 
@@ -167,7 +163,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
                 DROPLET_KEY to JsonPrimitive(dropletId)
             ))
 
-            body = serializer.write(obj)
+            body = obj.jsonContent()
         }
 
         return json.parse(call)
