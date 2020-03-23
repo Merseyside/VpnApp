@@ -1,4 +1,4 @@
-package com.merseyside.dropletapp.presentation.view.fragment.authFragment.model
+package com.merseyside.dropletapp.presentation.view.fragment.auth.model
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -7,7 +7,8 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.model.OAuthProvider
 import com.merseyside.dropletapp.providerApi.Provider
-import com.merseyside.mvvmcleanarch.presentation.model.BaseAdapterViewModel
+import com.merseyside.dropletapp.utils.getProviderColor
+import com.merseyside.dropletapp.utils.getProviderIcon
 import com.merseyside.mvvmcleanarch.presentation.model.BaseComparableAdapterViewModel
 import com.merseyside.mvvmcleanarch.utils.Logger
 import com.merseyside.mvvmcleanarch.utils.ext.isNotNullAndEmpty
@@ -15,7 +16,6 @@ import com.merseyside.mvvmcleanarch.utils.ext.isNotNullAndEmpty
 class ProviderItemModel(override var obj: OAuthProvider) : BaseComparableAdapterViewModel<OAuthProvider>(obj) {
 
     override fun areItemsTheSame(obj: OAuthProvider): Boolean {
-        Logger.log(this, "here")
         return obj.provider.getId() == this.obj.provider.getId()
     }
 
@@ -26,11 +26,7 @@ class ProviderItemModel(override var obj: OAuthProvider) : BaseComparableAdapter
     @Bindable
     @DrawableRes
     fun getIcon(): Int {
-        return when(obj.provider) {
-            is Provider.DigitalOcean -> R.drawable.digital_ocean
-            is Provider.Linode -> R.drawable.ic_linode
-            is Provider.CryptoServers -> R.drawable.crypto_servers
-        }
+        return getProviderIcon(obj.provider.getId())
     }
 
     @Bindable
@@ -41,11 +37,7 @@ class ProviderItemModel(override var obj: OAuthProvider) : BaseComparableAdapter
     @Bindable
     @ColorRes
     fun getTitleColor(): Int {
-        return when(obj.provider) {
-            is Provider.DigitalOcean -> R.color.digital_ocean_color
-            is Provider.Linode -> R.color.linode_color
-            is Provider.CryptoServers -> R.color.crypto_servers_color
-        }
+        return getProviderColor(obj.provider.getId())
     }
 
     @Bindable

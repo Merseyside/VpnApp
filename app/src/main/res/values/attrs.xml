@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <attr name="vpnTextColor" format="reference"/>
+    <attr name="mainTextColor" format="reference"/>
     <attr name="pendingColor" format="reference"/>
     <attr name="inactiveColor" format="reference"/>
 

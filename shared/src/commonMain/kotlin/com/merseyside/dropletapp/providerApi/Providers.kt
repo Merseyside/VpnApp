@@ -54,6 +54,22 @@ sealed class Provider {
         }
     }
 
+    @Serializable
+    class Custom : Provider() {
+        override fun getName(): String {
+            return "Custom"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            return this === other
+        }
+
+        override fun getId(): Long {
+            return 3
+        }
+
+    }
+
     companion object {
         private var providers: List<Provider>? = null
 
@@ -64,6 +80,7 @@ sealed class Provider {
                 providers.add(CryptoServers())
                 providers.add(DigitalOcean())
                 providers.add(Linode())
+                providers.add(Custom())
 
                 this.providers = providers
             }

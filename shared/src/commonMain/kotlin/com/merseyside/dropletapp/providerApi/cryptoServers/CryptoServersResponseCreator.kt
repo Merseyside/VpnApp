@@ -1,10 +1,7 @@
 package com.merseyside.dropletapp.providerApi.cryptoServers
 
 import com.merseyside.dropletapp.data.exception.IllegalResponseCode
-import com.merseyside.dropletapp.providerApi.AUTHORIZATION_KEY
-import com.merseyside.dropletapp.providerApi.KEY
-import com.merseyside.dropletapp.providerApi.REGION_KEY
-import com.merseyside.dropletapp.providerApi.SSH_KEY_ID
+import com.merseyside.dropletapp.providerApi.*
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.providerApi.base.entity.response.ErrorResponse
 import com.merseyside.dropletapp.providerApi.cryptoServers.entity.point.CryptoDropletInfoPoint
@@ -119,7 +116,8 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
     suspend fun createDroplet(
         token: String,
         regionSlut: String,
-        sshKeyId: Long
+        sshKeyId: Long,
+        script: String
     ): DigitalOceanCreateDropletResponse {
         val apiMethod = "droplet/create"
 
@@ -130,7 +128,8 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
 
             val obj = JsonObject(mapOf(
                 REGION_KEY to JsonPrimitive(regionSlut),
-                SSH_KEY_ID to JsonPrimitive(sshKeyId)
+                SSH_KEY_ID to JsonPrimitive(sshKeyId),
+                USER_DATA to JsonPrimitive(script)
             ))
 
             body = obj.jsonContent()
@@ -162,8 +161,6 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
 
                 header(AUTHORIZATION_KEY, getAuthHeader(token))
             }
-
-            Logger.logMsg(TAG, call)
         } catch (e: ResponseException) {}
     }
 
@@ -175,8 +172,6 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
 
             header(AUTHORIZATION_KEY, getAuthHeader(token))
         }
-
-        Logger.logMsg(TAG, call)
     }
 
     suspend fun getServerList(token: String): List<CryptoServerPoint> {

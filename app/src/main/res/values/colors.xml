@@ -34,6 +34,7 @@
     <color name="linode_color">#017C15</color>
     <color name="digital_ocean_color">#0C84C8</color>
     <color name="crypto_servers_color">#454242</color>
+    <color name="custom_color">#000000</color>
 
     <!--End of purple theme-->
 </resources>

@@ -20,7 +20,6 @@
     <string name="hint_server_name_summary">Server name</string>
 
     <string name="complete_msg">Completed</string>
-    <string name="fill_fields_msg">Please fill all fields correctly</string>
     <string name="unknown_error_msg">Unknown error</string>
     <string name="grant_permissions">You have to access this permission in order to you app</string>
     <string name="no_servers">No servers\nPress + to add server</string>
@@ -106,6 +105,21 @@
     <string name="checking_server">Checking server status</string>
     <string name="creating_server">Creating a new server</string>
     <string name="ssh_keys">Generating ssh keys</string>
+
+    <string name="custom_server">Other server</string>
+    <string name="ip_address">IP Address</string>
+    <string name="username">Username</string>
+    <string name="port">Port</string>
+    <string name="setup_ssh_connection">Setup SSH connection</string>
+    <string name="unknown_region">Unknown region</string>
+    <string name="private_key_auth">Private key authorization</string>
+    <string name="password_hint">Password</string>
+    <string name="ssh_key_hint">Private SSH key</string>
+    <string name="field_error">Field can not be empty</string>
+    <string name="fill_fields_msg">Please, fill fields correctly</string>
+    <string name="V2Ray" translatable="false">V2Ray</string>
+    <string name="ip_not_valid">Address is not valid</string>
+    <string name="debian_9">Requires a clean Debian 9 server</string>
 
     <string name="digital_ocean_client_id">5ac7fe6563469c85ed75f4375779d6656a67f721442f61bdfd616955e6778bad</string>
 

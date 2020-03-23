@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model
 
+import android.content.Context
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.databinding.Bindable
@@ -9,6 +10,7 @@ import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.ssh.SshManager
+import com.merseyside.dropletapp.utils.getProviderIcon
 import com.merseyside.mvvmcleanarch.presentation.model.BaseComparableAdapterViewModel
 import com.merseyside.mvvmcleanarch.utils.Logger
 
@@ -29,27 +31,24 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
 
     @Bindable
     fun getServerIp(): String {
-        return VpnApplication.getInstance().getActualString(R.string.address, obj.address)
+        return getString(R.string.address, obj.address)
     }
 
     @Bindable
     fun getConnectionType(): String {
-        return VpnApplication.getInstance().getActualString(R.string.type, obj.typedConfig.getName())
+        return getString(R.string.type, obj.typedConfig.getName())
     }
 
     @Bindable
     fun getRegion(): String {
-        return VpnApplication.getInstance().getActualString(R.string.region, obj.regionName)
+        return obj.regionName?.let {
+            getString(R.string.region, obj.regionName!!)
+        } ?: ""
     }
 
     @DrawableRes
     fun getIcon(): Int {
-        return when(Provider.getProviderById(obj.providerId)) {
-            is Provider.DigitalOcean -> R.drawable.digital_ocean
-            is Provider.Linode -> R.drawable.ic_linode
-            is Provider.CryptoServers -> R.drawable.crypto_servers
-            null -> TODO()
-        }
+        return getProviderIcon(obj.providerId)
     }
 
     @Bindable
@@ -102,11 +101,11 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
     fun getStatus(): String {
 
         return when (obj.environmentStatus) {
-            SshManager.Status.STARTING -> VpnApplication.getInstance().getActualString(R.string.starting)
-            SshManager.Status.READY -> VpnApplication.getInstance().getActualString(R.string.ready)
-            SshManager.Status.ERROR -> VpnApplication.getInstance().getActualString(R.string.error)
-            SshManager.Status.IN_PROCESS -> VpnApplication.getInstance().getActualString(R.string.in_process)
-            SshManager.Status.PENDING -> VpnApplication.getInstance().getActualString(R.string.pending)
+            SshManager.Status.STARTING -> getString(R.string.starting)
+            SshManager.Status.READY -> getString(R.string.ready)
+            SshManager.Status.ERROR -> getString(R.string.error)
+            SshManager.Status.IN_PROCESS -> getString(R.string.in_process)
+            SshManager.Status.PENDING -> getString(R.string.pending)
         }
     }
 
@@ -114,5 +113,9 @@ class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterView
         notifyPropertyChanged(BR.statusColor)
         notifyPropertyChanged(BR.statusIcon)
         notifyPropertyChanged(BR.status)
+    }
+
+    override fun getLocaleContext(): Context {
+        return VpnApplication.getInstance()
     }
 }

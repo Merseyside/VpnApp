@@ -79,7 +79,8 @@
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                         android:text="@{obj.region}"
                         android:ellipsize="marquee"
-                        android:singleLine="true"/>
+                        android:singleLine="true"
+                        app:isVisibleOrGone="@{!obj.region.empty}"/>
 
                 </LinearLayout>
 

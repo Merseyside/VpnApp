@@ -9,10 +9,10 @@ data class Server(
     val id: Long,
     val name: String,
     val createdAt: String,
-    val regionName: String,
+    val regionName: String?,
     val providerId: Long,
     val providerName: String,
-    val serverStatus: String,
+    val serverStatus: String?,
     val address: String,
     val typedConfig: TypedConfig,
     val environmentStatus: SshManager.Status
@@ -54,10 +54,10 @@ data class Server(
     fun getConfig(): String? {
         return when(typedConfig) {
             is TypedConfig.L2TP, is TypedConfig.PPTP -> {
-                "${typedConfig.config}\nIP Address=$address"
+                "${typedConfig.getConfig()}\nIP Address=$address"
             }
 
-            else -> typedConfig.config
+            else -> typedConfig.getConfig()
         }
     }
 }

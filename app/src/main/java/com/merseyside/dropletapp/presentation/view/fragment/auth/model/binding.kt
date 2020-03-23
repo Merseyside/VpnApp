@@ -1,9 +1,9 @@
-package com.merseyside.dropletapp.presentation.view.fragment.authFragment.model
+package com.merseyside.dropletapp.presentation.view.fragment.auth.model
 
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.dropletapp.domain.model.OAuthProvider
-import com.merseyside.dropletapp.presentation.view.fragment.authFragment.adapter.ProviderAdapter
+import com.merseyside.dropletapp.presentation.view.fragment.auth.adapter.ProviderAdapter
 import com.merseyside.mvvmcleanarch.presentation.adapter.UpdateRequest
 
 @BindingAdapter("bind:providers")
