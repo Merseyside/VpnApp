@@ -8,15 +8,18 @@ sealed class ConnectionType {
     abstract fun getSetupScript(): String
     abstract fun isNeedsConfig(): Boolean
 
+    abstract fun getUsername(): String
+    abstract fun getPassword(): String
+
     open fun getConfigFileScript(): String {
         return ""
     }
 
     @Serializable
-    class OpenVpnType(private val username: String) : ConnectionType() {
+    class OpenVpnType(val userName: String) : ConnectionType() {
         override fun getSetupScript(): String {
 
-            return "export CLIENT=$username" +
+            return "export CLIENT=$userName" +
                     " && bash -c " +
                     "\"$(wget https://gist.githubusercontent.com/myvpn-run/ab573e451a7b44991fb3a45" +
                     "66496d0f0/raw/4b9aa9f10049f1350fd81e1d1e4350b5bb227c7e/openvpn.sh -O -)\""
@@ -27,14 +30,25 @@ sealed class ConnectionType {
             return true
         }
 
+        override fun getUsername(): String {
+            return userName
+        }
+
+        override fun getPassword(): String {
+            throw UnsupportedOperationException()
+        }
+
         override fun getConfigFileScript(): String {
-            return "cat /root/$username.ovpn"
+            return "cat /root/$userName.ovpn"
         }
 
         override fun equals(other: Any?): Boolean {
             return this === other
         }
 
+        override fun toString(): String {
+            return "openvpn"
+        }
     }
 
     @Serializable
@@ -57,10 +71,22 @@ sealed class ConnectionType {
             return this === other
         }
 
+        override fun toString(): String {
+            return "wireguard"
+        }
+
+        override fun getUsername(): String {
+            throw UnsupportedOperationException()
+        }
+
+        override fun getPassword(): String {
+            throw UnsupportedOperationException()
+        }
+
     }
 
     @Serializable
-    class L2TPType(private val userName: String, private val password: String, private val key: String) : ConnectionType() {
+    class L2TPType(private val userName: String, private val password: String, val key: String) : ConnectionType() {
         override fun getSetupScript(): String {
             return "export VPN_IPSEC_PSK=$key && export VPN_USER=$userName && export VPN_PASSWORD=$password &&" +
                     " bash -c \"$(wget https://gist.githubusercontent.com/myvpn-run/c2ba3ac57c290" +
@@ -75,6 +101,17 @@ sealed class ConnectionType {
             return this === other
         }
 
+        override fun toString(): String {
+            return "l2tp"
+        }
+
+        override fun getUsername(): String {
+            return userName
+        }
+
+        override fun getPassword(): String {
+            return password
+        }
     }
 
     @Serializable
@@ -91,6 +128,46 @@ sealed class ConnectionType {
 
         override fun equals(other: Any?): Boolean {
             return this === other
+        }
+
+        override fun toString(): String {
+            return "pptp"
+        }
+
+        override fun getUsername(): String {
+            return userName
+        }
+
+        override fun getPassword(): String {
+            return password
+        }
+
+    }
+
+    @Serializable
+    class Shadowsocks(private val password: String) : ConnectionType() {
+        override fun getSetupScript(): String {
+            throw UnsupportedOperationException()
+        }
+
+        override fun isNeedsConfig(): Boolean {
+            return true
+        }
+
+        override fun getUsername(): String {
+            throw UnsupportedOperationException()
+        }
+
+        override fun getPassword(): String {
+            return password
+        }
+
+        override fun equals(other: Any?): Boolean {
+            return this === other
+        }
+
+        override fun toString(): String {
+            return "shadowsocks"
         }
 
     }

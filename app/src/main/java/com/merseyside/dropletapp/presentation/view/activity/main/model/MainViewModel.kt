@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.FlowCollector
 import ru.terrakok.cicerone.Router
 import kotlin.coroutines.CoroutineContext
 
-@UseExperimental(InternalCoroutinesApi::class)
+@OptIn(InternalCoroutinesApi::class)
 class MainViewModel(
     private val router: Router,
     private val getDropletsUseCase: GetDropletsInteractor

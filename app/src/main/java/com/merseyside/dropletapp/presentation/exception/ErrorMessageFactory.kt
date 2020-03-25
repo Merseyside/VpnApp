@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.exception
 
+import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import com.merseyside.dropletapp.BuildConfig
 import com.merseyside.dropletapp.R
@@ -8,8 +9,9 @@ import com.merseyside.dropletapp.data.exception.BannedAddressException
 import com.merseyside.dropletapp.data.exception.NoDataException
 import com.merseyside.dropletapp.providerApi.exception.BadResponseCodeException
 import com.merseyside.dropletapp.providerApi.exception.InvalidTokenException
+import com.merseyside.mvvmcleanarch.presentation.interfaces.IStringHelper
 
-class ErrorMessageFactory {
+class ErrorMessageFactory : IStringHelper {
 
     fun createErrorMsg(throwable: Throwable): String {
         if (BuildConfig.DEBUG) {
@@ -32,11 +34,11 @@ class ErrorMessageFactory {
 
     }
 
-    private fun getString(id: Int): String {
-        return VpnApplication.getInstance().getActualString(id)
-    }
-
     companion object {
         private const val TAG = "ErrorMessageFactory"
+    }
+
+    override fun getLocaleContext(): Context {
+        return VpnApplication.getInstance()
     }
 }

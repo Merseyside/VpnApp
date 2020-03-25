@@ -32,7 +32,8 @@ class LinodeProvider private constructor(httpClientEngine: HttpClientEngine): Pr
         regionSlug: String,
         sshKeyId: Long?,
         sshKey: String?,
-        tag: String
+        tag: String,
+        script: String
     ): DropletInfoResponse {
 
         val response = responseCreator.createLinode(token, name, regionSlug, sshKey, tag)

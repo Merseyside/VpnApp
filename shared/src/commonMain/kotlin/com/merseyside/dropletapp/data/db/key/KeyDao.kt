@@ -9,9 +9,9 @@ class KeyDao(database: VpnDatabase) {
 
     internal fun insert(
         sshKeyId: Long,
-        publicKeyPath: String,
+        publicKeyPath: String? = null,
         privateKeyPath: String,
-        token: String
+        token: String? = null
     ) {
         db.insert(sshKeyId, publicKeyPath, privateKeyPath, token)
     }

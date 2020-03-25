@@ -13,10 +13,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout android:orientation="vertical"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:padding="@dimen/normal_spacing">
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/normal_spacing">
 
             <LinearLayout
                     android:orientation="vertical"
@@ -91,8 +91,19 @@
                         android:layout_marginTop="@dimen/small_spacing"
                         bind:types="@{viewModel.types}"
                         bind:onTypeClick="@={viewModel.selectedType}"
-
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+                    <Switch
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/V2Ray"
+                        android:textColor="?attr/mainTextColor"
+                        android:trackTint="@color/grey_light"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                        android:layout_marginTop="@dimen/small_spacing"
+                        android:padding="@dimen/very_small_spacing"
+                        android:checked="@={viewModel.isV2RayEnabled()}"
+                        app:isVisible="@{viewModel.isShadowsocks}"/>
 
                 </LinearLayout>
 

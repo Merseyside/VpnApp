@@ -17,13 +17,14 @@ class ServerDao(database: VpnDatabase) {
         username: String,
         providerId: Long,
         name: String,
-        sshKeyId: Long,
-        serverStatus: String,
+        sshKeyId: Long? = null,
+        serverStatus: String? = null,
         environmentStatus: String,
         createdAt: String,
-        regionName: String,
+        regionName: String? = null,
         address: String,
-        typedConfig: TypedConfig
+        typedConfig: TypedConfig,
+        aesKey: String
     ) {
         db.insert(
             id = id,
@@ -36,7 +37,8 @@ class ServerDao(database: VpnDatabase) {
             createdAt = createdAt,
             regionName = regionName,
             address = address,
-            typedConfig = typedConfig
+            typedConfig = typedConfig,
+            aesKey = aesKey
         )
     }
 

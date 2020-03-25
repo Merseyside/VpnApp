@@ -1,13 +1,11 @@
-package com.merseyside.dropletapp.presentation.view.fragment.authFragment.model
+package com.merseyside.dropletapp.presentation.view.fragment.auth.model
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.databinding.ObservableField
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.model.OAuthProvider
 import com.merseyside.dropletapp.domain.interactor.GetOAuthProvidersInteractor
-import com.merseyside.dropletapp.domain.interactor.GetProvidersWithTokenInteractor
 import com.merseyside.dropletapp.domain.interactor.SaveTokenInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
@@ -25,7 +23,7 @@ class AuthViewModel(
     private var provider: OAuthProvider? = null
 
     val oAuthProviders = ObservableField<List<OAuthProvider>>()
-    val providersHint = ObservableField<String>(getString(R.string.choose_provider_hint))
+    val providersHint = ObservableField(getString(R.string.choose_provider_hint))
 
     override fun dispose() {
         getOAuthProvidersUseCase.cancel()
@@ -75,6 +73,10 @@ class AuthViewModel(
     }
 
     fun navigateToServerCreationScreen(provider: Provider) {
-        router.navigateTo(Screens.AddDropletScreen(provider))
+        if (provider !is Provider.Custom) {
+            router.navigateTo(Screens.AddDropletScreen(provider))
+        } else {
+            router.navigateTo(Screens.AddCustomDropletScreen())
+        }
     }
 }

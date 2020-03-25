@@ -1,5 +1,7 @@
 package com.merseyside.dropletapp.data.repository
 
+import com.merseyside.dropletapp.agent.net.Agent
+import com.merseyside.dropletapp.data.cipher.AesCipher
 import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.dropletapp.data.db.key.KeyDao
 import com.merseyside.dropletapp.data.db.server.ServerDao
@@ -19,9 +21,8 @@ import com.merseyside.dropletapp.domain.repository.TokenRepository
 import com.merseyside.dropletapp.providerApi.ProviderApiFactory
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.ssh.ConnectionType
-import com.merseyside.dropletapp.utils.DROPLET_TAG
+import com.merseyside.dropletapp.utils.*
 import com.merseyside.dropletapp.utils.Logger
-import com.merseyside.dropletapp.utils.isDropletValid
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -33,7 +34,9 @@ class ProviderRepositoryImpl(
     private val keyDao: KeyDao,
     private val serverDao: ServerDao,
     private val tokenRepository: TokenRepository,
-    private val oAuthProviderRepository: OAuthProviderRepository
+    private val oAuthProviderRepository: OAuthProviderRepository,
+    private val agent: Agent,
+    private val cipher: AesCipher
 ) : ProviderRepository, CoroutineScope {
 
     enum class LogStatus {SSH_KEYS, CREATING_SERVER, CHECKING_STATUS, CONNECTING, SETUP}
@@ -42,7 +45,7 @@ class ProviderRepositoryImpl(
         fun onLog(log: LogStatus)
     }
 
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { context, throwable ->
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Logger.logError(TAG, throwable)
     }
 
@@ -70,7 +73,7 @@ class ProviderRepositoryImpl(
     }
 
     init {
-        startCheckingConfigFile()
+        //startCheckingConfigFile()
         startCheckingServerStatus()
     }
 
@@ -122,7 +125,7 @@ class ProviderRepositoryImpl(
     override suspend fun getRegions(providerId: Long): List<RegionPoint> {
         val provider = providerApiFactory.getProvider(providerId)
 
-        return provider.getRegions(getToken(providerId))
+        return provider!!.getRegions(getToken(providerId))
     }
 
     private fun createKeyPair(): Pair<PublicKey, PrivateKey> {
@@ -135,60 +138,124 @@ class ProviderRepositoryImpl(
             is TypedConfig.WireGuard -> ConnectionType.WireGuardType()
             is TypedConfig.L2TP -> ConnectionType.L2TPType(typedConfig.userName, typedConfig.password, typedConfig.key)
             is TypedConfig.PPTP -> ConnectionType.PPTPType(typedConfig.userName, typedConfig.password)
+            is TypedConfig.Shadowsocks -> ConnectionType.Shadowsocks(typedConfig.password)
         }
     }
 
     private fun getTypedConfigByName(
-        name: String,
-        username: String
+        typeName: String,
+        userName: String,
+        password: String = generateRandomString()
     ): TypedConfig {
-            return when (name) {
-                TypedConfig.OpenVpn.name -> TypedConfig.OpenVpn(username)
+            return when (typeName) {
+                TypedConfig.OpenVpn.name -> TypedConfig.OpenVpn(userName)
                 TypedConfig.WireGuard.name -> TypedConfig.WireGuard()
-                TypedConfig.L2TP.name -> TypedConfig.L2TP(username, generateRandomString(), generateRandomString())
-                TypedConfig.PPTP.name -> TypedConfig.PPTP(username, generateRandomString())
-                else -> throw IllegalStateException()
+                TypedConfig.L2TP.name -> TypedConfig.L2TP(userName, password, generateRandomString())
+                TypedConfig.PPTP.name -> TypedConfig.PPTP(userName, password)
+                TypedConfig.Shadowsocks.name -> TypedConfig.Shadowsocks(password)
+                else -> throw IllegalArgumentException()
             }
     }
 
-
-    override suspend fun createServer(dropletId: Long, providerId: Long, logCallback: LogCallback?): Boolean {
+    override suspend fun createServer(
+        dropletId: Long,
+        providerId: Long,
+        logCallback: LogCallback?
+    ): Boolean {
         logCallback?.onLog(LogStatus.CHECKING_STATUS)
 
         val server = serverDao.getDropletByIds(dropletId, providerId)
 
         if (server != null) {
-            val keys = keyDao.selectById(server.sshKeyId)
 
-            val connectionType = getConnectionType(server.typedConfig)
-            val result = setupServer(
-                providerId = providerId,
-                username = server.username,
-                ipAddress = server.address,
-                keyPathPrivate = keys?.privateKeyPath ?: throw NoDataException(),
-                connectionType = connectionType,
-                logCallback = logCallback
+            val agentResponse = agent.makeRequestAgent(
+                ip = server.address,
+                port = "80",
+                aesKey = server.aesKey
             )
 
-            if (result) {
-                val status = if (connectionType.isNeedsConfig()) {
-                    SshManager.Status.IN_PROCESS.toString()
-                } else {
+            if (agentResponse != null && agentResponse.status.code == "completed") {
+
+                server.typedConfig.config = agentResponse.status.config
+                serverDao.addTypedConfig(server.id, server.providerId, server.typedConfig)
+
+                serverDao.updateStatus(
+                    server.id,
+                    server.providerId,
                     SshManager.Status.READY.toString()
-                }
-                serverDao.updateStatus(dropletId, providerId, status)
+                )
             } else {
                 serverDao.updateStatus(
                     server.id,
                     server.providerId,
                     SshManager.Status.ERROR.toString()
                 )
-            }
 
-            return result
+                throw BannedAddressException()
+            }
         }
 
         return false
+    }
+
+    private fun saveCustomKey(keyPath: String): Long {
+
+        val sshKeyId = getCurrentTimeMillis()
+
+        keyDao.insert(sshKeyId = sshKeyId, privateKeyPath = keyPath)
+
+        return sshKeyId
+    }
+
+    override suspend fun createCustomServer(
+        typeName: String,
+        userName: String,
+        host: String,
+        port: Int,
+        password: String?,
+        sshKey: String?,
+        isV2RayEnabled: Boolean?,
+        logCallback: LogCallback?
+    ): Boolean {
+
+        val privateKeyPath = sshKey?.let {
+            sshManager.savePrivateKey(it).keyPath
+        }
+
+        val typedConfig = if (password != null) {
+            getTypedConfigByName(typeName, userName, password)
+        } else {
+            getTypedConfigByName(typeName, userName)
+        }
+
+        val aesKey = cipher.generateKey(32)
+
+        val script = getScript(getConnectionType(typedConfig), isV2RayEnabled, aesKey)
+
+        if (setupCustomServer(userName, host, port, privateKeyPath, password, script, logCallback)) {
+
+            val sshKeyId = privateKeyPath?.let {
+                saveCustomKey(privateKeyPath)
+            }
+
+            val currentTime = getCurrentTimeMillis()
+            serverDao.insert(
+                id = currentTime,
+                username = userName,
+                providerId = Provider.Custom().getId(),
+                name = "${typedConfig.getName()}-$userName",
+                sshKeyId = sshKeyId,
+                environmentStatus = SshManager.Status.PENDING.toString(),
+                createdAt = currentTime.toString(),
+                address = host,
+                typedConfig = typedConfig,
+                aesKey = aesKey
+            )
+
+            return true
+        }
+
+        throw BannedAddressException()
     }
 
     private suspend fun getToken(providerId: Long): String {
@@ -203,6 +270,7 @@ class ProviderRepositoryImpl(
         providerId: Long,
         regionSlug: String,
         typeName: String,
+        isV2RayEnabled: Boolean?,
         logCallback: LogCallback?
     ): Boolean {
 
@@ -213,9 +281,13 @@ class ProviderRepositoryImpl(
         val keyPair = createKeyPair()
 
         val providerApi = providerApiFactory.getProvider(providerId)
-        val keyResponse = providerApi.importKey(token, "My VPN ssh key", keyPair.first.key)
+        val keyResponse = providerApi!!.importKey(token, "My VPN ssh key", keyPair.first.key)
 
         logCallback?.onLog(LogStatus.CREATING_SERVER)
+
+        val userName = generateRandomString()
+        val typedConfig = getTypedConfigByName(typeName, userName)
+        val aesKey = cipher.generateKey(32)
 
         val createDropletResponse = providerApi.createDroplet(
             token = token,
@@ -223,21 +295,22 @@ class ProviderRepositoryImpl(
             regionSlug = regionSlug,
             sshKeyId = keyResponse.id,
             sshKey = keyPair.first.key,
-            tag = DROPLET_TAG
+            tag = DROPLET_TAG,
+            script = getScript(
+                getConnectionType(typedConfig),
+                isV2RayEnabled,
+                aesKey
+            )
         )
 
         if (isDropletValid(createDropletResponse)) {
 
             val address = createDropletResponse.networks.first().ipAddress
 
-            val username = generateRandomString()
-
-            val typeConfig = getTypedConfigByName(typeName, username)
-
             createDropletResponse.let { info ->
                 serverDao.insert(
                     id = info.id,
-                    username = username,
+                    username = userName,
                     providerId = providerId,
                     name = info.name,
                     sshKeyId = keyResponse.id,
@@ -246,37 +319,13 @@ class ProviderRepositoryImpl(
                     createdAt = info.createdAt,
                     regionName = info.regionName,
                     address = address,
-                    typedConfig = typeConfig
+                    typedConfig = typedConfig,
+                    aesKey = aesKey
                 )
             }
 
             keyDao.insert(keyResponse.id, keyPair.first.keyPath, keyPair.second.keyPath, token)
 
-//            logCallback?.onLog("Connecting to server by SSH...")
-//
-//            val connectionType = getConnectionType(typeConfig)
-//            val result = setupServer(
-//                providerId = providerId,
-//                username = username,
-//                ipAddress = address,
-//                keyPathPrivate = keyPair.second.keyPath,
-//                connectionType = connectionType,
-//                logCallback = logCallback
-//            )
-//
-//            if (result) {
-//                val status = if (connectionType.isNeedsConfig()) {
-//                    SshManager.Status.IN_PROCESS.toString()
-//                } else {
-//                    SshManager.Status.READY.toString()
-//                }
-//                serverDao.updateStatus(createDropletResponse.id, providerId, status)
-//            } else {
-//                deleteDroplet(providerId, createDropletResponse.id)
-//
-//                throw BannedAddressException()
-//            }
-//
             return true
         }
 
@@ -284,26 +333,39 @@ class ProviderRepositoryImpl(
     }
 
     private suspend fun setupServer(
-        providerId: Long,
         username: String,
-        ipAddress: String,
+        host: String,
         keyPathPrivate: String,
         connectionType: ConnectionType,
-        logCallback: LogCallback? = null): Boolean {
-        val provider = Provider.getProviderById(providerId)
-
-        val preScriptTimeSeconds = if (provider is Provider.CryptoServers) {
-            30
-        } else {
-            null
-        }
+        logCallback: LogCallback? = null
+    ): Boolean {
 
         return sshManager.setupServer(
             username,
-            ipAddress,
+            host,
             keyPathPrivate,
             connectionType,
-            preScriptTimeSeconds,
+            logCallback
+        )
+    }
+
+    private suspend fun setupCustomServer(
+        userName: String,
+        host: String,
+        port: Int,
+        keyPathPrivate: String?,
+        password: String?,
+        script: String,
+        logCallback: LogCallback? = null
+    ): Boolean {
+
+        return sshManager.setupCustomServer(
+            userName,
+            host,
+            port,
+            keyPathPrivate,
+            password,
+            script,
             logCallback
         )
     }
@@ -330,13 +392,11 @@ class ProviderRepositoryImpl(
         }
     }
 
-
     override suspend fun deleteDroplet(providerId: Long, dropletId: Long): Boolean {
-        Logger.logMsg(TAG, "Delete droplet")
-        val provider = providerApiFactory.getProvider(providerId)
 
         try {
-            provider.deleteDroplet(getToken(providerId), dropletId)
+            providerApiFactory.getProvider(providerId)
+                ?.deleteDroplet(getToken(providerId), dropletId)
         } catch (e: Exception) {}
 
         serverDao.deleteDroplet(dropletId, providerId)
@@ -346,7 +406,7 @@ class ProviderRepositoryImpl(
 
     override suspend fun getTypedConfig(server: ServerModel): TypedConfig {
 
-        val keys = keyDao.selectById(server.sshKeyId)
+        val keys = keyDao.selectById(server.sshKeyId!!)
 
         if (server.typedConfig.config.isNullOrEmpty()) {
 
@@ -354,6 +414,7 @@ class ProviderRepositoryImpl(
                 server.username,
                 server.address,
                 keys?.privateKeyPath ?: throw NoDataException(),
+                null,
                 getConnectionType(server.typedConfig)
             )
 
@@ -365,6 +426,7 @@ class ProviderRepositoryImpl(
                     server.providerId,
                     SshManager.Status.READY.toString()
                 )
+
                 serverDao.addTypedConfig(server.id, server.providerId, server.typedConfig)
             } else throw NoDataException("No ovpn file found")
 
@@ -377,16 +439,52 @@ class ProviderRepositoryImpl(
     private suspend fun isServerAlive(token: String, providerId: Long, dropletId: Long): Boolean {
         val provider = providerApiFactory.getProvider(providerId)
 
-        return provider.isServerAlive(token, dropletId)
+        return provider!!.isServerAlive(token, dropletId)
     }
 
-    private fun generateRandomString(): String {
-        val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+    private fun getScript(connectionType: ConnectionType, isV2RayEnable: Boolean?, encryptKey: String): String {
+        val v2RayStr = isV2RayEnable?.let {
+            "Environment=SHADOWSOCKS_PLUGIN_V2RAY_ENABLE=${if (isV2RayEnable ) '1' else '0'}\n"
+        }  ?: ""
 
-        return (1..10)
-            .map { kotlin.random.Random.nextInt(0, charPool.size) }
-            .map(charPool::get)
-            .joinToString("")
+        return "#!/bin/sh\n" +
+                "sudo wget -O /usr/local/bin/myvpn-agent https://github.com/my0419/myvpn-agent/releases/latest/download/myvpn-agent_linux_x86_64 &&\n" +
+                "chmod +x /usr/local/bin/myvpn-agent &&\n" +
+                "echo \"[Unit]\n" +
+                "Description=MyVPN Agent\n" +
+                "[Service]\n" +
+                "ExecStart=/usr/local/bin/myvpn-agent\n" +
+                "Restart=no\n" +
+                "Environment=VPN_TYPE=$connectionType\n" +
+                connectionType.let {
+                    if (it is ConnectionType.L2TPType) {
+                        "Environment=VPN_IPSEC_PSK=${it.key}\n"
+                    } else {
+                        ""
+                    }
+                } +
+
+                connectionType.let {
+                    try {
+                        "Environment=VPN_USER=${connectionType.getUsername()}\n"
+                    } catch (e: UnsupportedOperationException) {
+                        ""
+                    }
+                } +
+
+                connectionType.let {
+                    try {
+                        "Environment=VPN_PASSWORD=${connectionType.getPassword()}\n"
+                    } catch (e: UnsupportedOperationException) {
+                        ""
+                    }
+                } + v2RayStr +
+
+                "Environment=ENCRYPT_KEY=${encryptKey}\n" +
+                "Environment=VPN_CLIENT_CONFIG_FILE=/tmp/myvpn-client-config\n" +
+                "[Install]\n" +
+                "WantedBy=multi-user.target\" > /etc/systemd/system/myvpn-agent.service &&\n" +
+                "systemctl start myvpn-agent.service"
     }
 
     companion object {

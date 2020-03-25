@@ -35,10 +35,11 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
         regionSlug: String,
         sshKeyId: Long?,
         sshKey: String?,
-        tag: String
+        tag: String,
+        script: String
     ): DropletInfoResponse {
 
-        val response = responseCreator.createDroplet(token, name, regionSlug, sshKeyId!!, tag)
+        val response = responseCreator.createDroplet(token, name, regionSlug, sshKeyId!!, tag, script)
 
         if (response.dropletPoint.id <= 0L) throw IllegalStateException("Error while creating droplet")
 

@@ -6,7 +6,6 @@ import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 
 expect class SshManager(
     timeoutMillis: Int
-
 ) {
 
     enum class Status{
@@ -19,26 +18,31 @@ expect class SshManager(
 
     fun createRsaKeys(): Pair<PublicKey, PrivateKey>?
 
-    suspend fun openSshConnection(
-        username: String,
-        host: String,
-        keyPathPrivate: String,
-        logCallback: ProviderRepositoryImpl.LogCallback? = null
-    ): SshConnection?
+    fun savePrivateKey(key: String): PrivateKey
 
     suspend fun setupServer(
         username: String,
         host: String,
         keyPathPrivate: String,
         connectionType: ConnectionType,
-        preScriptTimeSeconds: Int? = null,
+        logCallback: ProviderRepositoryImpl.LogCallback? = null
+    ): Boolean
+
+    suspend fun setupCustomServer(
+        username: String,
+        host: String,
+        port: Int,
+        keyPathPrivate: String?,
+        password: String?,
+        script: String,
         logCallback: ProviderRepositoryImpl.LogCallback? = null
     ): Boolean
 
     suspend fun getConfigFile(
         username: String,
         host: String,
-        keyPathPrivate: String,
+        keyPathPrivate: String?,
+        password: String?,
         connectionType: ConnectionType
     ): String?
 

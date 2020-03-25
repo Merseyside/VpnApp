@@ -5,7 +5,7 @@
     <data>
         <variable
             name="obj"
-            type="com.merseyside.dropletapp.presentation.view.fragment.authFragment.model.ProviderItemModel" />
+            type="com.merseyside.dropletapp.presentation.view.fragment.auth.model.ProviderItemModel" />
     </data>
 
     <androidx.cardview.widget.CardView

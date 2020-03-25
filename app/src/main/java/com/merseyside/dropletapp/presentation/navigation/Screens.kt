@@ -2,7 +2,8 @@ package com.merseyside.dropletapp.presentation.navigation
 
 import androidx.fragment.app.Fragment
 import com.merseyside.dropletapp.domain.Server
-import com.merseyside.dropletapp.presentation.view.fragment.authFragment.view.AuthFragment
+import com.merseyside.dropletapp.presentation.view.fragment.auth.view.AuthFragment
+import com.merseyside.dropletapp.presentation.view.fragment.droplet.addCustomServer.view.AddCustomDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.view.AddDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.view.DropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view.DropletListFragment
@@ -46,6 +47,12 @@ class Screens {
     class QrScreen(private val config: String) : SupportAppScreen() {
         override fun getFragment(): Fragment {
             return QrFragment.newInstance(config)
+        }
+    }
+
+    class AddCustomDropletScreen() : SupportAppScreen() {
+        override fun getFragment(): Fragment {
+            return AddCustomDropletFragment.newInstance()
         }
     }
 }

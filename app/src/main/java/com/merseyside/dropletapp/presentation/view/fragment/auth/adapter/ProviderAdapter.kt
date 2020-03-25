@@ -1,9 +1,9 @@
-package com.merseyside.dropletapp.presentation.view.fragment.authFragment.adapter
+package com.merseyside.dropletapp.presentation.view.fragment.auth.adapter
 
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.model.OAuthProvider
-import com.merseyside.dropletapp.presentation.view.fragment.authFragment.model.ProviderItemModel
+import com.merseyside.dropletapp.presentation.view.fragment.auth.model.ProviderItemModel
 import com.merseyside.mvvmcleanarch.presentation.adapter.BaseSortedAdapter
 
 class ProviderAdapter : BaseSortedAdapter<OAuthProvider, ProviderItemModel>() {

@@ -185,10 +185,10 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
         binding.config.setOnClickListener {
             if (binding.expandedGroup.visibility == View.VISIBLE) {
                 binding.expandedGroup.visibility = View.GONE
-                binding.expandableIcon.setImageDrawable(ContextCompat.getDrawable(baseActivityView, R.drawable.ic_arrow_down))
+                binding.expandableIcon.setImageDrawable(ContextCompat.getDrawable(baseActivityView, R.drawable.ic_arrow_up))
             } else {
                 binding.expandedGroup.visibility = View.VISIBLE
-                binding.expandableIcon.setImageDrawable(ContextCompat.getDrawable(baseActivityView, R.drawable.ic_arrow_up))
+                binding.expandableIcon.setImageDrawable(ContextCompat.getDrawable(baseActivityView, R.drawable.ic_arrow_down))
             }
         }
     }

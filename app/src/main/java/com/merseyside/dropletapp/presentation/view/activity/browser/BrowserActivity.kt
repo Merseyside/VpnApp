@@ -94,8 +94,19 @@ class BrowserActivity : BaseActivity() {
     }
 
     private fun clearCookie() {
-        CookieManager.getInstance().removeAllCookies(null)
-        CookieManager.getInstance().flush()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CookieManager.getInstance().removeAllCookies(null)
+            CookieManager.getInstance().flush()
+        } else {
+            val cookieSyncMngr: CookieSyncManager = CookieSyncManager.createInstance(this)
+            cookieSyncMngr.startSync()
+            val cookieManager: CookieManager = CookieManager.getInstance()
+            cookieManager.removeAllCookie()
+            cookieManager.removeSessionCookie()
+            cookieSyncMngr.stopSync()
+            cookieSyncMngr.sync()
+        }
+
     }
 
     companion object {

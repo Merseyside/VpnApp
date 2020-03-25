@@ -18,7 +18,6 @@
     <string name="hint_server_name_summary">Имя сервера</string>
 
     <string name="complete_msg">Выполнено</string>
-    <string name="fill_fields_msg">Пожалуйста, заполните все поля правильно. Имя должно быть от 3-х символов</string>
     <string name="unknown_error_msg">Неизвестная ошибка</string>
     <string name="grant_permissions">Необходимо получить данное разрешение чтобы пользоваться приложением</string>
     <string name="no_servers">Серверы не добавлены\nНажмите + чтобы добавить</string>
@@ -101,5 +100,19 @@
     <string name="checking_server">Проверка статуса сервера</string>
     <string name="creating_server">Создание нового сервера</string>
     <string name="ssh_keys">Генерация ssh ключей</string>
+
+    <string name="custom_server">Другой сервер</string>
+    <string name="ip_address">IP адрес</string>
+    <string name="username">Имя пользователя</string>
+    <string name="port">Порт</string>
+    <string name="setup_ssh_connection">Настройка SSH соединения</string>
+    <string name="unknown_region">Неизвестный регион</string>
+    <string name="private_key_auth">Приватный ключ авторизации</string>
+    <string name="password_hint">Пароль</string>
+    <string name="ssh_key_hint">Приватный SSH ключ</string>
+    <string name="field_error">Поле не может быть пустым</string>
+    <string name="fill_fields_msg">Пожалуйста, заполните поля корректно</string>
+    <string name="ip_not_valid">Не правильный адрес</string>
+    <string name="debian_9">Требуется чистый Debian 9 сервер</string>
 
 </resources>

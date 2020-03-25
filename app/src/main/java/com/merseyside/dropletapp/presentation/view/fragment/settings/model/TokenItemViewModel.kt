@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.fragment.settings.model
 
+import android.content.Context
 import androidx.databinding.Bindable
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
@@ -34,11 +35,15 @@ class TokenItemViewModel(override var obj: TokenEntity) : BaseAdapterViewModel<T
 
     @Bindable
     fun getDeleteText(): String {
-        return VpnApplication.getInstance().getActualString(R.string.delete_action)
+        return getString(R.string.delete_action)
     }
 
     override fun notifyUpdate() {
         notifyPropertyChanged(BR.last)
         notifyPropertyChanged(BR.deleteText)
+    }
+
+    override fun getLocaleContext(): Context {
+        return VpnApplication.getInstance()
     }
 }

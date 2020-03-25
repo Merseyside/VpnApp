@@ -27,6 +27,7 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
         isLenient = true
         ignoreUnknownKeys = true
     }
+
     private val baseUrl = "https://api.linode.com/v4"
 
     private fun getRoute(method: String): String{

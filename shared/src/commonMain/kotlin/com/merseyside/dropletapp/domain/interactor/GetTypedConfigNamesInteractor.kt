@@ -1,6 +1,5 @@
 package com.merseyside.dropletapp.domain.interactor
 
-import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.di.providerComponent
 import com.merseyside.dropletapp.domain.base.CoroutineUseCase
 import com.merseyside.dropletapp.domain.repository.ProviderRepository

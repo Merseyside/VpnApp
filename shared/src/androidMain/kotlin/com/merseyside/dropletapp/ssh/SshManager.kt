@@ -63,17 +63,28 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
         return publicKey to privateKey
     }
 
-    actual suspend fun openSshConnection(
+    actual fun savePrivateKey(key: String): PrivateKey {
+        val outputDir = application.cacheDir
+
+        val priFile = File(outputDir, "rsa-${System.currentTimeMillis()}")
+        priFile.writeText(key)
+
+        return PrivateKey(FileManager.getStringFromFile(priFile.absolutePath), priFile.absolutePath)
+    }
+
+    private suspend fun openSshConnection(
         username: String,
         host: String,
-        keyPathPrivate: String,
+        port: Int,
+        keyPathPrivate: String?,
+        password: String?,
         logCallback: ProviderRepositoryImpl.LogCallback?
     ): SshConnection? {
         logCallback?.onLog(ProviderRepositoryImpl.LogStatus.CONNECTING)
 
         val connection = activeConnections.firstOrNull {
             it.host == host
-        } ?: SshConnection(username, host, keyPathPrivate).also { it.setTimeout(timeoutMillis) }
+        } ?: SshConnection(username, host, port, keyPathPrivate, password).also { it.setTimeout(timeoutMillis) }
 
         if (connection.isConnected()) {
             Log.d(TAG, "already connected")
@@ -99,27 +110,59 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
         host: String,
         keyPathPrivate: String,
         connectionType: ConnectionType,
-        preScriptTimeSeconds: Int?,
         logCallback: ProviderRepositoryImpl.LogCallback?
     ): Boolean {
-        val connection = openSshConnection(username, host, keyPathPrivate, logCallback) ?: return false
+        val connection = openSshConnection(
+            username,
+            host,
+            PORT,
+            keyPathPrivate,
+            null,
+            logCallback
+        ) ?: return false
 
         logCallback?.onLog(ProviderRepositoryImpl.LogStatus.SETUP)
 
-        if (preScriptTimeSeconds != null) {
-            Thread.sleep(preScriptTimeSeconds * 1000L)
-        }
-
         return connection.setupServer(connectionType.getSetupScript())
+    }
+
+    actual suspend fun setupCustomServer(
+        username: String,
+        host: String,
+        port: Int,
+        keyPathPrivate: String?,
+        password: String?,
+        script: String,
+        logCallback: ProviderRepositoryImpl.LogCallback?
+    ): Boolean {
+        val connection = openSshConnection(
+            username,
+            host,
+            port,
+            keyPathPrivate,
+            password,
+            logCallback
+        ) ?: return false
+
+        logCallback?.onLog(ProviderRepositoryImpl.LogStatus.SETUP)
+
+        return connection.setupServer(script)
     }
 
     actual suspend fun getConfigFile(
         username: String,
         host: String,
-        keyPathPrivate: String,
+        keyPathPrivate: String?,
+        password: String?,
         connectionType: ConnectionType
     ): String? {
-        val connection = openSshConnection(username, host, keyPathPrivate, null) ?: throw ConnectException("Can not connect to server")
+        val connection = openSshConnection(
+            username,
+            host,
+            PORT,
+            keyPathPrivate,
+            password,
+            null) ?: throw ConnectException("Can not connect to server")
 
         return connection.getConfigFile(connectionType.getConfigFileScript())?.also { Log.d(TAG, it) }
     }
@@ -156,6 +199,8 @@ actual class SshManager actual constructor(private val timeoutMillis: Int) {
 
     companion object {
         private const val TAG = "SshManager"
+
+        private const val PORT = 22
 
         private const val passphrase = "admin@self.host"
     }

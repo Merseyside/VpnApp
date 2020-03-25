@@ -25,9 +25,12 @@ class CryptoServersProvider private constructor(httpClientEngine: HttpClientEngi
         regionSlug: String,
         sshKeyId: Long?,
         sshKey: String?,
-        tag: String
+        tag: String,
+        script: String
     ): DropletInfoResponse {
-        val response = responseCreator.createDroplet(token, regionSlug, sshKeyId!!)
+        Logger.logMsg("Script", script)
+
+        val response = responseCreator.createDroplet(token, regionSlug, sshKeyId!!, script)
 
         if (response.dropletPoint.id <= 0L) throw IllegalStateException("Error while creating droplet")
         else responseCreator.deleteSshKey(token, response.dropletPoint.id, sshKeyId)
@@ -114,7 +117,7 @@ class CryptoServersProvider private constructor(httpClientEngine: HttpClientEngi
 
         private const val TAG = "CryptoServersProvider"
 
-        private const val REPEAT_COUNT = 5
+        private const val REPEAT_COUNT = 10
         private const val DELAY_MILLIS = 7000L
     }
 

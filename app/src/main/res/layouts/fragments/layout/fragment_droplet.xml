@@ -112,7 +112,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                        android:text="@{viewModel.region}"/>
+                        android:text="@{viewModel.region}"
+                        app:isVisibleOrGone="@{!viewModel.region.empty}"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -163,7 +164,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
                                     tools:ignore="ContentDescription"
-                                    app:srcCompat="@drawable/ic_arrow_down"/>
+                                    app:srcCompat="@drawable/ic_arrow_up"/>
 
                             </RelativeLayout>
 
@@ -178,7 +179,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:text="@{viewModel.serverConfig}"
-                                    android:textColor="?attr/vpnTextColor"
+                                    android:textColor="?attr/mainTextColor"
                                     android:editable="false"
                                     android:background="@null"
                                     android:layout_marginTop="@dimen/small_spacing"

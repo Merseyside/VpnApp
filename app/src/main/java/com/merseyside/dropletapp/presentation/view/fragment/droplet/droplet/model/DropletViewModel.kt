@@ -1,6 +1,5 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.model
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,7 +8,6 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.admin.merseylibrary.data.filemanager.FileManager
 import com.merseyside.dropletapp.R
-import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.data.exception.BannedAddressException
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
@@ -23,8 +21,9 @@ import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.dropletapp.utils.generateRandomString
 import com.merseyside.dropletapp.utils.getLogByStatus
-import com.merseyside.mvvmcleanarch.utils.Logger
+import com.merseyside.dropletapp.utils.getProviderIcon
 import com.merseyside.mvvmcleanarch.utils.SingleLiveEvent
+import com.merseyside.mvvmcleanarch.utils.mainThread
 import de.blinkt.openvpn.VpnProfile
 import de.blinkt.openvpn.core.UpstreamConfigParser
 import de.blinkt.openvpn.core.VpnStatus
@@ -32,7 +31,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.FlowCollector
 import ru.terrakok.cicerone.Router
 import java.io.File
-import java.lang.IllegalStateException
 import kotlin.coroutines.CoroutineContext
 
 class DropletViewModel(
@@ -42,7 +40,7 @@ class DropletViewModel(
     private val deleteServerUseCase: DeleteDropletInteractor
 ) : BaseDropletViewModel(router), CoroutineScope {
 
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { context, throwable -> }
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, _ -> }
     private val job = Job()
     override val coroutineContext: CoroutineContext = Dispatchers.Main + coroutineExceptionHandler + job
 
@@ -60,12 +58,12 @@ class DropletViewModel(
     val type = ObservableField<String>()
 
     val connectButtonColor = ObservableField<Int>()
-    val connectButtonTitle = ObservableField<String>(getString(R.string.connect))
-    val isConnectButtonEnable = ObservableField<Boolean>(true)
-    val isConnectButtonVisible = ObservableField<Boolean>(true)
+    val connectButtonTitle = ObservableField(getString(R.string.connect))
+    val isConnectButtonEnable = ObservableField(true)
+    val isConnectButtonVisible = ObservableField(true)
 
-    val isQrVisible = ObservableField<Boolean>(false)
-    val qrTitleText = ObservableField<String>(getString(R.string.show_qr))
+    val isQrVisible = ObservableField(false)
+    val qrTitleText = ObservableField(getString(R.string.show_qr))
 
     val connectionLiveData = SingleLiveEvent<Boolean>()
     val configFileLiveData = SingleLiveEvent<File>()
@@ -73,7 +71,7 @@ class DropletViewModel(
     val openConfigFile = SingleLiveEvent<File>()
     val storagePermissionsErrorLiveEvent = SingleLiveEvent<Any>()
 
-    val serverConfigTitle = ObservableField<String>(getString(R.string.server_config))
+    val serverConfigTitle = ObservableField(getString(R.string.server_config))
     val serverConfig = ObservableField<String>()
 
     lateinit var server: Server
@@ -100,7 +98,7 @@ class DropletViewModel(
 
     private var loadServersJob: Job? = null
 
-    @UseExperimental(InternalCoroutinesApi::class)
+    @OptIn(InternalCoroutinesApi::class)
     private fun loadServers(): Job {
         return launch {
             getDropletsUseCase.observe().collect(dropletObserver)
@@ -129,13 +127,16 @@ class DropletViewModel(
         createServerUseCase.cancel()
     }
 
-    override fun updateLanguage(context: Context) {
-        region.set(context.getString(R.string.region, server.regionName))
-        address.set(context.getString(R.string.address, server.address))
-        type.set(context.getString(R.string.type, server.typedConfig.getName()))
+    private fun updateLanguage() {
+        server.regionName?.let {
+            region.set(getString(R.string.region, server.regionName!!))
+        } ?: region.set("")
 
-        serverConfigTitle.set(context.getString(R.string.server_config))
-        qrTitleText.set(context.getString(R.string.show_qr))
+        address.set(getString(R.string.address, server.address))
+        type.set(getString(R.string.type, server.typedConfig.getName()))
+
+        serverConfigTitle.set(getString(R.string.server_config))
+        qrTitleText.set(getString(R.string.show_qr))
     }
 
     fun onConnect() {
@@ -160,7 +161,7 @@ class DropletViewModel(
         } else {
             if (server.environmentStatus == SshManager.Status.READY) {
                 if (!isConnected) {
-                    prepareVpn(server.typedConfig.config!!)
+                    prepareVpn(server.typedConfig.getConfig()!!)
                 } else {
                     isConnected = false
                 }
@@ -180,8 +181,12 @@ class DropletViewModel(
     }
 
     fun onQrClick() {
-        if (server.getConfig() != null) {
-            navigateToQrScreen(server.getConfig()!!)
+        if (server.typedConfig is TypedConfig.HasQrCode) {
+
+            val qrData = server.typedConfig as TypedConfig.HasQrCode
+            if (qrData.getQrData() != null) {
+                navigateToQrScreen(qrData.getQrData()!!)
+            }
         }
     }
 
@@ -190,7 +195,7 @@ class DropletViewModel(
     }
 
     private fun loadVpnProfile(body: String): VpnProfile? {
-        return UpstreamConfigParser.parseConfig(VpnApplication.getInstance(), body)
+        return UpstreamConfigParser.parseConfig(getLocaleContext(), body)
     }
 
     private fun prepareVpn(body: String) {
@@ -223,8 +228,8 @@ class DropletViewModel(
                 providerId = server.providerId,
                 logCallback = object: ProviderRepositoryImpl.LogCallback {
                     override fun onLog(log: ProviderRepositoryImpl.LogStatus) {
-                        Handler(Looper.getMainLooper()).post {
-                            showProgress(getLogByStatus(VpnApplication.getInstance().context, log))
+                        mainThread {
+                            showProgress(getLogByStatus(getLocaleContext(), log))
                         }
                     }
                 }),
@@ -264,15 +269,15 @@ class DropletViewModel(
     fun shareConfigFile() {
         configFileLiveData.value = when(server.typedConfig) {
             is TypedConfig.OpenVpn -> {
-                FileManager.createTempFile(server.name, ".ovpn", server.typedConfig.config!!)
+                FileManager.createTempFile(server.name, ".ovpn", server.typedConfig.getConfig()!!)
             }
 
             is TypedConfig.WireGuard -> {
-                FileManager.createTempFile(server.name, ".conf", server.typedConfig.config!!)
+                FileManager.createTempFile(server.name, ".conf", server.typedConfig.getConfig()!!)
             }
 
             else -> {
-                FileManager.createTempFile(server.name, ".txt", server.typedConfig.config!!)
+                FileManager.createTempFile(server.name, ".txt", server.typedConfig.getConfig()!!)
             }
         }
 
@@ -315,7 +320,9 @@ class DropletViewModel(
             }
         }
 
-        if (server.typedConfig is TypedConfig.WireGuard && server.environmentStatus == SshManager.Status.READY) {
+        if ((server.typedConfig is TypedConfig.HasQrCode)
+            && server.environmentStatus == SshManager.Status.READY
+        ) {
             isQrVisible.set(true)
         } else {
             isQrVisible.set(false)
@@ -323,17 +330,17 @@ class DropletViewModel(
 
         serverConfig.set(server.getConfig())
 
-        updateLanguage(VpnApplication.getInstance().context)
+        updateLanguage()
     }
 
     private fun getStatus(): String {
 
         return when (server.environmentStatus) {
-            SshManager.Status.STARTING -> VpnApplication.getInstance().getActualString(R.string.starting)
-            SshManager.Status.READY -> VpnApplication.getInstance().getActualString(R.string.ready)
-            SshManager.Status.ERROR -> VpnApplication.getInstance().getActualString(R.string.error)
-            SshManager.Status.IN_PROCESS -> VpnApplication.getInstance().getActualString(R.string.in_process)
-            SshManager.Status.PENDING -> VpnApplication.getInstance().getActualString(R.string.pending)
+            SshManager.Status.STARTING -> getString(R.string.starting)
+            SshManager.Status.READY -> getString(R.string.ready)
+            SshManager.Status.ERROR -> getString(R.string.error)
+            SshManager.Status.IN_PROCESS -> getString(R.string.in_process)
+            SshManager.Status.PENDING -> getString(R.string.pending)
         }
     }
 
@@ -382,12 +389,7 @@ class DropletViewModel(
 
     @DrawableRes
     fun getIcon(): Int {
-        return when(Provider.getProviderById(server.providerId)) {
-            is Provider.DigitalOcean -> R.drawable.digital_ocean
-            is Provider.Linode -> R.drawable.ic_linode
-            is Provider.CryptoServers -> R.drawable.crypto_servers
-            null -> TODO()
-        }
+        return getProviderIcon(server.providerId)
     }
 
     private fun updateConnectButtonWithVpnStatus(status: VpnStatus.ConnectionStatus) {
@@ -471,7 +473,7 @@ class DropletViewModel(
             }
 
             SshManager.Status.READY -> {
-                if (server.typedConfig is TypedConfig.WireGuard) {
+                if (server.typedConfig is TypedConfig.HasQrCode) {
                     getString(R.string.save_config)
                 } else {
                     getString(R.string.connect)
@@ -495,7 +497,11 @@ class DropletViewModel(
     }
 
     fun getTitle(): String {
-        return server.providerName
+        return if (Provider.getProviderById(server.providerId) is Provider.Custom) {
+            getString(R.string.custom_server)
+        } else {
+            server.providerName
+        }
     }
 
     override fun onBackPressed(): Boolean {

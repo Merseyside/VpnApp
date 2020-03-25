@@ -3,9 +3,10 @@ package com.merseyside.dropletapp.ssh
 expect class SshConnection(
     username: String,
     host: String,
-    filePathPrivate: String
+    port: Int,
+    filePathPrivate: String? = null,
+    password: String? = null
 ) {
-
     fun openSshConnection(): Boolean
 
     fun setupServer(script: String): Boolean

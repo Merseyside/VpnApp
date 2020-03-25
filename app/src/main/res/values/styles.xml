@@ -29,7 +29,7 @@
 
         <item name="dividerHorizontal">@style/DividerStyle</item>
 
-        <item name="vpnTextColor">@color/main_text_color_blue_theme</item>
+        <item name="mainTextColor">@color/main_text_color_blue_theme</item>
         <item name="pendingColor">@color/blue_theme_pending_color</item>
         <item name="inactiveColor">@color/grey</item>
 

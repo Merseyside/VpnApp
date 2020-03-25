@@ -18,6 +18,7 @@ class CreateServerInteractor : CoroutineUseCase<Boolean, CreateServerInteractor.
                 params.providerId,
                 params.regionSlug!!,
                 params.typedConfig!!,
+                params.isV2RayEnabled,
                 params.logCallback
             )
         }
@@ -28,6 +29,7 @@ class CreateServerInteractor : CoroutineUseCase<Boolean, CreateServerInteractor.
         val providerId: Long,
         val regionSlug: String? = null,
         val typedConfig: String? = null,
+        val isV2RayEnabled: Boolean? = null,
         val logCallback: ProviderRepositoryImpl.LogCallback? = null
     )
 }

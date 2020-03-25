@@ -13,9 +13,11 @@ import java.util.concurrent.TimeUnit
 
 
 actual class SshConnection actual constructor(
-    val username: String,
+    private val username: String,
     val host: String,
-    private val filePathPrivate: String
+    private val port: Int,
+    private val filePathPrivate: String?,
+    private val password: String?
 ) {
 
     private val ssh = SSHClient(AndroidConfig())
@@ -35,9 +37,21 @@ actual class SshConnection actual constructor(
 
         return try {
 
-            ssh.connect(host, 22)
+            ssh.connect(host, port)
 
-            ssh.authPublickey("root", filePathPrivate)
+            when {
+                filePathPrivate != null -> {
+                    ssh.authPublickey(username, filePathPrivate)
+                }
+
+                password != null -> {
+                    ssh.authPassword(username, password)
+                }
+
+                else -> {
+                    throw IllegalStateException("Please, pass key path or password")
+                }
+            }
 
             true
         } catch (e: Exception) {

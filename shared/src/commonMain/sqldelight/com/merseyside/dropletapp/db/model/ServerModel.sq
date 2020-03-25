@@ -5,19 +5,30 @@ CREATE TABLE ServerModel(
     username TEXT NOT NULL,
     providerId INTEGER NOT NULL,
     name TEXT NOT NULL,
-    sshKeyId INTEGER NOT NULL,
-    serverStatus TEXT NOT NULL,
+    sshKeyId INTEGER,
+    serverStatus TEXT,
     environmentStatus TEXT NOT NULL,
     createdAt TEXT NOT NULL,
-    regionName TEXT NOT NULL,
+    regionName TEXT,
     address TEXT NOT NULL,
-    typedConfig TEXT AS TypedConfig NOT NULL
+    typedConfig TEXT AS TypedConfig NOT NULL,
+    aesKey TEXT NOT NULL
 );
 
 insert:
 INSERT OR REPLACE INTO ServerModel(
-    id, username, providerId, name, sshKeyId, serverStatus, environmentStatus, createdAt, regionName, address, typedConfig
-    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    id,
+    username,
+    providerId,
+    name,
+    sshKeyId,
+    serverStatus,
+    environmentStatus,
+    createdAt,
+    regionName,
+    address,
+    typedConfig,
+    aesKey) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 selectAll:
 SELECT * FROM ServerModel;

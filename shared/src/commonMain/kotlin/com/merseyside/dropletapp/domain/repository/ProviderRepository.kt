@@ -23,6 +23,18 @@ interface ProviderRepository {
         providerId: Long,
         regionSlug: String,
         typeName: String,
+        isV2RayEnabled: Boolean? = null,
+        logCallback: ProviderRepositoryImpl.LogCallback? = null
+    ): Boolean
+
+    suspend fun createCustomServer(
+        typeName: String,
+        userName: String,
+        host: String,
+        port: Int,
+        password: String?,
+        sshKey: String?,
+        isV2RayEnabled: Boolean?,
         logCallback: ProviderRepositoryImpl.LogCallback? = null
     ): Boolean
 

@@ -1,4 +1,4 @@
-package com.merseyside.dropletapp.presentation.view.fragment.authFragment.view
+package com.merseyside.dropletapp.presentation.view.fragment.auth.view
 
 import android.app.Activity
 import android.content.Context
@@ -15,8 +15,9 @@ import com.merseyside.dropletapp.presentation.base.BaseDropletFragment
 import com.merseyside.dropletapp.presentation.di.component.DaggerAuthComponent
 import com.merseyside.dropletapp.presentation.di.module.AuthModule
 import com.merseyside.dropletapp.presentation.view.activity.browser.BrowserActivity
-import com.merseyside.dropletapp.presentation.view.fragment.authFragment.adapter.ProviderAdapter
-import com.merseyside.dropletapp.presentation.view.fragment.authFragment.model.AuthViewModel
+import com.merseyside.dropletapp.presentation.view.fragment.auth.adapter.ProviderAdapter
+import com.merseyside.dropletapp.presentation.view.fragment.auth.model.AuthViewModel
+import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.utils.OAuthBehaviour
 import com.merseyside.mvvmcleanarch.presentation.adapter.BaseAdapter
 import com.merseyside.mvvmcleanarch.utils.Logger
@@ -63,7 +64,9 @@ class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(){
 
         adapter!!.setOnItemClickListener(object: BaseAdapter.OnItemClickListener<OAuthProvider> {
             override fun onItemClicked(obj: OAuthProvider) {
-                if (obj.oAuthConfig != null) {
+                if (obj.provider is Provider.Custom) {
+                    viewModel.navigateToServerCreationScreen(obj.provider)
+                } else if (obj.oAuthConfig != null) {
                     viewModel.setProvider(obj)
                     if (obj.token.isNullOrEmpty()) {
                         startAuthFlow(obj.oAuthConfig!!)

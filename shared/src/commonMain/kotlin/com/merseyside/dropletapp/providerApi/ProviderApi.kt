@@ -15,7 +15,8 @@ interface ProviderApi {
         regionSlug: String,
         sshKeyId: Long? = null,
         sshKey: String? = null,
-        tag: String
+        tag: String,
+        script: String
     ): DropletInfoResponse
 
     suspend fun getRegions(token: String): List<RegionPoint>

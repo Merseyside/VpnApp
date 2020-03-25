@@ -8,7 +8,6 @@ import android.view.View
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.dropletapp.R
-import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
@@ -19,6 +18,8 @@ import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.utils.getLogByStatus
+import com.merseyside.mvvmcleanarch.utils.ext.onChange
+import com.merseyside.mvvmcleanarch.utils.mainThread
 import kotlinx.coroutines.cancel
 import ru.terrakok.cicerone.Router
 
@@ -29,14 +30,23 @@ class AddDropletViewModel(
     private val getTypedConfigNamesUseCase: GetTypedConfigNamesInteractor
 ) : BaseDropletViewModel(router) {
 
-    val vpnTypeObservableField = ObservableField<String>(getString(R.string.vpn_type))
-    val regionHintObservableField = ObservableField<String>(getString(R.string.hint_region_summary))
-    val buttonTextObservableField = ObservableField<String>(getString(R.string.create_server))
+    val vpnTypeObservableField = ObservableField(getString(R.string.vpn_type))
+    val regionHintObservableField = ObservableField(getString(R.string.hint_region_summary))
+    val buttonTextObservableField = ObservableField(getString(R.string.create_server))
 
     val types = ObservableField<List<String>>()
     val selectedType = ObservableField<String>()
 
+    val isShadowsocks = ObservableField(false)
+    val isV2RayEnabled = ObservableField(false)
+
     private var provider: Provider? = null
+
+    init {
+        selectedType.onChange { _, value, _ ->
+            isShadowsocks.set(value == TypedConfig.Shadowsocks.name)
+        }
+    }
 
     override fun updateLanguage(context: Context) {
         vpnTypeObservableField.set(context.getString(R.string.vpn_type))
@@ -102,10 +112,11 @@ class AddDropletViewModel(
                         providerId = provider!!.getId(),
                         regionSlug = currentRegion?.slug ?: throw IllegalArgumentException(),
                         typedConfig = selectedType.get(),
+                        isV2RayEnabled = if (selectedType.get()!! == TypedConfig.Shadowsocks.name) isV2RayEnabled.get() else null,
                         logCallback = object : ProviderRepositoryImpl.LogCallback {
                             override fun onLog(log: ProviderRepositoryImpl.LogStatus) {
-                                Handler(Looper.getMainLooper()).post {
-                                    showProgress(getLogByStatus(VpnApplication.getInstance().context, log))
+                                mainThread {
+                                    showProgress(getLogByStatus(getLocaleContext(), log))
                                 }
                             }
                         }

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.merseyside.dropletapp.domain.interactor.GetOAuthProvidersInteractor
 import com.merseyside.dropletapp.domain.interactor.SaveTokenInteractor
-import com.merseyside.dropletapp.presentation.view.fragment.authFragment.model.AuthViewModel
+import com.merseyside.dropletapp.presentation.view.fragment.auth.model.AuthViewModel
 import com.merseyside.mvvmcleanarch.presentation.fragment.BaseFragment
 import com.merseyside.mvvmcleanarch.presentation.model.BundleAwareViewModelFactory
 import dagger.Module

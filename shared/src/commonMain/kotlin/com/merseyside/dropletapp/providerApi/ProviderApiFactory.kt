@@ -20,10 +20,14 @@ class  ProviderApiFactory(private val httpClientEngine: HttpClientEngine) {
             is Provider.CryptoServers -> {
                 CryptoServersProvider.getInstance(httpClientEngine)
             }
+
+            else -> {
+                throw UnsupportedOperationException()
+            }
         }
     }
 
-    fun getProvider(providerId: Long): ProviderApi {
+    fun getProvider(providerId: Long): ProviderApi? {
         return when (Provider.getProviderById(providerId)) {
             is Provider.DigitalOcean -> {
                 create(Provider.DigitalOcean())
@@ -37,7 +41,7 @@ class  ProviderApiFactory(private val httpClientEngine: HttpClientEngine) {
                 create(Provider.CryptoServers())
             }
 
-            else -> throw IllegalArgumentException()
+            else -> null
         }
     }
 }

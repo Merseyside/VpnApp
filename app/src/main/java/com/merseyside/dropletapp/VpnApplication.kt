@@ -11,6 +11,7 @@ import com.merseyside.dropletapp.presentation.di.component.AppComponent
 import com.merseyside.dropletapp.presentation.di.component.DaggerAppComponent
 import com.merseyside.dropletapp.presentation.di.module.AppModule
 import com.merseyside.dropletapp.utils.AccountManagerAndroid
+import com.merseyside.dropletapp.utils.RemoteConfigHelper
 import com.merseyside.mvvmcleanarch.BaseApplication
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import javax.inject.Inject

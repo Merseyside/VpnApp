@@ -24,10 +24,7 @@ class AppModule(private val application: Application) {
 
     @Provides
     internal fun providePreferenceManager(@ApplicationContext context: Context): PreferenceManager {
-        return PreferenceManager.Builder()
-            .setContext(context)
-            .setShared(false)
-            .build()
+        return PreferenceManager.Builder(context).build()
     }
 
     @Provides

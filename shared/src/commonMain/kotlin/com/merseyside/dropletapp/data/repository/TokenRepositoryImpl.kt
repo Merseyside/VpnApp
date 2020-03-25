@@ -38,7 +38,7 @@ class TokenRepositoryImpl(
     override suspend fun getRegions(token: Token, providerId: Long): List<RegionPoint> {
         val provider = providerApiFactory.getProvider(providerId)
 
-        return provider.getRegions(token)
+        return provider!!.getRegions(token)
     }
 
     companion object {
