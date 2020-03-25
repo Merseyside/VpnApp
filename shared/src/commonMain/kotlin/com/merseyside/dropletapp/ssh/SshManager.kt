@@ -6,7 +6,6 @@ import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 
 expect class SshManager(
     timeoutMillis: Int
-
 ) {
 
     enum class Status{

@@ -20,7 +20,7 @@ class Agent(
         aesKey: String
     ): AgentResponse? {
 
-        repeat(6) {
+        repeat(50) {
             try {
                 val response = responseCreator.makeAgentRequest(ip, port)
 

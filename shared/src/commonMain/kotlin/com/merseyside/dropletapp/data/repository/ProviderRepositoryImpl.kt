@@ -258,45 +258,6 @@ class ProviderRepositoryImpl(
         throw BannedAddressException()
     }
 
-//    override suspend fun createCustomServer(dropletId: Long, providerId: Long, logCallback: LogCallback?): Boolean {
-//        logCallback?.onLog(LogStatus.CHECKING_STATUS)
-//
-//        val server = serverDao.getDropletByIds(dropletId, providerId)
-//
-//        if (server != null) {
-//            val keys = keyDao.selectById(server.sshKeyId)
-//
-//            val connectionType = getConnectionType(server.typedConfig)
-//            val result = setupServer(
-//                providerId = providerId,
-//                username = server.username,
-//                host = server.address,
-//                keyPathPrivate = keys?.privateKeyPath ?: throw NoDataException(),
-//                connectionType = connectionType,
-//                logCallback = logCallback
-//            )
-//
-//            if (result) {
-//                val status = if (connectionType.isNeedsConfig()) {
-//                    SshManager.Status.IN_PROCESS.toString()
-//                } else {
-//                    SshManager.Status.READY.toString()
-//                }
-//                serverDao.updateStatus(dropletId, providerId, status)
-//            } else {
-//                serverDao.updateStatus(
-//                    server.id,
-//                    server.providerId,
-//                    SshManager.Status.ERROR.toString()
-//                )
-//            }
-//
-//            return result
-//        }
-//
-//        return false
-//    }
-
     private suspend fun getToken(providerId: Long): String {
         val oAuthProvider = oAuthProviderRepository.getOAuthProvider(Provider.getProviderById(providerId)!!)
 

@@ -24,7 +24,7 @@ class AddCustomDropletViewModel(
     private val getTypedConfigNamesUseCase: GetTypedConfigNamesInteractor
 ) : BaseDropletViewModel(router) {
 
-    val isPrivateKey = ObservableField<Boolean>()
+    val isPrivateKey = ObservableField(false)
     val authFieldHint = ObservableField<String>()
     val authField = ObservableField<String>()
     val authError = ObservableField("")

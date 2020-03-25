@@ -43,9 +43,11 @@ actual class SshConnection actual constructor(
                 filePathPrivate != null -> {
                     ssh.authPublickey(username, filePathPrivate)
                 }
+
                 password != null -> {
                     ssh.authPassword(username, password)
                 }
+
                 else -> {
                     throw IllegalStateException("Please, pass key path or password")
                 }
