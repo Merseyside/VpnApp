@@ -11,7 +11,7 @@ import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.ssh.SshManager
-import com.merseyside.mvvmcleanarch.utils.Logger
+import com.merseyside.merseyLib.utils.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.FlowCollector
 import ru.terrakok.cicerone.Router
@@ -30,10 +30,10 @@ class DropletListViewModel(
     private val job = Job()
     override val coroutineContext: CoroutineContext = Dispatchers.Main + coroutineExceptionHandler + job
 
-    val dropletsVisibility = ObservableField<Boolean>(true)
+    val dropletsVisibility = ObservableField(true)
     val dropletLiveData = MutableLiveData<List<Server>>()
 
-    val noItemsHintObservableFields = ObservableField<String>(getString(R.string.no_servers))
+    val noItemsHintObservableFields = ObservableField(getString(R.string.no_servers))
 
 
     override fun readFrom(bundle: Bundle) {}
@@ -50,7 +50,7 @@ class DropletListViewModel(
         loadServers()
     }
 
-    @UseExperimental(InternalCoroutinesApi::class)
+    @OptIn(InternalCoroutinesApi::class)
     private fun loadServers() {
         launch {
             getDropletsUseCase.observe().collect(dropletObserver)

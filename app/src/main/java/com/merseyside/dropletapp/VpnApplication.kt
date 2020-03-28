@@ -12,7 +12,7 @@ import com.merseyside.dropletapp.presentation.di.component.DaggerAppComponent
 import com.merseyside.dropletapp.presentation.di.module.AppModule
 import com.merseyside.dropletapp.utils.AccountManagerAndroid
 import com.merseyside.dropletapp.utils.RemoteConfigHelper
-import com.merseyside.mvvmcleanarch.BaseApplication
+import com.merseyside.merseyLib.BaseApplication
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import javax.inject.Inject
 
@@ -51,8 +51,7 @@ class VpnApplication : BaseApplication() {
                     VpnDatabase.Schema.create(driver)
                 }
 
-                override fun onUpgrade(db: SupportSQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-                }
+                override fun onUpgrade(db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
             })
             .build()

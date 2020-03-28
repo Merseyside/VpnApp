@@ -5,8 +5,8 @@ import androidx.databinding.Bindable
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.entity.TypedConfig
-import com.merseyside.mvvmcleanarch.presentation.adapter.SelectableItemInterface
-import com.merseyside.mvvmcleanarch.presentation.model.BaseAdapterViewModel
+import com.merseyside.merseyLib.adapters.SelectableItemInterface
+import com.merseyside.merseyLib.model.BaseAdapterViewModel
 
 class TypeNameItemViewModel(override var obj: String) : BaseAdapterViewModel<String>(obj), SelectableItemInterface {
 

@@ -19,8 +19,8 @@ import com.merseyside.dropletapp.presentation.view.fragment.auth.adapter.Provide
 import com.merseyside.dropletapp.presentation.view.fragment.auth.model.AuthViewModel
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.utils.OAuthBehaviour
-import com.merseyside.mvvmcleanarch.presentation.adapter.BaseAdapter
-import com.merseyside.mvvmcleanarch.utils.Logger
+import com.merseyside.merseyLib.adapters.BaseAdapter
+import com.merseyside.merseyLib.utils.Logger
 
 class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(){
 

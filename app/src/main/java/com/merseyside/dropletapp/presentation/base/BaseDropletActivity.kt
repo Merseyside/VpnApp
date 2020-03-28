@@ -2,7 +2,7 @@ package com.merseyside.dropletapp.presentation.base
 
 import androidx.databinding.ViewDataBinding
 import com.merseyside.dropletapp.R
-import com.merseyside.mvvmcleanarch.presentation.activity.BaseMvvmActivity
+import com.merseyside.merseyLib.presentation.activity.BaseMvvmActivity
 
 abstract class BaseDropletActivity<B : ViewDataBinding, M : BaseDropletViewModel>
     : BaseMvvmActivity<B, M>(), HasAppComponent {

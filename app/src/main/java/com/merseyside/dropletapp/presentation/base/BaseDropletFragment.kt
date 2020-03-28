@@ -12,8 +12,8 @@ import androidx.databinding.ViewDataBinding
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.view.AddDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.view.DropletFragment
-import com.merseyside.mvvmcleanarch.presentation.fragment.BaseMvvmFragment
-import com.merseyside.mvvmcleanarch.presentation.view.IFocusManager
+import com.merseyside.merseyLib.presentation.fragment.BaseMvvmFragment
+import com.merseyside.merseyLib.presentation.view.IFocusManager
 
 abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel>
     : BaseMvvmFragment<B, M>(), HasAppComponent, IFocusManager {

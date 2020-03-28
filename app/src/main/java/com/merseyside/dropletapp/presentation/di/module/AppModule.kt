@@ -3,8 +3,8 @@ package com.merseyside.dropletapp.presentation.di.module
 import android.app.Application
 import android.content.Context
 import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
-import com.merseyside.mvvmcleanarch.presentation.di.qualifiers.ApplicationContext
-import com.merseyside.mvvmcleanarch.utils.PreferenceManager
+import com.merseyside.merseyLib.presentation.di.qualifiers.ApplicationContext
+import com.merseyside.merseyLib.utils.PreferenceManager
 import dagger.Module
 import dagger.Provides
 

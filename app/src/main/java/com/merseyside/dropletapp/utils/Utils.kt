@@ -7,7 +7,7 @@ import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.providerApi.Provider
-import com.merseyside.mvvmcleanarch.utils.ext.getString
+import com.merseyside.merseyLib.presentation.ext.getString
 
 fun isServerNameValid(name: String?): Boolean {
     return name?.let {

@@ -5,8 +5,8 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletItemViewModel
-import com.merseyside.mvvmcleanarch.presentation.adapter.BaseSortedAdapter
-import com.merseyside.mvvmcleanarch.presentation.view.BaseViewHolder
+import com.merseyside.merseyLib.adapters.BaseSortedAdapter
+import com.merseyside.merseyLib.presentation.view.BaseViewHolder
 
 class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
 

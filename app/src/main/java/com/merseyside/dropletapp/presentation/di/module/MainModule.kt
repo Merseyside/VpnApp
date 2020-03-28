@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewModel
-import com.merseyside.mvvmcleanarch.presentation.activity.BaseActivity
-import com.merseyside.mvvmcleanarch.presentation.model.BundleAwareViewModelFactory
+import com.merseyside.merseyLib.presentation.activity.BaseActivity
+import com.merseyside.merseyLib.presentation.model.BundleAwareViewModelFactory
 import dagger.Module
 import dagger.Provides
 import ru.terrakok.cicerone.Router

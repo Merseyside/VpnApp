@@ -18,9 +18,9 @@ import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.a
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
-import com.merseyside.mvvmcleanarch.data.serialization.deserialize
-import com.merseyside.mvvmcleanarch.data.serialization.serialize
-import com.merseyside.mvvmcleanarch.presentation.view.OnBackPressedListener
+import com.merseyside.merseyLib.data.serialization.deserialize
+import com.merseyside.merseyLib.data.serialization.serialize
+import com.merseyside.merseyLib.presentation.view.OnBackPressedListener
 
 class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDropletViewModel>(),
     OnBackPressedListener {

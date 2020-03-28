@@ -9,7 +9,7 @@ import android.view.ViewTreeObserver
 import android.widget.ImageView
 import androidx.annotation.CallSuper
 import com.merseyside.dropletapp.R
-import com.merseyside.mvvmcleanarch.presentation.fragment.BaseFragment
+import com.merseyside.merseyLib.presentation.fragment.BaseFragment
 import net.glxn.qrgen.android.QRCode
 
 

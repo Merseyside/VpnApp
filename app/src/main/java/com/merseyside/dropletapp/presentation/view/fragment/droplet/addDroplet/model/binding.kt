@@ -9,8 +9,8 @@ import androidx.databinding.InverseBindingListener
 import androidx.recyclerview.widget.RecyclerView
 import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter.TypesAdapter
-import com.merseyside.mvvmcleanarch.presentation.adapter.BaseAdapter
-import com.merseyside.mvvmcleanarch.presentation.adapter.BaseSelectableAdapter
+import com.merseyside.merseyLib.adapters.BaseAdapter
+import com.merseyside.merseyLib.adapters.BaseSelectableAdapter
 
 @BindingAdapter("bind:types")
 fun setTypes(recyclerView: RecyclerView, types: List<String>?) {

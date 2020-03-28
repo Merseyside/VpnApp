@@ -18,8 +18,8 @@ import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.utils.getLogByStatus
-import com.merseyside.mvvmcleanarch.utils.ext.onChange
-import com.merseyside.mvvmcleanarch.utils.mainThread
+import com.merseyside.merseyLib.utils.ext.onChange
+import com.merseyside.merseyLib.utils.mainThread
 import kotlinx.coroutines.cancel
 import ru.terrakok.cicerone.Router
 

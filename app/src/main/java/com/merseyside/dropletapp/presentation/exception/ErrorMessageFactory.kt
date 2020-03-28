@@ -9,7 +9,7 @@ import com.merseyside.dropletapp.data.exception.BannedAddressException
 import com.merseyside.dropletapp.data.exception.NoDataException
 import com.merseyside.dropletapp.providerApi.exception.BadResponseCodeException
 import com.merseyside.dropletapp.providerApi.exception.InvalidTokenException
-import com.merseyside.mvvmcleanarch.presentation.interfaces.IStringHelper
+import com.merseyside.merseyLib.presentation.interfaces.IStringHelper
 
 class ErrorMessageFactory : IStringHelper {
 

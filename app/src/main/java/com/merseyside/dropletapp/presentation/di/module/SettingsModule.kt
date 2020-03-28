@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModelProviders
 import com.merseyside.dropletapp.domain.interactor.DeleteTokenInteractor
 import com.merseyside.dropletapp.domain.interactor.GetAllTokensInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.settings.model.SettingsViewModel
-import com.merseyside.mvvmcleanarch.presentation.fragment.BaseFragment
-import com.merseyside.mvvmcleanarch.presentation.model.BundleAwareViewModelFactory
+import com.merseyside.merseyLib.presentation.fragment.BaseFragment
+import com.merseyside.merseyLib.presentation.model.BundleAwareViewModelFactory
 import dagger.Module
 import dagger.Provides
 import ru.terrakok.cicerone.Router

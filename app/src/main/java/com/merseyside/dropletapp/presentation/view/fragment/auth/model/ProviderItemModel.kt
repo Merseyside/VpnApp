@@ -1,19 +1,22 @@
 package com.merseyside.dropletapp.presentation.view.fragment.auth.model
 
+import android.content.Context
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.databinding.Bindable
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
+import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.domain.model.OAuthProvider
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.utils.getProviderColor
 import com.merseyside.dropletapp.utils.getProviderIcon
-import com.merseyside.mvvmcleanarch.presentation.model.BaseComparableAdapterViewModel
-import com.merseyside.mvvmcleanarch.utils.Logger
-import com.merseyside.mvvmcleanarch.utils.ext.isNotNullAndEmpty
+import com.merseyside.merseyLib.presentation.interfaces.IStringHelper
+import com.merseyside.merseyLib.presentation.model.BaseComparableAdapterViewModel
+import com.merseyside.merseyLib.utils.ext.isNotNullAndEmpty
 
-class ProviderItemModel(override var obj: OAuthProvider) : BaseComparableAdapterViewModel<OAuthProvider>(obj) {
+class ProviderItemModel(override var obj: OAuthProvider)
+    : BaseComparableAdapterViewModel<OAuthProvider>(obj), IStringHelper {
 
     override fun areItemsTheSame(obj: OAuthProvider): Boolean {
         return obj.provider.getId() == this.obj.provider.getId()
@@ -31,7 +34,11 @@ class ProviderItemModel(override var obj: OAuthProvider) : BaseComparableAdapter
 
     @Bindable
     fun getTitle(): String {
-        return obj.provider.getName()
+        return if (obj.provider !is Provider.Custom) {
+            obj.provider.getName()
+        } else {
+            getString(R.string.custom_server)
+        }
     }
 
     @Bindable
@@ -65,5 +72,9 @@ class ProviderItemModel(override var obj: OAuthProvider) : BaseComparableAdapter
         } else {
             this.obj.provider.getId().compareTo(obj.provider.getId())
         }
+    }
+
+    override fun getLocaleContext(): Context {
+        return VpnApplication.getInstance()
     }
 }

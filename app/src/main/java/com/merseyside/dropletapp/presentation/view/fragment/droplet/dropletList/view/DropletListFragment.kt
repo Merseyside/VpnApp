@@ -16,9 +16,9 @@ import com.merseyside.dropletapp.presentation.di.component.DaggerDropletListComp
 import com.merseyside.dropletapp.presentation.di.module.DropletListModule
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.adapter.DropletAdapter
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletListViewModel
-import com.merseyside.mvvmcleanarch.presentation.adapter.BaseAdapter
-import com.merseyside.mvvmcleanarch.presentation.adapter.UpdateRequest
-import com.merseyside.mvvmcleanarch.utils.Logger
+import com.merseyside.merseyLib.adapters.BaseAdapter
+import com.merseyside.merseyLib.adapters.UpdateRequest
+import com.merseyside.merseyLib.utils.Logger
 import de.blinkt.openvpn.core.OpenVPNService
 import de.blinkt.openvpn.core.VpnStatus
 
@@ -96,7 +96,7 @@ class DropletListFragment : BaseVpnFragment<FragmentDropletListBinding, DropletL
 
         doLayout()
 
-        viewModel.dropletLiveData.observe(this, dropletObserver)
+        viewModel.dropletLiveData.observe(viewLifecycleOwner, dropletObserver)
     }
 
     private fun init() {

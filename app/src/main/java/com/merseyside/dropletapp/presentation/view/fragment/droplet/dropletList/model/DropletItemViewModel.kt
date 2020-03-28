@@ -8,13 +8,13 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.domain.Server
-import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.dropletapp.utils.getProviderIcon
-import com.merseyside.mvvmcleanarch.presentation.model.BaseComparableAdapterViewModel
-import com.merseyside.mvvmcleanarch.utils.Logger
+import com.merseyside.merseyLib.presentation.interfaces.IStringHelper
+import com.merseyside.merseyLib.presentation.model.BaseComparableAdapterViewModel
+import com.merseyside.merseyLib.utils.Logger
 
-class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterViewModel<Server>(obj) {
+class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterViewModel<Server>(obj), IStringHelper {
 
     override fun areContentsTheSame(obj: Server): Boolean {
         return (this.obj == obj).also { Logger.log(this, it) }

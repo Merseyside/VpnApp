@@ -2,7 +2,7 @@ package com.merseyside.dropletapp.presentation.di.component
 
 import com.merseyside.dropletapp.presentation.di.module.AddCustomDropletModule
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addCustomServer.view.AddCustomDropletFragment
-import com.merseyside.mvvmcleanarch.presentation.di.qualifiers.FragmentScope
+import com.merseyside.merseyLib.presentation.di.qualifiers.FragmentScope
 import dagger.Component
 
 @FragmentScope

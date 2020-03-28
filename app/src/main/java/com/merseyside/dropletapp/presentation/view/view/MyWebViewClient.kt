@@ -8,7 +8,7 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.merseyside.mvvmcleanarch.utils.Logger
+import com.merseyside.merseyLib.utils.Logger
 import okhttp3.OkHttpClient
 import okhttp3.Request
 

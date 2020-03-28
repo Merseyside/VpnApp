@@ -16,7 +16,7 @@ import com.merseyside.dropletapp.presentation.di.module.MainModule
 import com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewModel
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view.DropletListFragment
 import com.merseyside.dropletapp.presentation.view.fragment.settings.view.SettingsFragment
-import com.merseyside.mvvmcleanarch.utils.Logger
+import com.merseyside.merseyLib.utils.Logger
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.support.SupportAppNavigator

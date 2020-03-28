@@ -22,8 +22,8 @@ import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.dropletapp.utils.generateRandomString
 import com.merseyside.dropletapp.utils.getLogByStatus
 import com.merseyside.dropletapp.utils.getProviderIcon
-import com.merseyside.mvvmcleanarch.utils.SingleLiveEvent
-import com.merseyside.mvvmcleanarch.utils.mainThread
+import com.merseyside.merseyLib.utils.SingleLiveEvent
+import com.merseyside.merseyLib.utils.mainThread
 import de.blinkt.openvpn.VpnProfile
 import de.blinkt.openvpn.core.UpstreamConfigParser
 import de.blinkt.openvpn.core.VpnStatus

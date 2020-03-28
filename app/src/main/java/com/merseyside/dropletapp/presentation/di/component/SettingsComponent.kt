@@ -2,7 +2,7 @@ package com.merseyside.dropletapp.presentation.di.component
 
 import com.merseyside.dropletapp.presentation.di.module.SettingsModule
 import com.merseyside.dropletapp.presentation.view.fragment.settings.view.SettingsFragment
-import com.merseyside.mvvmcleanarch.presentation.di.qualifiers.FragmentScope
+import com.merseyside.merseyLib.presentation.di.qualifiers.FragmentScope
 import dagger.Component
 
 @FragmentScope

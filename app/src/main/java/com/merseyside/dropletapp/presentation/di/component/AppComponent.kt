@@ -6,8 +6,8 @@ import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.presentation.di.module.AppModule
 import com.merseyside.dropletapp.presentation.di.module.NavigationModule
-import com.merseyside.mvvmcleanarch.presentation.di.qualifiers.ApplicationContext
-import com.merseyside.mvvmcleanarch.utils.PreferenceManager
+import com.merseyside.merseyLib.presentation.di.qualifiers.ApplicationContext
+import com.merseyside.merseyLib.utils.PreferenceManager
 import dagger.Component
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router

@@ -7,9 +7,10 @@ import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.providerApi.Provider
-import com.merseyside.mvvmcleanarch.presentation.model.BaseAdapterViewModel
+import com.merseyside.merseyLib.model.BaseAdapterViewModel
+import com.merseyside.merseyLib.presentation.interfaces.IStringHelper
 
-class TokenItemViewModel(override var obj: TokenEntity) : BaseAdapterViewModel<TokenEntity>(obj) {
+class TokenItemViewModel(override var obj: TokenEntity) : BaseAdapterViewModel<TokenEntity>(obj), IStringHelper {
 
     private var isLastItem: Boolean = false
 

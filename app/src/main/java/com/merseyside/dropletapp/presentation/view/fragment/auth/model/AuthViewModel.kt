@@ -10,7 +10,7 @@ import com.merseyside.dropletapp.domain.interactor.SaveTokenInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
-import com.merseyside.mvvmcleanarch.utils.Logger
+import com.merseyside.merseyLib.utils.Logger
 import kotlinx.coroutines.cancel
 import ru.terrakok.cicerone.Router
 
