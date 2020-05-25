@@ -130,10 +130,8 @@ class AddDropletViewModel(
                         }
                         showErrorMsg(
                             errorMsgCreator.createErrorMsg(throwable),
-                            getString(R.string.retry),
-                            View.OnClickListener {
-                                createServer()
-                            })
+                            getString(R.string.retry)
+                        ) { createServer() }
                     },
                     onPreExecute = {
                         isNavigationEnable = false

@@ -2,10 +2,10 @@ package com.merseyside.dropletapp.presentation.base
 
 import androidx.databinding.ViewDataBinding
 import com.merseyside.dropletapp.R
-import com.merseyside.merseyLib.presentation.activity.BaseMvvmActivity
+import com.merseyside.merseyLib.presentation.activity.BaseVMActivity
 
 abstract class BaseDropletActivity<B : ViewDataBinding, M : BaseDropletViewModel>
-    : BaseMvvmActivity<B, M>(), HasAppComponent {
+    : BaseVMActivity<B, M>(), HasAppComponent {
 
 //    override fun getRootView(): View {
 //        return window.decorView.findViewById(android.R.id.content)

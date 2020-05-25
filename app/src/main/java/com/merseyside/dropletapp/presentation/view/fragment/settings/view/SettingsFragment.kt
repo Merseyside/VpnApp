@@ -82,7 +82,7 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
             else -> ""
         }
 
-        LogoutBehavior(baseActivityView, uri).start()
+        LogoutBehavior(baseActivity, uri).start()
     }
 
     private fun doLayout() {

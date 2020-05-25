@@ -12,11 +12,11 @@ import androidx.databinding.ViewDataBinding
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.view.AddDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.view.DropletFragment
-import com.merseyside.merseyLib.presentation.fragment.BaseMvvmFragment
+import com.merseyside.merseyLib.presentation.fragment.BaseVMFragment
 import com.merseyside.merseyLib.presentation.view.IFocusManager
 
 abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel>
-    : BaseMvvmFragment<B, M>(), HasAppComponent, IFocusManager {
+    : BaseVMFragment<B, M>(), HasAppComponent, IFocusManager {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,22 +35,16 @@ abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel
     }
 
     protected fun closeKeyboard() {
-        val inputMethodManager = baseActivityView.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager = baseActivity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view!!.windowToken, 0)
     }
 
     protected fun goBack() {
-        if (fragmentManager != null) {
-            if (fragmentManager!!.backStackEntryCount > 0) viewModel.goBack()
-        }
+        if (parentFragmentManager.backStackEntryCount > 0) viewModel.goBack()
     }
 
     open fun hasTitleBackButton(): Boolean {
-        if (fragmentManager != null) {
-            return fragmentManager!!.backStackEntryCount > 0
-        }
-
-        return false
+        return parentFragmentManager.backStackEntryCount > 0
     }
 
     private fun setTitleBackButtonEnabled() {
@@ -81,9 +75,5 @@ abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel
 
         menu.findItem(R.id.action_settings).isVisible = this !is AddDropletFragment && this !is DropletFragment
         menu.findItem(R.id.action_servers).isVisible = this !is AddDropletFragment && this !is DropletFragment
-    }
-
-    companion object {
-        private const val TAG = "BaseDropletFragment"
     }
 }

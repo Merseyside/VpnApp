@@ -6,7 +6,7 @@ import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletItemViewModel
 import com.merseyside.merseyLib.adapters.BaseSortedAdapter
-import com.merseyside.merseyLib.presentation.view.BaseViewHolder
+import com.merseyside.merseyLib.view.BaseBindingHolder
 
 class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
 
@@ -30,13 +30,13 @@ class DropletAdapter : BaseSortedAdapter<Server, DropletItemViewModel>() {
         return DropletItemViewModel(obj)
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BaseBindingHolder<DropletItemViewModel>, position: Int) {
         super.onBindViewHolder(holder, position)
 
         setupPopup(holder)
     }
 
-    private fun setupPopup(holder: BaseViewHolder) {
+    private fun setupPopup(holder: BaseBindingHolder<DropletItemViewModel>) {
 
         holder.itemView.rootView.setOnLongClickListener {
             val item = getItemByPosition(holder.adapterPosition)

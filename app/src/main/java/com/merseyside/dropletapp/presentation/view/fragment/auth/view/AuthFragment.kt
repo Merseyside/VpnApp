@@ -83,7 +83,7 @@ class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(){
     private fun startAuthFlow(oAuthConfig: OAuthConfig) {
         Log.d(TAG, "$oAuthConfig")
 
-        val manager = OAuthBehaviour.Builder(baseActivityView, this, REQUEST_CODE).apply {
+        val manager = OAuthBehaviour.Builder(baseActivity, this, REQUEST_CODE).apply {
             setOAuthConfig(oAuthConfig)
 
         }.build()

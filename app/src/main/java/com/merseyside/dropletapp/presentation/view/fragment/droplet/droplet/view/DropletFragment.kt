@@ -26,8 +26,6 @@ import com.merseyside.dropletapp.presentation.di.module.DropletModule
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.model.DropletViewModel
 import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.merseyLib.AnimatorList
-import com.merseyside.merseyLib.data.serialization.deserialize
-import com.merseyside.merseyLib.data.serialization.serialize
 import com.merseyside.merseyLib.presentation.view.OnBackPressedListener
 import com.merseyside.merseyLib.utils.Logger
 import com.merseyside.merseyLib.Approach
@@ -35,6 +33,8 @@ import com.merseyside.merseyLib.Axis
 import com.merseyside.merseyLib.MainPoint
 import com.merseyside.merseyLib.animator.AlphaAnimator
 import com.merseyside.merseyLib.animator.TransitionAnimator
+import com.merseyside.merseyLib.utils.serialization.deserialize
+import com.merseyside.merseyLib.utils.serialization.serialize
 import com.merseyside.merseyLib.utils.time.Millis
 import de.blinkt.openvpn.VpnProfile
 import de.blinkt.openvpn.core.OpenVPNService
@@ -64,7 +64,7 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
             Manifest.permission.READ_EXTERNAL_STORAGE
         )
 
-        if (!PermissionsManager.isPermissionsGranted(baseActivityView, permission)) {
+        if (!PermissionsManager.isPermissionsGranted(baseActivity, permission)) {
 
             PermissionsManager.verifyStoragePermissions(this, permission,
                 PERMISSION_ACCESS_CODE
@@ -99,7 +99,7 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
     }
 
     private fun connectToVpn() {
-        val intent = VpnService.prepare(baseActivityView)
+        val intent = VpnService.prepare(baseActivity)
 
         if (intent != null) {
             VpnStatus.updateStateString("USER_VPN_PERMISSION", "", R.string.state_user_vpn_permission,
@@ -185,10 +185,10 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
         binding.config.setOnClickListener {
             if (binding.expandedGroup.visibility == View.VISIBLE) {
                 binding.expandedGroup.visibility = View.GONE
-                binding.expandableIcon.setImageDrawable(ContextCompat.getDrawable(baseActivityView, R.drawable.ic_arrow_up))
+                binding.expandableIcon.setImageDrawable(ContextCompat.getDrawable(baseActivity, R.drawable.ic_arrow_up))
             } else {
                 binding.expandedGroup.visibility = View.VISIBLE
-                binding.expandableIcon.setImageDrawable(ContextCompat.getDrawable(baseActivityView, R.drawable.ic_arrow_down))
+                binding.expandableIcon.setImageDrawable(ContextCompat.getDrawable(baseActivity, R.drawable.ic_arrow_down))
             }
         }
     }
@@ -224,11 +224,11 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
     }
 
     private fun registerReceivers() {
-        baseActivityView.registerReceiver(br, IntentFilter(BROADCAST_ACTION))
+        baseActivity.registerReceiver(br, IntentFilter(BROADCAST_ACTION))
     }
 
     private fun unregisterReceivers() {
-        baseActivityView.unregisterReceiver(br)
+        baseActivity.unregisterReceiver(br)
     }
 
     private fun receiveStatus(intent: Intent) {
@@ -267,7 +267,7 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
 
         Logger.log(this, "shareOvpn")
 
-        val shareIntent = ShareCompat.IntentBuilder.from(baseActivityView)
+        val shareIntent = ShareCompat.IntentBuilder.from(baseActivity)
             .setType("text/*")
             .setStream(FileProvider.getUriForFile(context, context.applicationContext.packageName + ".fileprovider", file))
             .setChooserTitle(R.string.share_ovpn_to)

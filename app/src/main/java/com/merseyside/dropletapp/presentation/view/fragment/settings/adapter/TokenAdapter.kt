@@ -5,7 +5,7 @@ import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.presentation.view.fragment.settings.model.TokenItemViewModel
 import com.merseyside.merseyLib.adapters.BaseAdapter
-import com.merseyside.merseyLib.presentation.view.BaseViewHolder
+import com.merseyside.merseyLib.view.BaseBindingHolder
 
 class TokenAdapter : BaseAdapter<TokenEntity, TokenItemViewModel>() {
 
@@ -22,14 +22,6 @@ class TokenAdapter : BaseAdapter<TokenEntity, TokenItemViewModel>() {
             R.layout.view_token
         } else {
             R.layout.view_token_odd
-        }
-    }
-
-    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        super.onBindViewHolder(holder, position)
-
-        getModelByPosition(position).apply {
-            setLast(position == itemCount - 1)
         }
     }
 }

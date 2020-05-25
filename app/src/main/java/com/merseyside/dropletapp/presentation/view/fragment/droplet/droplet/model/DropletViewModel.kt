@@ -1,8 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.model
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.annotation.DrawableRes
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
@@ -22,8 +20,8 @@ import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.dropletapp.utils.generateRandomString
 import com.merseyside.dropletapp.utils.getLogByStatus
 import com.merseyside.dropletapp.utils.getProviderIcon
-import com.merseyside.merseyLib.utils.SingleLiveEvent
 import com.merseyside.merseyLib.utils.mainThread
+import com.merseyside.merseyLib.utils.mvvm.SingleLiveEvent
 import de.blinkt.openvpn.VpnProfile
 import de.blinkt.openvpn.core.UpstreamConfigParser
 import de.blinkt.openvpn.core.VpnStatus
@@ -151,7 +149,7 @@ class DropletViewModel(
                         title = getString(R.string.wireguard_title),
                         message = getString(R.string.wireguard_description, resultFile.path),
                         positiveButtonText = getString(R.string.wireguard_positive_text),
-                        isOneAction = true
+                        isSingleAction = true
                     )
                 } else {
                     storagePermissionsErrorLiveEvent.call()

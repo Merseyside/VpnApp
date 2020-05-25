@@ -93,6 +93,8 @@ class BrowserActivity : BaseActivity() {
         clearCookie()
     }
 
+    override fun performInjection(bundle: Bundle?) {}
+
     private fun clearCookie() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             CookieManager.getInstance().removeAllCookies(null)

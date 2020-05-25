@@ -53,6 +53,8 @@ class QrFragment : BaseFragment() {
         }
     }
 
+    override fun performInjection(bundle: Bundle?) {}
+
     private fun setQrCode(imageView: ImageView, config: String, width: Int, height: Int) {
         val myBitmap: Bitmap = QRCode.from(config).withSize(width, height).bitmap()
 
@@ -64,7 +66,7 @@ class QrFragment : BaseFragment() {
         val id = item.itemId
 
         if (id == android.R.id.home) {
-            baseActivityView.onBackPressed()
+            baseActivity.onBackPressed()
         }
 
         return super.onOptionsItemSelected(item)

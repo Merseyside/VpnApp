@@ -18,9 +18,9 @@ import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.a
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
-import com.merseyside.merseyLib.data.serialization.deserialize
-import com.merseyside.merseyLib.data.serialization.serialize
 import com.merseyside.merseyLib.presentation.view.OnBackPressedListener
+import com.merseyside.merseyLib.utils.serialization.deserialize
+import com.merseyside.merseyLib.utils.serialization.serialize
 
 class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDropletViewModel>(),
     OnBackPressedListener {
@@ -29,7 +29,7 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
 
 
     private val regionObserver = Observer<List<RegionPoint>> {
-        regionAdapter = RegionAdapter(baseActivityView, R.layout.view_text, it)
+        regionAdapter = RegionAdapter(baseActivity, R.layout.view_text, it)
         binding.regionSpinner.adapter = regionAdapter
     }
 
@@ -93,7 +93,7 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
 
-            if (PermissionsManager.isPermissionsGranted(baseActivityView, permission)) {
+            if (PermissionsManager.isPermissionsGranted(baseActivity, permission)) {
                 viewModel.createServer()
             } else {
                 PermissionsManager.verifyStoragePermissions(this, permission, PERMISSION_ACCESS_CODE)

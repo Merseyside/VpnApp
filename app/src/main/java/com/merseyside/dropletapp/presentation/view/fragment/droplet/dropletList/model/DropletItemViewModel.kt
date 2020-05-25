@@ -10,8 +10,8 @@ import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.dropletapp.utils.getProviderIcon
+import com.merseyside.merseyLib.model.BaseComparableAdapterViewModel
 import com.merseyside.merseyLib.presentation.interfaces.IStringHelper
-import com.merseyside.merseyLib.presentation.model.BaseComparableAdapterViewModel
 import com.merseyside.merseyLib.utils.Logger
 
 class DropletItemViewModel(override var obj: Server) : BaseComparableAdapterViewModel<Server>(obj), IStringHelper {

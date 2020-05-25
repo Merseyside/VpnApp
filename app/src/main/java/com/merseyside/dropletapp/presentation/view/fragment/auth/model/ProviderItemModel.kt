@@ -11,8 +11,8 @@ import com.merseyside.dropletapp.domain.model.OAuthProvider
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.utils.getProviderColor
 import com.merseyside.dropletapp.utils.getProviderIcon
+import com.merseyside.merseyLib.model.BaseComparableAdapterViewModel
 import com.merseyside.merseyLib.presentation.interfaces.IStringHelper
-import com.merseyside.merseyLib.presentation.model.BaseComparableAdapterViewModel
 import com.merseyside.merseyLib.utils.ext.isNotNullAndEmpty
 
 class ProviderItemModel(override var obj: OAuthProvider)

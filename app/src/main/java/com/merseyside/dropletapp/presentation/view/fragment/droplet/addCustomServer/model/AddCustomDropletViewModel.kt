@@ -119,10 +119,8 @@ class AddCustomDropletViewModel(
                 }
                 showErrorMsg(
                     errorMsgCreator.createErrorMsg(throwable),
-                    getString(R.string.retry),
-                    View.OnClickListener {
-                        createCustomServer()
-                    })
+                    getString(R.string.retry)
+                ) { createCustomServer() }
             }, onPreExecute = {
                 isNavigationEnable = false
                 showProgress(getString(R.string.setup_server_msg))

@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/grey_dark"
-            app:isVisibleOrGone="@{!obj.last}"/>
+            app:isVisibleOrGone="@{!obj.showDivider}"/>
 
     </LinearLayout>
 

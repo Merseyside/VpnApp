@@ -26,20 +26,20 @@ abstract class BaseVpnFragment<B : ViewDataBinding, M : BaseDropletViewModel> : 
     }
 
     private fun bindService() {
-        val intent = Intent(baseActivityView, OpenVPNService::class.java)
+        val intent = Intent(baseActivity, OpenVPNService::class.java)
         intent.action = OpenVPNService.START_SERVICE
-        isServiceBind = baseActivityView.bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+        isServiceBind = baseActivity.bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
     }
 
     private fun unbindService() {
         if (isServiceBind) {
             isServiceBind = false
-            baseActivityView.unbindService(mConnection)
+            baseActivity.unbindService(mConnection)
         }
     }
 
     protected fun turnOffVpn() {
-        ProfileManager.setConnectedVpnProfileDisconnected(baseActivityView)
+        ProfileManager.setConnectedVpnProfileDisconnected(baseActivity)
         if (vpnService != null) {
             if (vpnService!!.management != null)
                 vpnService!!.management.stopVPN(false)

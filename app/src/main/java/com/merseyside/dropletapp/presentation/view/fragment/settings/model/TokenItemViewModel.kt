@@ -12,8 +12,6 @@ import com.merseyside.merseyLib.presentation.interfaces.IStringHelper
 
 class TokenItemViewModel(override var obj: TokenEntity) : BaseAdapterViewModel<TokenEntity>(obj), IStringHelper {
 
-    private var isLastItem: Boolean = false
-
     @Bindable
     fun getProviderName(): String {
         return Provider.getProviderById(obj.providerId)?.getName() ?: "Wrong provider"
@@ -24,14 +22,8 @@ class TokenItemViewModel(override var obj: TokenEntity) : BaseAdapterViewModel<T
     }
 
     @Bindable
-    fun isLast(): Boolean {
-        return isLastItem
-    }
-
-    fun setLast(isLast: Boolean) {
-        isLastItem = isLast
-
-        notifyUpdate()
+    fun isShowDivider(): Boolean {
+        return isLast()
     }
 
     @Bindable
@@ -40,7 +32,7 @@ class TokenItemViewModel(override var obj: TokenEntity) : BaseAdapterViewModel<T
     }
 
     override fun notifyUpdate() {
-        notifyPropertyChanged(BR.last)
+        notifyPropertyChanged(BR.showDivider)
         notifyPropertyChanged(BR.deleteText)
     }
 
