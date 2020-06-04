@@ -13,7 +13,6 @@ import com.merseyside.dropletapp.data.exception.NoDataException
 import com.merseyside.dropletapp.data.exception.NonValidToken
 import com.merseyside.dropletapp.db.model.ServerModel
 import com.merseyside.dropletapp.domain.Server
-import com.merseyside.dropletapp.domain.base.networkContext
 import com.merseyside.dropletapp.domain.repository.OAuthProviderRepository
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
@@ -22,7 +21,9 @@ import com.merseyside.dropletapp.providerApi.ProviderApiFactory
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.ssh.ConnectionType
 import com.merseyside.dropletapp.utils.*
-import com.merseyside.dropletapp.utils.Logger
+import com.merseyside.kmpMerseyLib.domain.coroutines.computationContext
+import com.merseyside.kmpMerseyLib.utils.Logger
+import com.merseyside.kmpMerseyLib.utils.time.getCurrentTimeMillis
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -46,11 +47,11 @@ class ProviderRepositoryImpl(
     }
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Logger.logError(TAG, throwable)
+        Logger.logErr(this, throwable)
     }
 
     override val coroutineContext: CoroutineContext
-        get() = networkContext + coroutineExceptionHandler
+        get() = computationContext + coroutineExceptionHandler
 
     override suspend fun getProviders(): List<Provider> {
         return providers

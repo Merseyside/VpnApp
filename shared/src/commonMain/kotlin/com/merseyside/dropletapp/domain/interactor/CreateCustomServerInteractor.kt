@@ -2,8 +2,8 @@ package com.merseyside.dropletapp.domain.interactor
 
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.di.providerComponent
-import com.merseyside.dropletapp.domain.base.CoroutineUseCase
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
+import com.merseyside.kmpMerseyLib.domain.coroutines.CoroutineUseCase
 import org.kodein.di.erased.instance
 
 class CreateCustomServerInteractor : CoroutineUseCase<Boolean, CreateCustomServerInteractor.Params>() {

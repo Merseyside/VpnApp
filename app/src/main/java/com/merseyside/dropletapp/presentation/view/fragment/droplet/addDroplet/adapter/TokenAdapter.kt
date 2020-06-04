@@ -1,17 +1,14 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter
 
-import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.TextView
-import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 
 class TokenAdapter(
-    context: Activity,
+    context: Context,
     private var resourceId: Int,
     list: List<TokenEntity>
 ): ArrayAdapter<TokenEntity>(context, resourceId, list) {

@@ -61,7 +61,6 @@ class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(){
             binding.providerList.adapter = adapter
         }
 
-
         adapter!!.setOnItemClickListener(object: BaseAdapter.OnItemClickListener<OAuthProvider> {
             override fun onItemClicked(obj: OAuthProvider) {
                 if (obj.provider is Provider.Custom) {

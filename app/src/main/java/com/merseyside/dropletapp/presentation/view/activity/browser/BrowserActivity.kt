@@ -26,6 +26,10 @@ class BrowserActivity : BaseActivity() {
         return null
     }
 
+    override fun getFragmentContainer(): Int? {
+        return null
+    }
+
     override fun applyOverrideConfiguration(overrideConfiguration: Configuration) {
         if (Build.VERSION.SDK_INT in 21..24) {
             overrideConfiguration.uiMode =

@@ -16,7 +16,6 @@ import com.merseyside.dropletapp.presentation.di.module.MainModule
 import com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewModel
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view.DropletListFragment
 import com.merseyside.dropletapp.presentation.view.fragment.settings.view.SettingsFragment
-import com.merseyside.merseyLib.utils.Logger
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
@@ -43,6 +42,7 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
             fragmentTransaction: FragmentTransaction?
         ) {
             super.setupFragmentTransaction(command, currentFragment, nextFragment, fragmentTransaction)
+
             fragmentTransaction!!.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         }
     }
@@ -95,6 +95,7 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+
         return true
     }
 

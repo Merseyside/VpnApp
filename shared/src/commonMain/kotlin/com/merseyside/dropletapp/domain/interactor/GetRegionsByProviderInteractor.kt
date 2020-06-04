@@ -1,7 +1,7 @@
 package com.merseyside.dropletapp.domain.interactor
 
 import com.merseyside.dropletapp.di.providerComponent
-import com.merseyside.dropletapp.domain.base.CoroutineUseCase
+import com.merseyside.kmpMerseyLib.domain.coroutines.CoroutineUseCase
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import org.kodein.di.erased.instance

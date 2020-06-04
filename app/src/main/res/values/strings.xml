@@ -35,6 +35,7 @@
     <string name="setup_server_msg">Setting up your server, it may takes 2&#8211;5 minutes</string>
     <string name="receiving_access_msg">Receiving vpn access, please wait…</string>
     <string name="loading_regions_msg">Loading regions, please wait…</string>
+    <string name="try_for_free">Try for free</string>
 
     <string name="connected">Connected</string>
     <string name="starting">Starting</string>
@@ -106,6 +107,8 @@
     <string name="creating_server">Creating a new server</string>
     <string name="ssh_keys">Generating ssh keys</string>
 
+    <string name="security_protocol">Security protocol:</string>
+    <string name="time_session">Time session</string>
     <string name="custom_server">Other server</string>
     <string name="ip_address">IP Address</string>
     <string name="username">Username</string>
@@ -120,6 +123,10 @@
     <string name="V2Ray" translatable="false">V2Ray</string>
     <string name="ip_not_valid">Address is not valid</string>
     <string name="debian_9">Requires a clean Debian 9 server</string>
+    <string name="log_in">Log in</string>
+    <string name="trial_is_over">Trial is over</string>
+    <string name="trial_is_over_msg">Thank you for using MyVpn.RUN. One hour of free period has left. Please, choose your provider and log in.</string>
+    <string name="trial_msg">In an hour, your access will be revoked, regardless of whether you use a VPN or not</string>
 
     <string name="digital_ocean_client_id">5ac7fe6563469c85ed75f4375779d6656a67f721442f61bdfd616955e6778bad</string>
 

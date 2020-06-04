@@ -121,4 +121,10 @@
         <item name="android:textColorSecondary">@color/white</item>
     </style>
 
+    <style name="FreeAccessToolbarTheme">
+        <item name="android:textColor">?attr/vpnHeadlineTextColor</item>
+        <item name="android:background">@color/free</item>
+        <item name="android:textColorSecondary">@color/white</item>
+    </style>
+
 </resources>

@@ -92,6 +92,8 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
     private Runnable mOpenVPNThread;
     private Object server;
 
+    private long sessionTime;
+
     // From: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
     public static String humanReadableByteCount(long bytes, boolean mbit) {
         if (mbit)
@@ -1025,11 +1027,21 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
     }
 
     public void setServer(Object obj) {
+        if (obj != null) {
+            sessionTime = System.currentTimeMillis();
+        } else {
+            sessionTime = 0;
+        }
+
         this.server = obj;
     }
 
     @Nullable
     public Object getServer() {
         return server;
+    }
+
+    public long getSessionTime() {
+        return sessionTime;
     }
 }

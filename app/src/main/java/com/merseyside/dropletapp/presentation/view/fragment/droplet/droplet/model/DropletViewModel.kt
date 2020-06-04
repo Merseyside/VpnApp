@@ -3,8 +3,6 @@ package com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.mod
 import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.databinding.ObservableField
-import androidx.lifecycle.MutableLiveData
-import com.merseyside.admin.merseylibrary.data.filemanager.FileManager
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.data.exception.BannedAddressException
@@ -13,13 +11,14 @@ import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
 import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
-import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
+import com.merseyside.dropletapp.presentation.base.BaseVpnViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.dropletapp.utils.generateRandomString
 import com.merseyside.dropletapp.utils.getLogByStatus
 import com.merseyside.dropletapp.utils.getProviderIcon
+import com.merseyside.filemanager.FileManager
 import com.merseyside.merseyLib.utils.mainThread
 import com.merseyside.merseyLib.utils.mvvm.SingleLiveEvent
 import de.blinkt.openvpn.VpnProfile
@@ -36,7 +35,7 @@ class DropletViewModel(
     private val getDropletsUseCase: GetDropletsInteractor,
     private val createServerUseCase: CreateServerInteractor,
     private val deleteServerUseCase: DeleteDropletInteractor
-) : BaseDropletViewModel(router), CoroutineScope {
+) : BaseVpnViewModel(router), CoroutineScope {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, _ -> }
     private val job = Job()
@@ -63,17 +62,12 @@ class DropletViewModel(
     val isQrVisible = ObservableField(false)
     val qrTitleText = ObservableField(getString(R.string.show_qr))
 
-    val connectionLiveData = SingleLiveEvent<Boolean>()
     val configFileLiveData = SingleLiveEvent<File>()
-    val vpnProfileLiveData = MutableLiveData<VpnProfile>()
     val openConfigFile = SingleLiveEvent<File>()
     val storagePermissionsErrorLiveEvent = SingleLiveEvent<Any>()
 
     val serverConfigTitle = ObservableField(getString(R.string.server_config))
     val serverConfig = ObservableField<String>()
-
-    lateinit var server: Server
-        private set
 
     var isInitialized: Boolean = false
     get() {
@@ -85,33 +79,23 @@ class DropletViewModel(
         }
     }
 
-    private var isConnected = false
-    set(value) {
-        if (field != value) {
-            field = value
-
-            connectionLiveData.value = value
-        }
-    }
-
     private var loadServersJob: Job? = null
 
     @OptIn(InternalCoroutinesApi::class)
     private fun loadServers(): Job {
         return launch {
-            getDropletsUseCase.observe().collect(dropletObserver)
-        }
-    }
-
-    private val dropletObserver = object : FlowCollector<List<Server>> {
-        override suspend fun emit(value: List<Server>) {
-
-            value.forEach {
-                if (it.id == server.id) {
-                    setServer(it)
-                    return
+            getDropletsUseCase.observe(
+                onEmit = { value ->
+                    run loop@{
+                        value.forEach {
+                            if (it.id == server.id) {
+                                setServer1(it)
+                                return@loop
+                            }
+                        }
+                    }
                 }
-            }
+            )
         }
     }
 
@@ -281,7 +265,7 @@ class DropletViewModel(
 
     }
 
-    fun setServer(server: Server) {
+    fun setServer1(server: Server) {
         this.server = server
 
         serverStatusEvent.value = server.environmentStatus

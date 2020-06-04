@@ -9,8 +9,8 @@ import com.merseyside.dropletapp.providerApi.cryptoServers.entity.point.CryptoSe
 import com.merseyside.dropletapp.providerApi.cryptoServers.entity.response.CryptoCreateSshKeyResponse
 import com.merseyside.dropletapp.providerApi.cryptoServers.entity.response.CryptoIsTokenValidResponse
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.DigitalOceanCreateDropletResponse
-import com.merseyside.dropletapp.utils.Logger
 import com.merseyside.dropletapp.utils.jsonContent
+import com.merseyside.kmpMerseyLib.utils.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.features.ResponseException
@@ -135,7 +135,7 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
             body = obj.jsonContent()
         }
 
-        Logger.logMsg(TAG, call)
+        Logger.log(this, call)
         return json.parse(call)
     }
 
@@ -186,9 +186,4 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
 
         return json.parse(CryptoServerPoint.serializer().list, call)
     }
-
-    companion object {
-        private const val TAG = "CryptoServersResponseCreator"
-    }
-
 }

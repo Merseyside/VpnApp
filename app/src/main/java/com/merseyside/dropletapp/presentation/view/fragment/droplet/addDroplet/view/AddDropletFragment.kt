@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import androidx.lifecycle.Observer
-import com.merseyside.admin.merseylibrary.system.PermissionsManager
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.databinding.FragmentAddDropletBinding
@@ -19,6 +18,7 @@ import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.m
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.merseyLib.presentation.view.OnBackPressedListener
+import com.merseyside.merseyLib.utils.PermissionManager
 import com.merseyside.merseyLib.utils.serialization.deserialize
 import com.merseyside.merseyLib.utils.serialization.serialize
 
@@ -93,17 +93,17 @@ class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDro
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
 
-            if (PermissionsManager.isPermissionsGranted(baseActivity, permission)) {
+            if (PermissionManager.isPermissionsGranted(baseActivity, *permission)) {
                 viewModel.createServer()
             } else {
-                PermissionsManager.verifyStoragePermissions(this, permission, PERMISSION_ACCESS_CODE)
+                PermissionManager.requestPermissions(this, *permission, requestCode = PERMISSION_ACCESS_CODE)
             }
 
             closeKeyboard()
         }
 
         if (arguments?.containsKey(PROVIDER_KEY) == true) {
-            viewModel.setProvider(arguments!!.getString(PROVIDER_KEY)!!.deserialize())
+            viewModel.setProvider(requireArguments().getString(PROVIDER_KEY)!!.deserialize())
         }
 
     }

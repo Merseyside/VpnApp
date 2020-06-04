@@ -2,8 +2,8 @@ package com.merseyside.dropletapp.providerApi.digitalOcean
 
 import com.merseyside.dropletapp.providerApi.*
 import com.merseyside.dropletapp.providerApi.digitalOcean.entity.response.*
-import com.merseyside.dropletapp.utils.Logger
 import com.merseyside.dropletapp.utils.jsonContent
+import com.merseyside.kmpMerseyLib.utils.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.features.defaultRequest
@@ -123,7 +123,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
                 USER_DATA to JsonPrimitive(script)
             ))
 
-            Logger.logMsg(TAG, script)
+            Logger.log(this, script)
 
             body = obj.jsonContent()
         }
@@ -171,9 +171,5 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
         }
 
         return json.parse(call)
-    }
-
-    companion object {
-        private const val TAG = "DigitalOceanResponseCreator"
     }
 }

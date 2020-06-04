@@ -1,6 +1,6 @@
 package com.merseyside.dropletapp.data.entity
 
-import com.merseyside.dropletapp.utils.deserialize
+import com.merseyside.kmpMerseyLib.utils.serialization.deserialize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

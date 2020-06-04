@@ -2,7 +2,7 @@ package com.merseyside.dropletapp.domain.interactor
 
 import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.di.tokenComponent
-import com.merseyside.dropletapp.domain.base.CoroutineUseCase
+import com.merseyside.kmpMerseyLib.domain.coroutines.CoroutineUseCase
 import com.merseyside.dropletapp.domain.repository.TokenRepository
 import org.kodein.di.erased.instance
 
