@@ -1,6 +1,6 @@
 package com.merseyside.dropletapp.agent.net
 
-import com.merseyside.dropletapp.utils.Logger
+import com.merseyside.kmpMerseyLib.utils.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.features.defaultRequest
@@ -50,15 +50,11 @@ class AgentResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
             val call = statement.execute()
 
-            Logger.logMsg(TAG, call.contentLength() ?: "0")
+            Logger.log(this, call.contentLength() ?: "0")
 
             call.content.readUTF8Line()
         } catch (e: SocketTimeoutException) {
             null
         }
-    }
-
-    companion object {
-        private const val TAG = "AgentResponse"
     }
 }

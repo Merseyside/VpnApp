@@ -9,6 +9,7 @@ import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
+import com.merseyside.dropletapp.presentation.base.BaseVpnViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.merseyLib.utils.Logger
@@ -21,7 +22,7 @@ class DropletListViewModel(
     private val router: Router,
     private val getDropletsUseCase: GetDropletsInteractor,
     private val deleteDropletUseCase: DeleteDropletInteractor
-) : BaseDropletViewModel(router), CoroutineScope {
+) : BaseVpnViewModel(router), CoroutineScope {
     override fun updateLanguage(context: Context) {
         noItemsHintObservableFields.set(context.getString(R.string.no_servers))
     }
@@ -53,20 +54,17 @@ class DropletListViewModel(
     @OptIn(InternalCoroutinesApi::class)
     private fun loadServers() {
         launch {
-            getDropletsUseCase.observe().collect(dropletObserver)
-        }
-    }
+            getDropletsUseCase.observe(
+                onEmit = { value ->
+                    if (value.isEmpty()) {
+                        dropletsVisibility.set(false)
+                    } else {
+                        dropletsVisibility.set(true)
+                    }
 
-    private val dropletObserver = object : FlowCollector<List<Server>> {
-        override suspend fun emit(value: List<Server>) {
-
-            if (value.isEmpty()) {
-                dropletsVisibility.set(false)
-            } else {
-                dropletsVisibility.set(true)
-            }
-
-            dropletLiveData.value = value
+                    dropletLiveData.value = value
+                }
+            )
         }
     }
 

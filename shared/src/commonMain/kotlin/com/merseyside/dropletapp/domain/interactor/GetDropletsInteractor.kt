@@ -1,9 +1,9 @@
 package com.merseyside.dropletapp.domain.interactor
 
-import com.merseyside.dropletapp.domain.base.FlowUseCase
 import com.merseyside.dropletapp.di.providerComponent
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
+import com.merseyside.kmpMerseyLib.domain.coroutines.FlowUseCase
 import kotlinx.coroutines.flow.Flow
 import org.kodein.di.erased.instance
 

@@ -20,8 +20,4 @@ fun generateRandomString(length: Int = 10): String {
         .joinToString("")
 }
 
-fun getCurrentTimeMillis(): Long {
-    return DateTime.now().milliseconds.toLong()
-}
-
 fun String.hexStringToByteArray() = ByteArray(this.length / 2) { this.substring(it * 2, it * 2 + 2).toInt(16).toByte() }

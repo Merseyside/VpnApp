@@ -5,8 +5,8 @@ import com.merseyside.dropletapp.providerApi.base.entity.point.NetworkPoint
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoResponse
 import com.merseyside.dropletapp.providerApi.base.entity.response.ImportSshKeyResponse
-import com.merseyside.dropletapp.utils.Logger
 import com.merseyside.dropletapp.utils.isDropletValid
+import com.merseyside.kmpMerseyLib.utils.Logger
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.coroutines.delay
 import kotlin.jvm.Synchronized
@@ -28,7 +28,7 @@ class CryptoServersProvider private constructor(httpClientEngine: HttpClientEngi
         tag: String,
         script: String
     ): DropletInfoResponse {
-        Logger.logMsg("Script", script)
+        Logger.log("Script", script)
 
         val response = responseCreator.createDroplet(token, regionSlug, sshKeyId!!, script)
 

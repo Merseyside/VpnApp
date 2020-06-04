@@ -3,6 +3,7 @@ package com.merseyside.dropletapp.domain.model
 import android.content.Context
 import android.content.res.AssetManager
 import com.merseyside.dropletapp.di.appContext
+import com.merseyside.filemanager.utils.getAssetContent
 import kotlinx.io.InputStream
 import kotlinx.serialization.ImplicitReflectionSerializer
 import kotlinx.serialization.InternalSerializationApi
@@ -41,17 +42,7 @@ actual data class OAuthConfig actual constructor(
 
         @OptIn(InternalSerializationApi::class)
         private fun getJsonFromAssets(filename: String, context: Context): String? {
-            val manager: AssetManager = context.assets
-
-            return try {
-                val file: InputStream = manager.open(filename)
-                val formArray = ByteArray(file.available())
-                file.read(formArray)
-                file.close()
-                String(formArray)
-            } catch (e: IOException) {
-                null
-            }
+            return getAssetContent(context, filename)
         }
     }
 

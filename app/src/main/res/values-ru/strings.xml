@@ -33,6 +33,7 @@
     <string name="setup_server_msg">Настройка вашего сервера, это может занять 2&#8211;5 минут</string>
     <string name="receiving_access_msg">Получение VPN доступа, пожалуйста, подождите…</string>
     <string name="loading_regions_msg">Загрузка регионов, пожалуйста, подождите…</string>
+    <string name="try_for_free">Попробовать бесплатно</string>
 
     <string name="connected">Подключено</string>
     <string name="starting">Запускается</string>
@@ -101,6 +102,7 @@
     <string name="creating_server">Создание нового сервера</string>
     <string name="ssh_keys">Генерация ssh ключей</string>
 
+    <string name="security_protocol">Протокол безопасности:</string>
     <string name="custom_server">Другой сервер</string>
     <string name="ip_address">IP адрес</string>
     <string name="username">Имя пользователя</string>
@@ -114,5 +116,9 @@
     <string name="fill_fields_msg">Пожалуйста, заполните поля корректно</string>
     <string name="ip_not_valid">Не правильный адрес</string>
     <string name="debian_9">Требуется чистый Debian 9 сервер</string>
+    <string name="log_in">Войти</string>
+    <string name="trial_is_over">Пробный период истек</string>
+    <string name="trial_is_over_msg">Спасибо за использование MyVpn.RUN. Бесплатный пробный час истек. Пожалуйста, войдите под одним из представленных провайдеров.</string>
+    <string name="trial_msg">Через час ваш доступ будет аннулирован, независимо от того используете Вы VPN или нет</string>
 
 </resources>

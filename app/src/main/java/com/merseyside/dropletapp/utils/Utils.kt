@@ -1,13 +1,19 @@
 package com.merseyside.dropletapp.utils
 
 import android.content.Context
+import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import com.merseyside.dropletapp.R
+import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.merseyLib.presentation.ext.getString
+
+val application = VpnApplication.getInstance()
 
 fun isServerNameValid(name: String?): Boolean {
     return name?.let {
@@ -82,4 +88,17 @@ fun generateRandomString(length: Int): String {
     }
 
     return ""
+}
+
+fun getDrawableByName(context: Context, name: String): Drawable? {
+    return ContextCompat.getDrawable(context, getDrawableResourceIdByName(context, name))
+}
+
+@DrawableRes
+fun getDrawableResourceIdByName(context: Context, name: String): Int {
+    val resources: Resources = context.resources
+    return resources.getIdentifier(
+        name, "drawable",
+        context.packageName
+    )
 }

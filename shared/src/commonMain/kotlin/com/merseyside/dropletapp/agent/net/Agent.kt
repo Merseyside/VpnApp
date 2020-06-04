@@ -2,8 +2,7 @@ package com.merseyside.dropletapp.agent.net
 
 import com.merseyside.dropletapp.agent.entity.AgentResponse
 import com.merseyside.dropletapp.data.cipher.AesCipher
-import com.merseyside.dropletapp.utils.Logger
-import com.merseyside.dropletapp.utils.deserialize
+import com.merseyside.kmpMerseyLib.utils.serialization.deserialize
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.coroutines.delay
 
