@@ -18,7 +18,7 @@ class MainViewModel(
     private val getDropletsUseCase: GetDropletsInteractor
 ) : BaseDropletViewModel(router), CoroutineScope {
 
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { context, throwable -> }
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, _ -> }
     private val job = Job()
     override val coroutineContext: CoroutineContext = Dispatchers.Main + coroutineExceptionHandler + job
 
@@ -34,26 +34,24 @@ class MainViewModel(
 
     private var isInitialized = false
 
-    private val dropletObserver = object : FlowCollector<List<Server>> {
-        var prevSize = 0
-
-        override suspend fun emit(value: List<Server>) {
-            if (value.isNotEmpty()) {
-                if (!isInitialized || (value.size == 1 && prevSize == 0)) navigateToDropletListScreen()
-                prevSize = value.size
-            } else {
-                if (!isInitialized) {
-                    navigateToAuthScreen()
-                }
-            }
-
-            isInitialized = true
-        }
-    }
-
     init {
         launch {
-            getDropletsUseCase.observe().collect(dropletObserver)
+            var prevSize = 0
+
+            getDropletsUseCase.observe(
+                onEmit = { value ->
+                    if (value.isNotEmpty()) {
+                        if (!isInitialized || (value.size == 1 && prevSize == 0)) navigateToDropletListScreen()
+                        prevSize = value.size
+                    } else {
+                        if (!isInitialized) {
+                            navigateToAuthScreen()
+                        }
+                    }
+
+                    isInitialized = true
+                }
+            )
         }
     }
 

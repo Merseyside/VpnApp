@@ -79,4 +79,8 @@ class AuthViewModel(
             router.navigateTo(Screens.AddCustomDropletScreen())
         }
     }
+
+    fun onFreeAccessClick() {
+        router.navigateTo(Screens.FreeAccessScreen())
+    }
 }

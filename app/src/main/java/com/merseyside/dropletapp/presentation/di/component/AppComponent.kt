@@ -6,6 +6,7 @@ import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.presentation.di.module.AppModule
 import com.merseyside.dropletapp.presentation.di.module.NavigationModule
+import com.merseyside.dropletapp.utils.PrefsHelper
 import com.merseyside.merseyLib.presentation.di.qualifiers.ApplicationContext
 import com.merseyside.merseyLib.utils.PreferenceManager
 import dagger.Component
@@ -31,4 +32,6 @@ interface AppComponent {
     fun router() : Router
 
     fun getServicesInteractor(): GetProvidersInteractor
+
+    fun prefsHelper(): PrefsHelper
 }

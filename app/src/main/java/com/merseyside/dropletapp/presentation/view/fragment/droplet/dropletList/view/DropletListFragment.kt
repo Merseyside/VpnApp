@@ -2,6 +2,7 @@ package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList
 
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
@@ -150,4 +151,7 @@ class DropletListFragment : BaseVpnFragment<FragmentDropletListBinding, DropletL
             return DropletListFragment()
         }
     }
+
+    override fun receiveStatus(intent: Intent) {}
+    override val changeConnectionObserver = Observer<Boolean> {}
 }

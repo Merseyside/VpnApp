@@ -7,6 +7,7 @@ import com.merseyside.dropletapp.presentation.view.fragment.droplet.addCustomSer
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.view.AddDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.view.DropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view.DropletListFragment
+import com.merseyside.dropletapp.presentation.view.fragment.free.view.FreeAccessFragment
 import com.merseyside.dropletapp.presentation.view.fragment.qr.QrFragment
 import com.merseyside.dropletapp.presentation.view.fragment.settings.view.SettingsFragment
 import com.merseyside.dropletapp.providerApi.Provider
@@ -53,6 +54,12 @@ class Screens {
     class AddCustomDropletScreen() : SupportAppScreen() {
         override fun getFragment(): Fragment {
             return AddCustomDropletFragment.newInstance()
+        }
+    }
+
+    class FreeAccessScreen: SupportAppScreen() {
+        override fun getFragment(): Fragment {
+            return FreeAccessFragment.newInstance()
         }
     }
 }

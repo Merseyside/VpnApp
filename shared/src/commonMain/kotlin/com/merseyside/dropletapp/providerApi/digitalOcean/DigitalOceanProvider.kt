@@ -3,14 +3,12 @@ package com.merseyside.dropletapp.providerApi.digitalOcean
 import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.providerApi.ProviderApi
 import com.merseyside.dropletapp.providerApi.base.entity.point.NetworkPoint
-import com.merseyside.dropletapp.providerApi.base.entity.response.CreateDropletResponse
-import com.merseyside.dropletapp.providerApi.base.entity.response.ImportSshKeyResponse
-import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoResponse
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
-import com.merseyside.dropletapp.providerApi.digitalOcean.entity.point.DropletInfoPoint
+import com.merseyside.dropletapp.providerApi.base.entity.response.DropletInfoResponse
+import com.merseyside.dropletapp.providerApi.base.entity.response.ImportSshKeyResponse
 import com.merseyside.dropletapp.providerApi.exception.InvalidTokenException
-import com.merseyside.dropletapp.utils.Logger
 import com.merseyside.dropletapp.utils.isDropletValid
+import com.merseyside.kmpMerseyLib.utils.Logger
 import io.ktor.client.engine.HttpClientEngine
 import kotlinx.coroutines.delay
 import kotlin.jvm.Synchronized
@@ -80,7 +78,7 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
     private suspend fun getDropletInfo(token: String, dropletId: Long): DropletInfoResponse {
         val response = responseCreator.getDropletInfo(token, dropletId)
 
-        Logger.logMsg(TAG, response.toString())
+        Logger.log(this, response.toString())
 
         return response.dropletInfoPoint.let {
             DropletInfoResponse(
@@ -119,8 +117,6 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
     }
 
     companion object {
-
-        const private val TAG = "DigitalOceanProvider"
 
         private var instance: DigitalOceanProvider? = null
 

@@ -2,6 +2,7 @@ package com.merseyside.dropletapp.domain
 
 import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.ssh.SshManager
+import com.merseyside.kmpMerseyLib.utils.time.getCurrentTimeMillis
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -58,6 +59,23 @@ data class Server(
             }
 
             else -> typedConfig.getConfig()
+        }
+    }
+
+    companion object {
+        fun newDummyServer(): Server {
+            return Server(
+                id = 0,
+                name = "Dummy server",
+                createdAt = getCurrentTimeMillis().toString(),
+                regionName = "Dummy region",
+                providerName = "Dummy provider",
+                providerId = 0,
+                serverStatus = "Dummy status",
+                address = "Dummy address",
+                typedConfig = TypedConfig.OpenVpn("user"),
+                environmentStatus = SshManager.Status.READY
+            )
         }
     }
 }

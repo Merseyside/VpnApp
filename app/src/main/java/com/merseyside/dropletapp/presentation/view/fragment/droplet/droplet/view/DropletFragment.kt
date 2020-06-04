@@ -1,12 +1,10 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.view
 
 import android.Manifest
-import android.app.Activity
 import android.content.*
 import android.content.Intent.ACTION_VIEW
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
-import android.net.VpnService
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
@@ -14,7 +12,6 @@ import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
-import com.merseyside.admin.merseylibrary.system.PermissionsManager
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.entity.TypedConfig
@@ -33,22 +30,15 @@ import com.merseyside.merseyLib.Axis
 import com.merseyside.merseyLib.MainPoint
 import com.merseyside.merseyLib.animator.AlphaAnimator
 import com.merseyside.merseyLib.animator.TransitionAnimator
+import com.merseyside.merseyLib.utils.PermissionManager
 import com.merseyside.merseyLib.utils.serialization.deserialize
 import com.merseyside.merseyLib.utils.serialization.serialize
 import com.merseyside.merseyLib.utils.time.Millis
-import de.blinkt.openvpn.VpnProfile
 import de.blinkt.openvpn.core.OpenVPNService
-import de.blinkt.openvpn.core.VPNLaunchHelper
 import de.blinkt.openvpn.core.VpnStatus
 import java.io.File
 
 class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel>(), OnBackPressedListener {
-
-    private val vpnProfileObserver = Observer<VpnProfile> {
-        if (it != null) {
-            connectToVpn()
-        }
-    }
 
     private val configFileObserver = Observer<File> {
         shareOvpn(it)
@@ -64,10 +54,12 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
             Manifest.permission.READ_EXTERNAL_STORAGE
         )
 
-        if (!PermissionsManager.isPermissionsGranted(baseActivity, permission)) {
+        if (!PermissionManager.isPermissionsGranted(baseActivity, *permission)) {
 
-            PermissionsManager.verifyStoragePermissions(this, permission,
-                PERMISSION_ACCESS_CODE
+            PermissionManager.requestPermissions(
+                this,
+                *permission,
+                requestCode = PERMISSION_ACCESS_CODE
             )
         }
     }
@@ -98,24 +90,7 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
         }
     }
 
-    private fun connectToVpn() {
-        val intent = VpnService.prepare(baseActivity)
-
-        if (intent != null) {
-            VpnStatus.updateStateString("USER_VPN_PERMISSION", "", R.string.state_user_vpn_permission,
-                VpnStatus.ConnectionStatus.LEVEL_WAITING_FOR_USER_INPUT)
-
-            try {
-                startActivityForResult(intent, START_VPN_PROFILE)
-            } catch (e: ActivityNotFoundException) {
-                VpnStatus.logError(R.string.no_vpn_support_image)
-            }
-        } else {
-            onActivityResult(START_VPN_PROFILE, Activity.RESULT_OK, null)
-        }
-    }
-
-    private val changeConnectionObserver = Observer<Boolean> {
+    override val changeConnectionObserver = Observer<Boolean> {
         Logger.log(this, it)
         if (it) {
             if (vpnService!!.server != null) {
@@ -129,7 +104,6 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
             val currentServer = vpnService!!.server as Server
 
             if (currentServer == viewModel.server) {
-                vpnService!!.server = null
                 turnOffVpn()
 
                 viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED)
@@ -165,12 +139,8 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        registerReceivers()
-
         doLayout()
 
-        viewModel.vpnProfileLiveData.observe(viewLifecycleOwner, vpnProfileObserver)
-        viewModel.connectionLiveData.observe(viewLifecycleOwner, changeConnectionObserver)
         viewModel.configFileLiveData.observe(viewLifecycleOwner, configFileObserver)
         viewModel.serverStatusEvent.observe(viewLifecycleOwner, serverStatus)
         viewModel.openConfigFile.observe(viewLifecycleOwner, openConfigObserver)
@@ -179,7 +149,7 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
 
     private fun doLayout() {
         if (arguments?.containsKey(SERVER_KEY) == true && !viewModel.isInitialized) {
-            viewModel.setServer(arguments!!.getString(SERVER_KEY)!!.deserialize())
+            viewModel.setServer1(requireArguments().getString(SERVER_KEY)!!.deserialize())
         }
 
         binding.config.setOnClickListener {
@@ -196,42 +166,13 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
     override fun onDestroyView() {
         super.onDestroyView()
 
-        unregisterReceivers()
-
-        viewModel.connectionLiveData.removeObserver(changeConnectionObserver)
-        viewModel.vpnProfileLiveData.removeObserver(vpnProfileObserver)
         viewModel.configFileLiveData.removeObserver(configFileObserver)
         viewModel.serverStatusEvent.removeObserver(serverStatus)
         viewModel.openConfigFile.removeObserver(openConfigObserver)
         viewModel.storagePermissionsErrorLiveEvent.removeObserver(storagePermissionError)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                START_VPN_PROFILE -> {
-                    vpnService!!.server = viewModel.server
-                    VPNLaunchHelper.startOpenVpn(viewModel.vpnProfileLiveData.value, context)
-                }
-            }
-        }
-    }
-
-    private var br: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            receiveStatus(intent)
-        }
-    }
-
-    private fun registerReceivers() {
-        baseActivity.registerReceiver(br, IntentFilter(BROADCAST_ACTION))
-    }
-
-    private fun unregisterReceivers() {
-        baseActivity.unregisterReceiver(br)
-    }
-
-    private fun receiveStatus(intent: Intent) {
+    override fun receiveStatus(intent: Intent) {
         viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.valueOf(intent.getStringExtra("status")))
     }
 
@@ -339,9 +280,6 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
 
     companion object {
         private const val SERVER_KEY = "server"
-
-        private const val START_VPN_PROFILE = 70
-        private const val BROADCAST_ACTION = "de.blinkt.openvpn.VPN_STATUS"
 
         private const val PERMISSION_ACCESS_CODE = 15
 

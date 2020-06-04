@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+                name="viewModel"
+                 type="com.merseyside.dropletapp.presentation.view.fragment.settings.model.SettingsViewModel"/>
+    </data>
+
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:padding="@dimen/normal_spacing"  >
+
+        <com.merseyside.horizontalselectorview.HorizontalSelectorView
+                android:id="@+id/language"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:horizontalSelectorTitle="@string/language"
+                android:entryValues="@array/language_entry_values"
+                android:entries="@array/language_entries"
+                app:horizontalSelectorType="image">
+
+        </com.merseyside.horizontalselectorview.HorizontalSelectorView>
+
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/normal_spacing"
+                app:isVisibleOrGone="@{viewModel.tokensVisibility}">
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                    android:text="@{viewModel.tokenHintObservableField}"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/token_list"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>
