@@ -43,6 +43,7 @@ object LibraryVersions {
             const val gson = "2.8.6"
             const val worker = "2.3.4"
             const val room = "2.0.0"
+            const val ktor = "1.3.2"
 
             object MerseyLibs {
                 const val version = "1.2.3"

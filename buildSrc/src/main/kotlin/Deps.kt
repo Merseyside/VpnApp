@@ -136,6 +136,9 @@ object Deps {
                 name = "com.github.Merseyside:android-filemanager:${Versions.Libs.Android.filemanager}"
             )
 
+            val wireguard = AndroidLibrary(
+                name = "com.wireguard.android:tunnel:${Versions.Libs.Android.wireguard}"
+            )
 
             object MerseyLibs {
                 private val base = "com.github.Merseyside.mersey-android-library"

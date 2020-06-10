@@ -114,7 +114,11 @@ object LibraryDeps {
                 common = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:${LibraryVersions.Libs.MultiPlatform.serialization}",
                 ios = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:${LibraryVersions.Libs.MultiPlatform.serialization}"
             )
-
+            val ktorClient = MultiPlatformLibrary(
+                android = "io.ktor:ktor-client-android:${Versions.Libs.MultiPlatform.ktorClient}",
+                common = "io.ktor:ktor-client-core:${Versions.Libs.MultiPlatform.ktorClient}",
+                ios = "io.ktor:ktor-client-ios:${Versions.Libs.MultiPlatform.ktorClient}"
+            )
             val mokoMvvm = MultiPlatformLibrary(
                 common = "dev.icerock.moko:mvvm:${LibraryVersions.Libs.MultiPlatform.mokoMvvm}",
                 iosX64 = "dev.icerock.moko:mvvm-iosx64:${LibraryVersions.Libs.MultiPlatform.mokoMvvm}",

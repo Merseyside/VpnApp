@@ -6,6 +6,7 @@ plugins {
     id("kotlinx-serialization")
 }
 
+
 android {
     compileSdkVersion(Versions.Android.compileSdk)
 
@@ -21,9 +22,6 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
 
-//        manifestPlaceholders = listOf(
-//            appAuthRedirectScheme to ""
-//        )
     }
 
     dataBinding {
@@ -146,3 +144,6 @@ dependencies {
 }
 
 apply("plugin" to "com.google.gms.google-services")
+repositories {
+    mavenCentral()
+}

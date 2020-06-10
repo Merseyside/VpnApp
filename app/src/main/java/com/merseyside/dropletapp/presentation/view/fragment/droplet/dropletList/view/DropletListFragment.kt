@@ -1,11 +1,7 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.view
 
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
 import android.view.View
 import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.BR
@@ -19,15 +15,17 @@ import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletListViewModel
 import com.merseyside.merseyLib.adapters.BaseAdapter
 import com.merseyside.merseyLib.adapters.UpdateRequest
+import com.merseyside.merseyLib.presentation.view.OnBackPressedListener
 import com.merseyside.merseyLib.utils.Logger
-import de.blinkt.openvpn.core.OpenVPNService
-import de.blinkt.openvpn.core.VpnStatus
 
-class DropletListFragment : BaseVpnFragment<FragmentDropletListBinding, DropletListViewModel>() {
+class DropletListFragment : BaseVpnFragment<FragmentDropletListBinding, DropletListViewModel>(),
+    OnBackPressedListener {
 
     private val adapter: DropletAdapter = DropletAdapter()
 
     private val dropletObserver = Observer<List<Server>> {
+
+        Logger.log(this, it)
 
         if (it.isEmpty()) {
             adapter.clear()
@@ -43,20 +41,6 @@ class DropletListFragment : BaseVpnFragment<FragmentDropletListBinding, DropletL
                     .build()
                 )
             }
-        }
-    }
-
-    override val mConnection = object : ServiceConnection {
-
-        override fun onServiceConnected(className: ComponentName,
-                                        service: IBinder
-        ) {
-            val binder = service as OpenVPNService.LocalBinder
-            vpnService = binder.service
-        }
-
-        override fun onServiceDisconnected(arg0: ComponentName) {
-            vpnService = null
         }
     }
 
@@ -111,7 +95,6 @@ class DropletListFragment : BaseVpnFragment<FragmentDropletListBinding, DropletL
 
     private fun doLayout() {
         adapter.setOnItemClickListener(onServerClickListener)
-        binding.fab.setOnClickListener { onAddServerClick() }
 
         binding.dropletList.adapter = adapter
     }
@@ -130,19 +113,10 @@ class DropletListFragment : BaseVpnFragment<FragmentDropletListBinding, DropletL
         viewModel.dropletLiveData.removeObserver(dropletObserver)
     }
 
-    private fun onAddServerClick() {
-        if (VpnStatus.isVPNActive()) {
-        showAlertDialog(
-            messageRes = R.string.add_server_without_vpn_message,
-            positiveButtonTextRes = R.string.add_server_positive,
-            negativeButtonTextRes = R.string.add_server_negative,
-            onPositiveClick = {
-                turnOffVpn()
-                viewModel.navigateToAuthScreen()
-            })
-        } else {
-            viewModel.navigateToAuthScreen()
-        }
+    override fun onBackPressed(): Boolean {
+        goBack()
+
+        return false
     }
 
     companion object {
@@ -152,6 +126,5 @@ class DropletListFragment : BaseVpnFragment<FragmentDropletListBinding, DropletL
         }
     }
 
-    override fun receiveStatus(intent: Intent) {}
     override val changeConnectionObserver = Observer<Boolean> {}
 }

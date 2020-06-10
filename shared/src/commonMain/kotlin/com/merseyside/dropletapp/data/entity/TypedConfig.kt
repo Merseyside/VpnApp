@@ -18,9 +18,27 @@ sealed class TypedConfig {
         fun getQrData(): String?
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other == null || this::class != other::class) return false
+
+        other as TypedConfig
+
+        return this.config == other.config
+    }
+
+    override fun hashCode(): Int {
+        return config?.hashCode() ?: 0
+    }
+
     companion object {
         fun getNames(): List<String> {
-            return arrayListOf(OpenVpn.name, WireGuard.name, L2TP.name, PPTP.name, Shadowsocks.name)
+            return arrayListOf(
+                OpenVpn.name,
+                WireGuard.name,
+                L2TP.name,
+                PPTP.name,
+                Shadowsocks.name
+            )
         }
     }
 
@@ -28,10 +46,6 @@ sealed class TypedConfig {
     class OpenVpn(val userName: String): TypedConfig() {
 
         override var config: String? = null
-
-        override fun equals(other: Any?): Boolean {
-            return this === other
-        }
 
         override fun getName(): String {
             return name
@@ -52,10 +66,6 @@ sealed class TypedConfig {
             return config
         }
 
-        override fun equals(other: Any?): Boolean {
-            return this === other
-        }
-
         override fun getName(): String {
             return name
         }
@@ -66,14 +76,11 @@ sealed class TypedConfig {
     }
 
     @Serializable
-    class L2TP(val userName: String, val password: String, val key: String): TypedConfig() {
+    class L2TP(val userName: String, val password: String, val key: String)
+        : TypedConfig() {
 
         override var config: String? = null
             get() = "user=$userName\npassword=$password\nkey=$key"
-
-        override fun equals(other: Any?): Boolean {
-            return this === other
-        }
 
         override fun getName(): String {
             return name
@@ -90,10 +97,6 @@ sealed class TypedConfig {
         override var config: String? = null
             get() = "user=$userName\npassword=$password"
 
-        override fun equals(other: Any?): Boolean {
-            return this === other
-        }
-
         override fun getName(): String {
             return name
         }
@@ -104,7 +107,8 @@ sealed class TypedConfig {
     }
 
     @Serializable
-    class Shadowsocks(val password: String): TypedConfig(), HasQrCode {
+    class Shadowsocks(val password: String)
+        : TypedConfig(), HasQrCode {
 
         override var config: String? = null
 

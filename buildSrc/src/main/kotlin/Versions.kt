@@ -59,6 +59,7 @@ object Versions {
             const val sshj = "0.27.0"
             const val ktorOkHttp = "1.3.2"
             const val filemanager = "1.0.0"
+            const val wireguard = "1.0.20200407"
 
             object MerseyLibs {
                 const val version = "1.2.3"

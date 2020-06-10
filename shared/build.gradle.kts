@@ -72,7 +72,8 @@ val androidLibs = listOf(
     Deps.Libs.Android.json,
     Deps.Libs.Android.okhttp,
     Deps.Libs.Android.okhttpInterceptor,
-    Deps.Libs.Android.ktorOkHttp
+    Deps.Libs.Android.ktorOkHttp,
+    Deps.Libs.Android.wireguard
     //Deps.Libs.Android.filemanager
 )
 
@@ -94,6 +95,7 @@ dependencies {
 
     implementation("com.hierynomus:sshj:0.27.0")
     implementation(project(":filemanager"))
+    implementation(project(":openvpn-core"))
 
     androidLibs.forEach { lib -> androidLibrary(lib)}
 
@@ -114,4 +116,7 @@ sqldelight {
         //dependency(project(":OtherProject"))
     }
     linkSqlite = false
+}
+repositories {
+    mavenCentral()
 }

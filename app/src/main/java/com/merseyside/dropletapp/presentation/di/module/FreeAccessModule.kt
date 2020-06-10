@@ -7,6 +7,9 @@ import com.merseyside.dropletapp.presentation.view.fragment.free.model.FreeAcces
 import com.merseyside.dropletapp.utils.PrefsHelper
 import com.merseyside.merseyLib.presentation.fragment.BaseFragment
 import com.merseyside.merseyLib.presentation.model.BundleAwareViewModelFactory
+import com.merseyside.dropletapp.connectionTypes.Builder
+import com.merseyside.dropletapp.di.connectionTypeBuilder
+import com.merseyside.dropletapp.domain.interactor.GetLockedTypesInteractor
 import dagger.Module
 import dagger.Provides
 import ru.terrakok.cicerone.Router
@@ -21,19 +24,33 @@ class FreeAccessModule(
     internal fun addDropletViewModelProvider(
         router: Router,
         prefsHelper: PrefsHelper,
-        getVpnConfigUseCase: GetVpnConfigInteractor
+        connectionTypeBuilder: Builder,
+        getVpnConfigUseCase: GetVpnConfigInteractor,
+        getLockedTypesUseCase: GetLockedTypesInteractor
     ): ViewModelProvider.Factory {
         return FreeAccessViewModelProviderFactory(
             bundle,
             router,
             prefsHelper,
-            getVpnConfigUseCase
+            connectionTypeBuilder,
+            getVpnConfigUseCase,
+            getLockedTypesUseCase
         )
+    }
+
+    @Provides
+    internal fun getConnectionTypeBuilder(): Builder {
+        return connectionTypeBuilder!!
     }
 
     @Provides
     internal fun provideGetVpnConfigInteractor(): GetVpnConfigInteractor {
         return GetVpnConfigInteractor()
+    }
+
+    @Provides
+    internal fun provideGetLockedTypesInteractor(): GetLockedTypesInteractor {
+        return GetLockedTypesInteractor()
     }
 
     @Provides
@@ -45,11 +62,19 @@ class FreeAccessModule(
         bundle: Bundle?,
         private val router: Router,
         private val prefsHelper: PrefsHelper,
-        private val getVpnConfigUseCase: GetVpnConfigInteractor
+        private val connectionTypeBuilder: Builder,
+        private val getVpnConfigUseCase: GetVpnConfigInteractor,
+        private val getLockedTypesUseCase: GetLockedTypesInteractor
     ): BundleAwareViewModelFactory<FreeAccessViewModel>(bundle) {
 
         override fun getViewModel(): FreeAccessViewModel {
-            return FreeAccessViewModel(router, prefsHelper, getVpnConfigUseCase)
+            return FreeAccessViewModel(
+                router,
+                prefsHelper,
+                connectionTypeBuilder,
+                getVpnConfigUseCase,
+                getLockedTypesUseCase
+            )
         }
     }
 }

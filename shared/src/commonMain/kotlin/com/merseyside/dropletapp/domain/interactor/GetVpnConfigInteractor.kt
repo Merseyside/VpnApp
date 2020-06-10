@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.domain.interactor
 
+import com.merseyside.dropletapp.connectionTypes.Type
 import com.merseyside.dropletapp.di.freeAccessComponent
 import com.merseyside.dropletapp.domain.repository.FreeAccessRepository
 import com.merseyside.kmpMerseyLib.domain.coroutines.CoroutineUseCase
@@ -10,10 +11,10 @@ class GetVpnConfigInteractor : CoroutineUseCase<String, GetVpnConfigInteractor.P
     private val repository: FreeAccessRepository by freeAccessComponent.instance()
 
     data class Params(
-        val typeName: String
+        val type: Type
     )
 
     override suspend fun executeOnBackground(params: Params?): String {
-        return repository.getVpnConfig(params!!.typeName)
+        return repository.getVpnConfig(params!!.type)
     }
 }

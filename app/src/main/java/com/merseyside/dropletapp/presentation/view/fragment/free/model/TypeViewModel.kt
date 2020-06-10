@@ -4,10 +4,11 @@ import androidx.annotation.DrawableRes
 import androidx.databinding.Bindable
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.BR
+import com.merseyside.dropletapp.domain.LockedType
 import com.merseyside.merseyLib.model.BaseSelectableAdapterViewModel
 import org.apache.xpath.operations.Bool
 
-class TypeViewModel(override var obj: Type) : BaseSelectableAdapterViewModel<Type>(
+class TypeViewModel(override var obj: LockedType) : BaseSelectableAdapterViewModel<LockedType>(
     obj,
     isSelectable = !obj.isLocked
 ) {
@@ -18,15 +19,15 @@ class TypeViewModel(override var obj: Type) : BaseSelectableAdapterViewModel<Typ
         notifyUpdate()
     }
 
-    override fun areContentsTheSame(obj: Type): Boolean {
+    override fun areContentsTheSame(obj: LockedType): Boolean {
         return false
     }
 
-    override fun compareTo(obj: Type): Int {
+    override fun compareTo(obj: LockedType): Int {
         return 0
     }
 
-    override fun areItemsTheSame(obj: Type): Boolean {
+    override fun areItemsTheSame(obj: LockedType): Boolean {
         return false
     }
 
@@ -36,7 +37,7 @@ class TypeViewModel(override var obj: Type) : BaseSelectableAdapterViewModel<Typ
 
     @Bindable
     fun getName(): String {
-        return obj.name
+        return obj.type.name
     }
 
     @Bindable

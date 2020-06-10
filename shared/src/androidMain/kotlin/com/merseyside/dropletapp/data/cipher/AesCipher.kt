@@ -1,6 +1,6 @@
 package com.merseyside.dropletapp.data.cipher
 
-import com.merseyside.dropletapp.utils.generateRandomString
+import com.merseyside.kmpMerseyLib.utils.generateRandomString
 import io.ktor.util.InternalAPI
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec

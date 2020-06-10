@@ -92,23 +92,23 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
 
     override val changeConnectionObserver = Observer<Boolean> {
         Logger.log(this, it)
-        if (it) {
-            if (vpnService!!.server != null) {
-                val currentServer = vpnService!!.server as Server
-                if (currentServer.id != viewModel.server.id) {
-                    turnOffVpn()
-                }
-            }
-            vpnService!!.server = viewModel.server
-        } else {
-            val currentServer = vpnService!!.server as Server
-
-            if (currentServer == viewModel.server) {
-                turnOffVpn()
-
-                viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED)
-            }
-        }
+//        if (it) {
+//            if (vpnService!!.server != null) {
+//                val currentServer = vpnService!!.server as Server
+//                if (currentServer.id != viewModel.server.id) {
+//                    turnOffVpn()
+//                }
+//            }
+//            vpnService!!.server = viewModel.server
+//        } else {
+//            val currentServer = vpnService!!.server as Server
+//
+//            if (currentServer == viewModel.server) {
+//                turnOffVpn()
+//
+//                viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED)
+//            }
+//        }
     }
 
     override fun getBindingVariable(): Int {
@@ -171,38 +171,34 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
         viewModel.openConfigFile.removeObserver(openConfigObserver)
         viewModel.storagePermissionsErrorLiveEvent.removeObserver(storagePermissionError)
     }
+//
+//    override fun receiveStatus(intent: Intent) {
+//        viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.valueOf(intent.getStringExtra("status")))
+//    }
 
-    override fun receiveStatus(intent: Intent) {
-        viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.valueOf(intent.getStringExtra("status")))
-    }
+//    override val mConnection = object : ServiceConnection {
+//
+//        override fun onServiceConnected(className: ComponentName,
+//                                        service: IBinder
+//        ) {
+//            val binder = service as OpenVPNService.LocalBinder
+//            vpnService = binder.service
+//
+//            Logger.log(this@DropletFragment, "on service connected")
+//
+//            if (VpnStatus.isVPNActive() && vpnService!!.server != null) {
+//
+//                val currentServer = vpnService!!.server as Server
+//                if (currentServer.id == viewModel.server.id) {
+//                    viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.LEVEL_CONNECTED)
+//                }
+//            }
+//        }
 
-    override val mConnection = object : ServiceConnection {
-
-        override fun onServiceConnected(className: ComponentName,
-                                        service: IBinder
-        ) {
-            val binder = service as OpenVPNService.LocalBinder
-            vpnService = binder.service
-
-            Logger.log(this@DropletFragment, "on service connected")
-
-            if (VpnStatus.isVPNActive() && vpnService!!.server != null) {
-
-                val currentServer = vpnService!!.server as Server
-                Logger.log(this@DropletFragment, "show connected server")
-
-                Logger.log(this@DropletFragment, vpnService!!.server!!)
-                Logger.log(this@DropletFragment, viewModel.server)
-                if (currentServer.id == viewModel.server.id) {
-                    viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.LEVEL_CONNECTED)
-                }
-            }
-        }
-
-        override fun onServiceDisconnected(arg0: ComponentName) {
-            vpnService = null
-        }
-    }
+//        override fun onServiceDisconnected(arg0: ComponentName) {
+//            //vpnService = null
+//        }
+//    }
 
     private fun shareOvpn(file: File) {
 
@@ -295,7 +291,9 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
     }
 
     override fun onBackPressed(): Boolean {
-        return viewModel.onBackPressed()
+        viewModel.goBack()
+
+        return false
     }
 
 }
