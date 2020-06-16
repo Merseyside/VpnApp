@@ -6,7 +6,6 @@ import android.content.Intent.ACTION_VIEW
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.IBinder
 import android.view.View
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
@@ -31,6 +30,7 @@ import com.merseyside.merseyLib.MainPoint
 import com.merseyside.merseyLib.animator.AlphaAnimator
 import com.merseyside.merseyLib.animator.TransitionAnimator
 import com.merseyside.merseyLib.utils.PermissionManager
+import com.merseyside.merseyLib.utils.openUrl
 import com.merseyside.merseyLib.utils.serialization.deserialize
 import com.merseyside.merseyLib.utils.serialization.serialize
 import com.merseyside.merseyLib.utils.time.Millis
@@ -46,6 +46,16 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
 
     private val openConfigObserver = Observer<File> {
         shareZip(it)
+    }
+
+    private val v2RayRequireObserver = Observer<Any> {
+        showAlertDialog(
+            titleRes = R.string.v2ray_required,
+            messageRes = R.string.v2ray_required_msg,
+            positiveButtonTextRes = R.string.download,
+            negativeButtonTextRes = R.string.error_dialog_negative,
+            onPositiveClick = { openUrl(baseActivity, "https://play.google.com/store/apps/details?id=com.github.shadowsocks.plugin.v2ray") }
+        )
     }
 
     private val storagePermissionError = Observer<Any> {
@@ -92,23 +102,6 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
 
     override val changeConnectionObserver = Observer<Boolean> {
         Logger.log(this, it)
-//        if (it) {
-//            if (vpnService!!.server != null) {
-//                val currentServer = vpnService!!.server as Server
-//                if (currentServer.id != viewModel.server.id) {
-//                    turnOffVpn()
-//                }
-//            }
-//            vpnService!!.server = viewModel.server
-//        } else {
-//            val currentServer = vpnService!!.server as Server
-//
-//            if (currentServer == viewModel.server) {
-//                turnOffVpn()
-//
-//                viewModel.setConnectionStatus(VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED)
-//            }
-//        }
     }
 
     override fun getBindingVariable(): Int {
@@ -145,6 +138,7 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
         viewModel.serverStatusEvent.observe(viewLifecycleOwner, serverStatus)
         viewModel.openConfigFile.observe(viewLifecycleOwner, openConfigObserver)
         viewModel.storagePermissionsErrorLiveEvent.observe(viewLifecycleOwner, storagePermissionError)
+        viewModel.v2RayRequireEvent.observe(viewLifecycleOwner, v2RayRequireObserver)
     }
 
     private fun doLayout() {
@@ -170,6 +164,7 @@ class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel
         viewModel.serverStatusEvent.removeObserver(serverStatus)
         viewModel.openConfigFile.removeObserver(openConfigObserver)
         viewModel.storagePermissionsErrorLiveEvent.removeObserver(storagePermissionError)
+        viewModel.v2RayRequireEvent.removeObserver(v2RayRequireObserver)
     }
 //
 //    override fun receiveStatus(intent: Intent) {

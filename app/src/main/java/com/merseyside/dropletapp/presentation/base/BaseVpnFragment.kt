@@ -8,6 +8,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.R
+import com.merseyside.dropletapp.connectionTypes.ServiceConnectionType
+import com.merseyside.dropletapp.connectionTypes.VpnHelper
 import com.merseyside.dropletapp.connectionTypes.typeImpl.openVpn.OpenVpnConnectionType
 import com.merseyside.merseyLib.utils.Logger
 import de.blinkt.openvpn.core.VpnStatus
@@ -40,18 +42,14 @@ abstract class BaseVpnFragment<B : ViewDataBinding, M : BaseVpnViewModel> : Base
     }
 
     private fun prepareVpn() {
-        val intent = OpenVpnConnectionType.prepare(context)
+        val intent = VpnHelper.prepare(context)
 
         if (intent != null) {
-            VpnStatus.updateStateString(
-                "USER_VPN_PERMISSION", "", R.string.state_user_vpn_permission,
-                VpnStatus.ConnectionStatus.LEVEL_WAITING_FOR_USER_INPUT
-            )
-
+            Logger.log("here1")
             try {
                 startActivityForResult(intent, START_VPN_PROFILE)
             } catch (e: ActivityNotFoundException) {
-                VpnStatus.logError(R.string.no_vpn_support_image)
+                showErrorMsg("No vpn activity found")
             }
         }
     }
@@ -61,6 +59,7 @@ abstract class BaseVpnFragment<B : ViewDataBinding, M : BaseVpnViewModel> : Base
             when (requestCode) {
 
                 START_VPN_PROFILE -> {
+                    Logger.log("here")
                     viewModel.onConnect()
                 }
             }

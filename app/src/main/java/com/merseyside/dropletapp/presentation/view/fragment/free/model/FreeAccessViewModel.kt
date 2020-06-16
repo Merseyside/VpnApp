@@ -54,6 +54,7 @@ class FreeAccessViewModel(
                     }
 
                     override fun onSessionTime(timestamp: Long) {
+                        Logger.log(this, "time = $timestamp")
                         sessionTime = timestamp
 
                         val alreadySpendTime = prefsHelper.getTrialTime()
@@ -154,7 +155,7 @@ class FreeAccessViewModel(
                 R.attr.colorError
             }
 
-            ConnectionLevel.DISCONNECTED -> {
+            ConnectionLevel.IDLE -> {
                 R.attr.colorPrimary
             }
 
@@ -170,7 +171,7 @@ class FreeAccessViewModel(
                 getString(R.string.disconnect_action)
             }
 
-            ConnectionLevel.DISCONNECTED -> {
+            ConnectionLevel.IDLE -> {
                 getString(R.string.connect)
             }
 
@@ -181,8 +182,7 @@ class FreeAccessViewModel(
     }
 
     override fun onConnect() {
-
-        if (OpenVpnConnectionType.prepare(application) == null) {
+        if (VpnHelper.prepare(application) == null) {
             if (!isConnected) {
                 if (prefsHelper.getTrialTime().log() < hour.toMillisLong()) {
                     connect()

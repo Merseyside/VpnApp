@@ -2,12 +2,11 @@ package com.merseyside.dropletapp.connectionTypes
 
 import android.content.Context
 import com.merseyside.dropletapp.connectionTypes.typeImpl.openVpn.OpenVpnConnectionType
+import com.merseyside.dropletapp.connectionTypes.typeImpl.shadowsocks.ShadowSocksConnectionType
 import com.merseyside.dropletapp.connectionTypes.typeImpl.wireguard.WireGuardConnectionType
 import com.merseyside.dropletapp.data.entity.TypedConfig
 
 actual class Builder actual constructor() {
-
-
     private var context: Context? = null
     private var type: Type? = null
     private var conf: String? = null
@@ -28,8 +27,13 @@ actual class Builder actual constructor() {
     }
 
     actual fun setTypedConfig(typeConfig: TypedConfig): Builder {
-        this.conf = typeConfig.getConfig()
-        this.type = Type.getType(typeConfig)
+        val config = when(typeConfig) {
+            is TypedConfig.Shadowsocks -> typeConfig.config
+            else -> typeConfig.getConfig()
+        }
+
+        config?.let { setConfig(it) }
+        Type.getType(typeConfig)?.let { setType(it) }
 
         return this
     }
@@ -47,7 +51,7 @@ actual class Builder actual constructor() {
                 WireGuardConnectionType()
             }
             Type.SHADOWSOCKS -> {
-                OpenVpnConnectionType()
+                ShadowSocksConnectionType()
             }
             else -> {
                 throw IllegalArgumentException("Type isn't supported yet")
@@ -59,5 +63,4 @@ actual class Builder actual constructor() {
 
         return connectionType
     }
-
 }

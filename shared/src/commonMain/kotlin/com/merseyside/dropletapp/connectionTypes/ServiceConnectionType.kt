@@ -2,6 +2,7 @@ package com.merseyside.dropletapp.connectionTypes
 
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.kmpMerseyLib.domain.coroutines.applicationContext
+import com.merseyside.kmpMerseyLib.utils.Logger
 import com.merseyside.kmpMerseyLib.utils.time.getCurrentTimeMillis
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -32,6 +33,8 @@ abstract class ServiceConnectionType : CoroutineScope {
         if (timerJob == null) {
             timerJob = launch {
 
+                sessionTime = getCurrentTimeMillis()
+
                 fun getDelta(): Long {
                     return getCurrentTimeMillis() - sessionTime
                 }
@@ -56,12 +59,15 @@ abstract class ServiceConnectionType : CoroutineScope {
     }
 
     open fun start(server: Server) {
-        currentConnectionType = this
-
-        if (this.server != null) {
-            if (this.server != server) throw IllegalArgumentException("Vpn has already running with another server.")
+        if (VpnHelper.isPrepared()) {
+            if (this.server != null) {
+                if (this.server != server) throw IllegalArgumentException("Vpn has already running with another server.")
+            } else {
+                currentConnectionType = this
+                this.server = server
+            }
         } else {
-            this.server = server
+            throw IllegalStateException("You have to prepare VPN before start it!")
         }
     }
 
@@ -69,10 +75,8 @@ abstract class ServiceConnectionType : CoroutineScope {
         stopTimer()
         currentConnectionType = null
 
-        callback?.onConnectionEvent(ConnectionLevel.DISCONNECTED)
+        callback?.onConnectionEvent(ConnectionLevel.IDLE)
     }
-
-    abstract fun isPrepared(): Boolean
 
     companion object {
         private var currentConnectionType: ServiceConnectionType? = null
@@ -80,9 +84,9 @@ abstract class ServiceConnectionType : CoroutineScope {
         protected fun setCurrentConnectionType(connectionType: ServiceConnectionType?) {
             if (currentConnectionType != null) {
                 currentConnectionType!!.stop()
+            } else {
+                currentConnectionType = connectionType
             }
-
-            currentConnectionType = connectionType
         }
 
         fun turnOff() {

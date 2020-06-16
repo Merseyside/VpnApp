@@ -3,6 +3,7 @@ package com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.mod
 import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.databinding.ObservableField
+import com.github.shadowsocks.plugin.PluginManager
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.connectionTypes.*
 import com.merseyside.dropletapp.connectionTypes.typeImpl.openVpn.OpenVpnConnectionType
@@ -18,7 +19,6 @@ import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.dropletapp.utils.application
-import com.merseyside.dropletapp.utils.generateRandomString
 import com.merseyside.dropletapp.utils.getLogByStatus
 import com.merseyside.dropletapp.utils.getProviderIcon
 import com.merseyside.filemanager.FileManager
@@ -63,6 +63,7 @@ class DropletViewModel(
 
 
     val serverStatusEvent = SingleLiveEvent<SshManager.Status>()
+    val v2RayRequireEvent = SingleLiveEvent<Any>()
 
     val providerIcon = ObservableField<Int>()
     val providerTitle = ObservableField<String>()
@@ -143,55 +144,39 @@ class DropletViewModel(
     }
 
     override fun onConnect() {
-        if (OpenVpnConnectionType.prepare(application) == null) {
-//            if (server.typedConfig is TypedConfig.WireGuard && server.environmentStatus == SshManager.Status.READY) {
-//                val externalStorage = FileManager.getStorageLocations(FileManager.STORAGE.SD_CARD)
-//
-//                if (externalStorage != null) {
-//                    val resultFile = FileManager.createFile(
-//                        "${externalStorage.path}/MyVpn",
-//                        "${generateRandomString(8)}.conf",
-//                        server.getConfig()!!
-//                    )
-//
-//                    if (resultFile != null) {
-//                        showAlertDialog(
-//                            title = getString(R.string.wireguard_title),
-//                            message = getString(R.string.wireguard_description, resultFile.path),
-//                            positiveButtonText = getString(R.string.wireguard_positive_text),
-//                            isSingleAction = true
-//                        )
-//                    } else {
-//                        storagePermissionsErrorLiveEvent.call()
-//                    }
-//                }
-//
-//            } else {
-                if (server.environmentStatus == SshManager.Status.READY) {
-                    if (!isConnected) {
-                        startVpn(server.typedConfig)
-                    } else {
-                        connectionType?.stop()
+        if (server.environmentStatus == SshManager.Status.READY) {
+            if (VpnHelper.prepare(application) == null) {
+                if (!isConnected) {
+                    if (server.typedConfig is TypedConfig.Shadowsocks) {
+                        if ((server.typedConfig as TypedConfig.Shadowsocks).isV2Ray()) {
+                            if (!PluginManager.isV2RayEnabled()) {
+                                v2RayRequireEvent.call()
+                                return
+                            }
+                        }
                     }
+
+                    startVpn(server.typedConfig)
                 } else {
-                    when (server.environmentStatus) {
-                        SshManager.Status.ERROR -> {
-                            deleteServer()
-                        }
-                        SshManager.Status.PENDING -> {
-                            prepareServer()
-                        }
-                        else -> {
-                        }
-                    }
+                    connectionType?.stop()
                 }
-            //}
+            } else {
+                vpnNotPreparedLiveEvent.call()
+            }
         } else {
-            vpnNotPreparedLiveEvent.call()
+            when (server.environmentStatus) {
+                SshManager.Status.ERROR -> {
+                    deleteServer()
+                }
+                SshManager.Status.PENDING -> {
+                    prepareServer()
+                }
+                else -> {}
+            }
         }
     }
 
-    fun startVpn(typedConfig: TypedConfig) {
+    private fun startVpn(typedConfig: TypedConfig) {
         connectionType = connectionTypeBuilder
             .setTypedConfig(typedConfig)
             .build()
@@ -424,7 +409,7 @@ class DropletViewModel(
                 R.attr.colorError
             }
 
-            ConnectionLevel.DISCONNECTED -> {
+            ConnectionLevel.IDLE -> {
                 R.attr.colorPrimary
             }
 
@@ -440,7 +425,7 @@ class DropletViewModel(
                 getString(R.string.disconnect_action)
             }
 
-            ConnectionLevel.DISCONNECTED -> {
+            ConnectionLevel.IDLE -> {
                 getString(R.string.connect)
             }
 

@@ -121,4 +121,7 @@
     <string name="trial_is_over_msg">Спасибо за использование MyVpn.RUN. Бесплатный пробный час истек. Пожалуйста, войдите под одним из представленных провайдеров.</string>
     <string name="trial_msg">Через час ваш доступ будет аннулирован, независимо от того используете Вы VPN или нет</string>
 
+    <string name="v2ray_required">V2Ray плагин</string>
+    <string name="v2ray_required_msg">Этому серверу необходим V2Ray плагин. Нажмите \"Загрузить\" для перехода в Google Play.</string>
+    <string name="download">Загрузить</string>
 </resources>

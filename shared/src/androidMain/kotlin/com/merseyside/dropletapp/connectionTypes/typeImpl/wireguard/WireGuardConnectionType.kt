@@ -1,58 +1,45 @@
 package com.merseyside.dropletapp.connectionTypes.typeImpl.wireguard
 
 import android.content.Context
-import android.content.Intent
 import com.merseyside.dropletapp.connectionTypes.AndroidImpl
 import com.merseyside.dropletapp.connectionTypes.ConnectionLevel
 import com.merseyside.dropletapp.connectionTypes.ServiceConnectionType
 import com.merseyside.dropletapp.domain.Server
+import com.merseyside.kmpMerseyLib.domain.coroutines.applicationContext
+import com.merseyside.kmpMerseyLib.domain.coroutines.computationContext
+import com.merseyside.kmpMerseyLib.utils.Logger
 import com.merseyside.kmpMerseyLib.utils.generateRandomString
 import com.merseyside.kmpMerseyLib.utils.time.getCurrentTimeMillis
 import com.wireguard.android.backend.Backend
 import com.wireguard.android.backend.GoBackend
 import com.wireguard.android.backend.Tunnel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.CoroutineContext
 
 actual class WireGuardConnectionType
-    : ServiceConnectionType(), AndroidImpl, CoroutineScope {
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Default
+    : ServiceConnectionType(), AndroidImpl {
 
     override var context: Context? = null
-        set(value) {
-            if (value != null) {
-                field = value
-
-                preparationIntent = prepare(value)
-            }
-        }
 
     private var tunnel: WireguardTunnel? = null
     private var backend: Backend? = null
 
-    override fun isPrepared(): Boolean {
-        return preparationIntent == null
-    }
-
     override fun start(server: Server) {
         super.start(server)
 
+        Logger.log(this, "config = $config")
+
         launch {
-            prepareTunnel()
-            getBackend(context!!)?.setState(tunnel, Tunnel.State.UP, tunnel!!.getConfig())
-                ?: throw IllegalArgumentException("Backend is null")
+            withContext(computationContext) {
+                prepareTunnel()
+                getBackend(context!!)?.setState(tunnel, Tunnel.State.UP, tunnel!!.getConfig())
+                    ?: throw IllegalArgumentException("Backend is null")
 
-            sessionTime = getCurrentTimeMillis()
-            notifySessionStarts()
-
-            withContext(Dispatchers.Main) {
-                callback?.onConnectionEvent(ConnectionLevel.CONNECTED)
+                sessionTime = getCurrentTimeMillis()
+                notifySessionStarts()
             }
+
+            callback?.onConnectionEvent(ConnectionLevel.CONNECTED)
         }
     }
 
@@ -78,13 +65,5 @@ actual class WireGuardConnectionType
         }
 
         return backend
-    }
-
-    companion object {
-        private var preparationIntent: Intent? = null
-
-        fun prepare(context: Context): Intent? {
-            return GoBackend.VpnService.prepare(context)
-        }
     }
 }

@@ -1,10 +1,10 @@
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android.extensions")
-    id("kotlinx-serialization")
-    id("com.squareup.sqldelight")
-    id("dev.icerock.mobile.multiplatform")
+    plugin(Deps.Plugins.kotlinMultiplatform)
+    plugin(Deps.Plugins.androidLibrary)
+    plugin(Deps.Plugins.kotlinAndroidExtensions)
+    plugin(Deps.Plugins.kotlinSerialization)
+    plugin(Deps.Plugins.sqlDelight)
+    plugin(Deps.Plugins.mobileMultiplatform)
 }
 
 android {
@@ -86,19 +86,23 @@ val merseyModules = listOf<MultiPlatformLibrary>(
 
 )
 
+val modulez = listOf(
+    Modules.Android.filemanager,
+    Modules.Android.openvpn
+)
+
 setupFramework(
     exports = mppLibs
 )
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-
     implementation("com.hierynomus:sshj:0.27.0")
-    implementation(project(":filemanager"))
-    implementation(project(":openvpn-core"))
 
+    api(project(Modules.Android.shadowsocks))
+
+    modulez.forEach { module -> implementation(project(module))}
     androidLibs.forEach { lib -> androidLibrary(lib)}
-
     mppLibs.forEach { mppLibrary(it) }
 
     if (Modules.isLocalDependencies) {

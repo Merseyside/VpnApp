@@ -3,6 +3,8 @@ package com.merseyside.dropletapp
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
+import com.github.shadowsocks.Core
+import com.github.shadowsocks.plugin.PluginManager
 import com.merseyside.dropletapp.connectionTypes.Builder
 import com.merseyside.dropletapp.data.db.VpnDatabase
 import com.merseyside.dropletapp.di.accountManager
@@ -13,6 +15,8 @@ import com.merseyside.dropletapp.presentation.di.component.AppComponent
 import com.merseyside.dropletapp.presentation.di.component.DaggerAppComponent
 import com.merseyside.dropletapp.presentation.di.module.AppModule
 import com.merseyside.dropletapp.utils.AccountManagerAndroid
+import com.merseyside.filemanager.AssetHelper
+import com.merseyside.kmpMerseyLib.utils.ext.log
 import com.merseyside.merseyLib.BaseApplication
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import javax.inject.Inject
@@ -37,6 +41,8 @@ class VpnApplication : BaseApplication() {
         initAccountManager()
         initConnectionTypeBuilder()
         appContext = this
+
+        Core.init(this)
     }
 
     private fun buildComponent() =

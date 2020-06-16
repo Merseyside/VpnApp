@@ -1,7 +1,7 @@
 object Modules {
 
     const val isLocalDependencies = true
-    const val library = "mersey-library"
+    const val library = "mersey-android-library"
 
     object MultiPlatform {
 
@@ -22,5 +22,9 @@ object Modules {
         const val adapters = ":adapters"
         const val animators = ":animators"
         const val utils = ":utils"
+
+        const val openvpn = ":openvpn-core"
+        const val filemanager = ":filemanager"
+        const val shadowsocks = ":core"
     }
 }

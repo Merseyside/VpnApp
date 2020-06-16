@@ -1,7 +1,6 @@
 package com.merseyside.dropletapp.connectionTypes.typeImpl.openVpn
 
 import android.content.*
-import android.net.VpnService
 import android.os.IBinder
 import com.merseyside.dropletapp.connectionTypes.AndroidImpl
 import com.merseyside.dropletapp.connectionTypes.ConnectionLevel
@@ -15,13 +14,6 @@ import de.blinkt.openvpn.core.*
 actual class OpenVpnConnectionType : ServiceConnectionType(), AndroidImpl {
 
     override var context: Context? = null
-        set(value) {
-            if (value != null) {
-                field = value
-
-                preparationIntent = prepare(value)
-            }
-        }
 
     private var vpnService: OpenVPNService? = null
     private var isServiceBind = false
@@ -55,10 +47,6 @@ actual class OpenVpnConnectionType : ServiceConnectionType(), AndroidImpl {
         }
 
         unbind()
-    }
-
-    override fun isPrepared(): Boolean {
-        return prepare(context!!) == null
     }
 
     private val mConnection = object : ServiceConnection {
@@ -130,7 +118,7 @@ actual class OpenVpnConnectionType : ServiceConnectionType(), AndroidImpl {
                 ConnectionLevel.CONNECTED
             }
             VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED -> {
-                ConnectionLevel.DISCONNECTED
+                ConnectionLevel.IDLE
             }
             else -> {
                 ConnectionLevel.CONNECTING
@@ -145,11 +133,5 @@ actual class OpenVpnConnectionType : ServiceConnectionType(), AndroidImpl {
     companion object {
 
         private const val BROADCAST_ACTION = "de.blinkt.openvpn.VPN_STATUS"
-
-        private var preparationIntent: Intent? = null
-
-        fun prepare(context: Context): Intent? {
-            return preparationIntent ?: VpnService.prepare(context)
-        }
     }
 }

@@ -5,8 +5,8 @@ object LibraryVersions {
         const val targetSdk = 29
         const val minSdk = 17
 
-        const val version = "1.2.2"
-        const val versionCode = 122
+        const val version = "1.2.4"
+        const val versionCode = 124
     }
 
     const val kotlin = "1.3.72"
@@ -14,10 +14,13 @@ object LibraryVersions {
     private const val mokoResources = "0.9.0"
 
     object Plugins {
+        const val android = "4.0.0"
+
         const val kotlin = LibraryVersions.kotlin
         const val serialization = LibraryVersions.kotlin
         const val androidExtensions = LibraryVersions.kotlin
         const val mokoResources = LibraryVersions.mokoResources
+        const val maven = "2.1"
     }
 
     object Libs {
@@ -25,7 +28,7 @@ object LibraryVersions {
             const val kotlinStdLib = LibraryVersions.kotlin
             const val coroutines = "1.3.7"
             const val appCompat = "1.1.0"
-            const val material = "1.2.0-alpha06"
+            const val material = "1.2.0-alpha05"
             const val fragment = "1.2.4"
             const val constraintLayout = "1.1.3"
             const val lifecycle = "2.0.0"
@@ -43,10 +46,9 @@ object LibraryVersions {
             const val gson = "2.8.6"
             const val worker = "2.3.4"
             const val room = "2.0.0"
-            const val ktor = "1.3.2"
 
             object MerseyLibs {
-                const val version = "1.2.3"
+                const val version = "1.2.1"
             }
         }
 
@@ -57,6 +59,7 @@ object LibraryVersions {
             const val serialization = "0.20.0"
             const val mokoMvvm = "0.6.0"
             const val mokoResources = LibraryVersions.mokoResources
+            const val ktor = "1.3.2"
 
             const val kodein = "6.5.5"
             const val sqlDelight = "1.3.0"
