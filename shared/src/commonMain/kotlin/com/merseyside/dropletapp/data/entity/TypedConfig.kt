@@ -18,9 +18,27 @@ sealed class TypedConfig {
         fun getQrData(): String?
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other == null || this::class != other::class) return false
+
+        other as TypedConfig
+
+        return this.config == other.config
+    }
+
+    override fun hashCode(): Int {
+        return config?.hashCode() ?: 0
+    }
+
     companion object {
         fun getNames(): List<String> {
-            return arrayListOf(OpenVpn.name, WireGuard.name, L2TP.name, PPTP.name, Shadowsocks.name)
+            return arrayListOf(
+                OpenVpn.name,
+                WireGuard.name,
+                L2TP.name,
+                PPTP.name,
+                Shadowsocks.name
+            )
         }
     }
 
@@ -28,10 +46,6 @@ sealed class TypedConfig {
     class OpenVpn(val userName: String): TypedConfig() {
 
         override var config: String? = null
-
-        override fun equals(other: Any?): Boolean {
-            return this === other
-        }
 
         override fun getName(): String {
             return name
@@ -52,10 +66,6 @@ sealed class TypedConfig {
             return config
         }
 
-        override fun equals(other: Any?): Boolean {
-            return this === other
-        }
-
         override fun getName(): String {
             return name
         }
@@ -66,14 +76,11 @@ sealed class TypedConfig {
     }
 
     @Serializable
-    class L2TP(val userName: String, val password: String, val key: String): TypedConfig() {
+    class L2TP(val userName: String, val password: String, val key: String)
+        : TypedConfig() {
 
         override var config: String? = null
             get() = "user=$userName\npassword=$password\nkey=$key"
-
-        override fun equals(other: Any?): Boolean {
-            return this === other
-        }
 
         override fun getName(): String {
             return name
@@ -90,10 +97,6 @@ sealed class TypedConfig {
         override var config: String? = null
             get() = "user=$userName\npassword=$password"
 
-        override fun equals(other: Any?): Boolean {
-            return this === other
-        }
-
         override fun getName(): String {
             return name
         }
@@ -104,12 +107,13 @@ sealed class TypedConfig {
     }
 
     @Serializable
-    class Shadowsocks(val password: String): TypedConfig(), HasQrCode {
+    class Shadowsocks(val password: String)
+        : TypedConfig(), HasQrCode {
 
         override var config: String? = null
 
         override fun getConfig(): String? {
-            return config?.deserialize(ShadowsocksResponse.serializer())?.getConfig()
+            return config?.deserialize(ShadowsocksResponse.serializer())?.getUserReadableConfig()
         }
 
         override fun getQrData(): String? {
@@ -120,8 +124,8 @@ sealed class TypedConfig {
             return name
         }
 
-        companion object {
-            const val name = "Shadowsocks"
+        fun isV2Ray(): Boolean {
+            return config!!.deserialize(ShadowsocksResponse.serializer()).plugin != null
         }
 
         @Serializable
@@ -139,24 +143,42 @@ sealed class TypedConfig {
             val password: String,
 
             @SerialName("method")
-            val method: String
+            val method: String,
+
+            @SerialName("plugin")
+            val plugin: String? = null,
+
+            @SerialName("plugin_opts")
+            val pluginOpts: String? = null
         ) {
 
-            fun getConfig(): String {
+            private fun getPlug(): String {
+                return if (plugin != null) {
+                    "?plugin=$plugin"
+                } else {
+                    ""
+                }
+            }
+
+            fun getUserReadableConfig(): String {
                 val stringBuilder = StringBuilder()
 
                 stringBuilder.append("ip: $server\n")
                 stringBuilder.append("password: $password\n")
                 stringBuilder.append("Server port: $port\n")
                 stringBuilder.append("Local port: $localPort\n")
-                stringBuilder.append("Protocol Connection: ss://$method:$password@$server:$port")
+                stringBuilder.append("Protocol Connection: ${getQrData()}")
 
                 return stringBuilder.toString()
             }
 
             fun getQrData(): String {
-                return "ss://$method:$password@$server:$port"
+                return "ss://$method:$password@$server:$port${getPlug()}"
             }
+        }
+
+        companion object {
+            const val name = "Shadowsocks"
         }
 
     }

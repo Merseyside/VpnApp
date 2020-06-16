@@ -1,9 +1,9 @@
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
-    id("kotlin-android-extensions")
-    id("kotlinx-serialization")
+    plugin(LibraryDeps.Plugins.androidApplication)
+    plugin(LibraryDeps.Plugins.kotlinAndroid)
+    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
+    plugin(LibraryDeps.Plugins.kotlinKapt)
+    plugin(LibraryDeps.Plugins.kotlinSerialization)
 }
 
 android {
@@ -20,15 +20,9 @@ android {
 
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
-
-//        manifestPlaceholders = listOf(
-//            appAuthRedirectScheme to ""
-//        )
     }
 
-    dataBinding {
-        isEnabled = true
-    }
+    buildFeatures.dataBinding = true
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -113,7 +107,7 @@ val androidLibs = listOf(
     //Deps.Libs.Android.filemanager.name
 )
 
-val localMerseyLibs = listOf<String>(
+val localMerseyLibs = listOf(
     LibraryModules.Android.cleanMvvmArch,
     LibraryModules.Android.adapters,
     LibraryModules.Android.animators,
@@ -137,8 +131,8 @@ dependencies {
     }
 
     implementation(project(":shared"))
-    implementation(project(":openvpn-core"))
-    implementation(project(":filemanager"))
+    implementation(project(Modules.Android.filemanager))
+    implementation(project(Modules.Android.openvpn))
 
     compileOnly("javax.annotation:jsr250-api:1.0")
 
@@ -146,3 +140,6 @@ dependencies {
 }
 
 apply("plugin" to "com.google.gms.google-services")
+repositories {
+    mavenCentral()
+}

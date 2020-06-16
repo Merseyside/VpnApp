@@ -1,11 +1,35 @@
 object Deps {
     object Plugins {
-        const val kotlinSerialization =
-            "org.jetbrains.kotlin:kotlin-serialization:${Versions.Plugins.serialization}"
-        const val androidExtensions =
-            "org.jetbrains.kotlin:kotlin-android-extensions:${Versions.Plugins.androidExtensions}"
-        const val mokoResources =
-            "dev.icerock.moko:resources-generator:${Versions.Plugins.mokoResources}"
+        val androidApplication = PluginDesc(id = "com.android.application")
+        val kotlinKapt = PluginDesc(id = "kotlin-kapt")
+        val kotlinAndroid = PluginDesc(id = "kotlin-android")
+        val kotlinAndroidExtensions = PluginDesc(id = "kotlin-android-extensions")
+        val mobileMultiplatform = PluginDesc(id = "dev.icerock.mobile.multiplatform")
+
+        val androidLibrary = PluginDesc(
+            id = "com.android.library",
+            module = "com.android.tools.build:gradle:${Versions.Plugins.android}"
+        )
+
+        val kotlinMultiplatform = PluginDesc(
+            id = "org.jetbrains.kotlin.multiplatform",
+            module = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.Plugins.kotlin}"
+        )
+
+        val kotlinSerialization = PluginDesc(
+            id = "kotlinx-serialization",
+            module = "org.jetbrains.kotlin:kotlin-serialization:${Versions.Plugins.serialization}"
+        )
+
+        val androidMaven = PluginDesc(
+            id = "com.github.dcendents.android-maven",
+            module = "com.github.dcendents:android-maven-gradle-plugin:${Versions.Plugins.maven}"
+        )
+
+        val sqlDelight = PluginDesc(
+            id = "com.squareup.sqldelight",
+            module = "com.squareup.sqldelight:gradle-plugin:${Versions.Plugins.sqlDelight}"
+        )
     }
 
     object Libs {
@@ -136,6 +160,9 @@ object Deps {
                 name = "com.github.Merseyside:android-filemanager:${Versions.Libs.Android.filemanager}"
             )
 
+            val wireguard = AndroidLibrary(
+                name = "com.wireguard.android:tunnel:${Versions.Libs.Android.wireguard}"
+            )
 
             object MerseyLibs {
                 private val base = "com.github.Merseyside.mersey-android-library"
@@ -218,10 +245,4 @@ object Deps {
             )
         }
     }
-
-    val plugins: Map<String, String> = mapOf(
-        "kotlin-android-extensions" to Plugins.androidExtensions,
-        "kotlinx-serialization" to Plugins.kotlinSerialization,
-        "dev.icerock.mobile.multiplatform-resources" to Plugins.mokoResources
-    )
 }

@@ -21,7 +21,7 @@ abstract class BaseDropletViewModel(private val router: Router? = null) : Parcel
     }
 
     fun goBack(isNotify: Boolean = true): Boolean {
-        return if (isNavigationEnable) {
+        return if (onBackPressed()) {
             if (isNotify) {
                 onBackSingleEvent.call()
             }

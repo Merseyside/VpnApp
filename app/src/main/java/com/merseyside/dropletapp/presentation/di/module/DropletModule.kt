@@ -3,6 +3,8 @@ package com.merseyside.dropletapp.presentation.di.module
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.merseyside.dropletapp.connectionTypes.Builder
+import com.merseyside.dropletapp.di.connectionTypeBuilder
 import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
 import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
@@ -22,6 +24,7 @@ class DropletModule(
     @Provides
     internal fun addDropletViewModelProvider(
         router: Router,
+        connectionTypeBuilder: Builder,
         getDropletsUseCase: GetDropletsInteractor,
         createServerUseCase: CreateServerInteractor,
         deleteServerUseCase: DeleteDropletInteractor
@@ -29,10 +32,16 @@ class DropletModule(
         return DropletViewModelProviderFactory(
             bundle,
             router,
+            connectionTypeBuilder,
             getDropletsUseCase,
             createServerUseCase,
             deleteServerUseCase
         )
+    }
+
+    @Provides
+    internal fun getConnectionTypeBuilder(): Builder {
+        return connectionTypeBuilder!!
     }
 
     @Provides
@@ -58,13 +67,14 @@ class DropletModule(
     class DropletViewModelProviderFactory(
         bundle: Bundle?,
         private val router: Router,
+        private val connectionTypeBuilder: Builder,
         private val getDropletsUseCase: GetDropletsInteractor,
         private val createServerUseCase: CreateServerInteractor,
         private val deleteServerUseCase: DeleteDropletInteractor
     ): BundleAwareViewModelFactory<DropletViewModel>(bundle) {
 
         override fun getViewModel(): DropletViewModel {
-            return DropletViewModel(router, getDropletsUseCase, createServerUseCase, deleteServerUseCase)
+            return DropletViewModel(router, connectionTypeBuilder, getDropletsUseCase, createServerUseCase, deleteServerUseCase)
         }
     }
 }

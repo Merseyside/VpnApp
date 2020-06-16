@@ -1,58 +1,64 @@
 enableFeaturePreview("GRADLE_METADATA")
 
-pluginManagement {
-    repositories {
-        jcenter()
-        google()
-        maven { url = uri("https://dl.bintray.com/kotlin/kotlin") }
-        maven { url = uri("https://kotlin.bintray.com/kotlinx") }
-        maven { url = uri("https://jetbrains.bintray.com/kotlin-native-dependencies") }
-        maven { url = uri("https://maven.fabric.io/public") }
-        maven { url = uri("https://dl.bintray.com/icerockdev/plugins") }
-        maven { url = uri("https://plugins.gradle.org/m2/") }
-    }
-
-    resolutionStrategy.eachPlugin {
-        // part of plugins defined in Deps.Plugins, part in buildSrc/build.gradle.kts
-        val module = Deps.plugins[requested.id.id] ?: return@eachPlugin
-
-        useModule(module)
-    }
-}
-
 include(":app")
 include(":shared")
-include(":openvpn-core")
+include("openvpn-core")
+
+include(":plugin")
+project(":plugin").projectDir =
+    File(rootDir.parent, "shadowsocks-android/plugin")
+
+include(":core")
+project(":core").projectDir =
+    File(rootDir.parent, "shadowsocks-android/core")
 
 include(":filemanager")
 project(":filemanager").projectDir =
-    File(settingsDir, "../android-filemanager/filemanager")
+    File(rootDir.parent, "android-filemanager/filemanager")
 
-if (Modules.isLocalDependencies) {
+val isLocalDependencies = true
 
-    include(LibraryModules.MultiPlatform.cleanMvvmArch.name)
-    project(LibraryModules.MultiPlatform.cleanMvvmArch.name).projectDir =
-        File(settingsDir, "../mersey-library/kmp-clean-mvvm-arch")
+if (isLocalDependencies) {
 
-    include(LibraryModules.MultiPlatform.utils.name)
-    project(LibraryModules.MultiPlatform.utils.name).projectDir =
-        File(settingsDir, "../mersey-library/kmp-utils")
+    include(":kmp-clean-mvvm-arch")
+    project(":kmp-clean-mvvm-arch").projectDir =
+        File(rootDir.parent, "mersey-android-library/kmp-clean-mvvm-arch")
 
-    include(LibraryModules.Android.animators)
-    project(LibraryModules.Android.animators).projectDir =
-        File(settingsDir, "../mersey-library/animators")
+    include(":kmp-utils")
+    project(":kmp-utils").projectDir =
+        File(rootDir.parent, "mersey-android-library/kmp-utils")
 
-    include(LibraryModules.Android.cleanMvvmArch)
-    project(LibraryModules.Android.cleanMvvmArch).projectDir =
-        File(settingsDir, "../mersey-library/clean-mvvm-arch")
+    include(":utils")
+    project(":utils").projectDir =
+        File(rootDir.parent, "mersey-android-library/utils")
 
-    include(LibraryModules.Android.adapters)
-    project(LibraryModules.Android.adapters).projectDir =
-        File(settingsDir, "../mersey-library/adapters")
+    include(":animators")
+    project(":animators").projectDir =
+        File(rootDir.parent, "mersey-android-library/animators")
 
-    include(LibraryModules.Android.utils)
-    project(LibraryModules.Android.utils).projectDir =
-        File(settingsDir, "../mersey-library/utils")
+    include(":clean-mvvm-arch")
+    project(":clean-mvvm-arch").projectDir =
+        File(rootDir.parent, "mersey-android-library/clean-mvvm-arch")
+
+    include(":adapters")
+    project(":adapters").projectDir =
+        File(rootDir.parent, "mersey-android-library/adapters")
+
+//    include(LibraryModules.Android.animators)
+//    project(LibraryModules.Android.animators).projectDir =
+//        File(rootDir.parent, "${Modules.library}/animators")
+//
+//    include(LibraryModules.Android.cleanMvvmArch)
+//    project(LibraryModules.Android.cleanMvvmArch).projectDir =
+//        File(rootDir.parent, "${Modules.library}/clean-mvvm-arch")
+//
+//    include(LibraryModules.Android.adapters)
+//    project(LibraryModules.Android.adapters).projectDir =
+//        File(rootDir.parent, "${Modules.library}/adapters")
+//
+//    include(LibraryModules.Android.utils)
+//    project(LibraryModules.Android.utils).projectDir =
+//        File(rootDir.parent, "${Modules.library}/utils")
 }
 
 rootProject.name = "vpn-application-android"

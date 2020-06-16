@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.di
 
+import com.merseyside.dropletapp.connectionTypes.Builder
 import com.merseyside.dropletapp.data.db.VpnDatabase
 import com.merseyside.dropletapp.data.db.createDatabase
 import com.merseyside.dropletapp.providerApi.ProviderApiFactory
@@ -14,11 +15,15 @@ internal expect fun getPlatformEngine(): HttpClientEngine
 
 expect var sqlDriver: SqlDriver?
 
+var connectionTypeBuilder: Builder? = null
+
 internal val databaseModule = Kodein.Module("database") {
 
     bind<VpnDatabase>() with singleton {
         createDatabase(sqlDriver!!)
     }
+
+    bind<Builder>() with singleton { connectionTypeBuilder!! }
 }
 
 internal val networkModule = Kodein.Module("network") {

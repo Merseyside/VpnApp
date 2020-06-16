@@ -3,7 +3,10 @@ package com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.mod
 import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.databinding.ObservableField
+import com.github.shadowsocks.plugin.PluginManager
 import com.merseyside.dropletapp.R
+import com.merseyside.dropletapp.connectionTypes.*
+import com.merseyside.dropletapp.connectionTypes.typeImpl.openVpn.OpenVpnConnectionType
 import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.data.exception.BannedAddressException
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
@@ -15,23 +18,21 @@ import com.merseyside.dropletapp.presentation.base.BaseVpnViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.ssh.SshManager
-import com.merseyside.dropletapp.utils.generateRandomString
+import com.merseyside.dropletapp.utils.application
 import com.merseyside.dropletapp.utils.getLogByStatus
 import com.merseyside.dropletapp.utils.getProviderIcon
 import com.merseyside.filemanager.FileManager
+import com.merseyside.merseyLib.utils.ext.log
 import com.merseyside.merseyLib.utils.mainThread
 import com.merseyside.merseyLib.utils.mvvm.SingleLiveEvent
-import de.blinkt.openvpn.VpnProfile
-import de.blinkt.openvpn.core.UpstreamConfigParser
-import de.blinkt.openvpn.core.VpnStatus
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.FlowCollector
 import ru.terrakok.cicerone.Router
 import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 class DropletViewModel(
     private val router: Router,
+    private val connectionTypeBuilder: Builder,
     private val getDropletsUseCase: GetDropletsInteractor,
     private val createServerUseCase: CreateServerInteractor,
     private val deleteServerUseCase: DeleteDropletInteractor
@@ -41,7 +42,28 @@ class DropletViewModel(
     private val job = Job()
     override val coroutineContext: CoroutineContext = Dispatchers.Main + coroutineExceptionHandler + job
 
+    private var connectionType: ServiceConnectionType? = null
+        set(value) {
+            field = value
+
+            value?.apply {
+
+                setConnectionCallback(object : ConnectionCallback {
+                    override fun onConnectionEvent(connectionLevel: ConnectionLevel) {
+                        connectionLevel.log()
+                        setConnectionStatus(connectionLevel)
+                    }
+
+                    override fun onSessionTime(timestamp: Long) {}
+                })
+
+                start(this@DropletViewModel.server)
+            }
+        }
+
+
     val serverStatusEvent = SingleLiveEvent<SshManager.Status>()
+    val v2RayRequireEvent = SingleLiveEvent<Any>()
 
     val providerIcon = ObservableField<Int>()
     val providerTitle = ObservableField<String>()
@@ -121,45 +143,43 @@ class DropletViewModel(
         qrTitleText.set(getString(R.string.show_qr))
     }
 
-    fun onConnect() {
-        if (server.typedConfig is TypedConfig.WireGuard && server.environmentStatus == SshManager.Status.READY) {
-            val externalStorage = FileManager.getStorageLocations(FileManager.STORAGE.SD_CARD)
-
-            if (externalStorage != null) {
-                val resultFile = FileManager.createFile("${externalStorage.path}/MyVpn", "${generateRandomString(8)}.conf", server.getConfig()!!)
-
-                if (resultFile != null) {
-                    showAlertDialog(
-                        title = getString(R.string.wireguard_title),
-                        message = getString(R.string.wireguard_description, resultFile.path),
-                        positiveButtonText = getString(R.string.wireguard_positive_text),
-                        isSingleAction = true
-                    )
-                } else {
-                    storagePermissionsErrorLiveEvent.call()
-                }
-            }
-
-        } else {
-            if (server.environmentStatus == SshManager.Status.READY) {
+    override fun onConnect() {
+        if (server.environmentStatus == SshManager.Status.READY) {
+            if (VpnHelper.prepare(application) == null) {
                 if (!isConnected) {
-                    prepareVpn(server.typedConfig.getConfig()!!)
+                    if (server.typedConfig is TypedConfig.Shadowsocks) {
+                        if ((server.typedConfig as TypedConfig.Shadowsocks).isV2Ray()) {
+                            if (!PluginManager.isV2RayEnabled()) {
+                                v2RayRequireEvent.call()
+                                return
+                            }
+                        }
+                    }
+
+                    startVpn(server.typedConfig)
                 } else {
-                    isConnected = false
+                    connectionType?.stop()
                 }
             } else {
-                when (server.environmentStatus) {
-                    SshManager.Status.ERROR -> {
-                        deleteServer()
-                    }
-                    SshManager.Status.PENDING -> {
-                        prepareServer()
-                    }
-                    else -> {
-                    }
+                vpnNotPreparedLiveEvent.call()
+            }
+        } else {
+            when (server.environmentStatus) {
+                SshManager.Status.ERROR -> {
+                    deleteServer()
                 }
+                SshManager.Status.PENDING -> {
+                    prepareServer()
+                }
+                else -> {}
             }
         }
+    }
+
+    private fun startVpn(typedConfig: TypedConfig) {
+        connectionType = connectionTypeBuilder
+            .setTypedConfig(typedConfig)
+            .build()
     }
 
     fun onQrClick() {
@@ -176,22 +196,11 @@ class DropletViewModel(
         router.navigateTo(Screens.QrScreen(config))
     }
 
-    private fun loadVpnProfile(body: String): VpnProfile? {
-        return UpstreamConfigParser.parseConfig(getLocaleContext(), body)
-    }
+    fun setConnectionStatus(level: ConnectionLevel) {
+        updateConnectButtonWithVpnStatus(level)
 
-    private fun prepareVpn(body: String) {
-        val vpnProfile: VpnProfile? = loadVpnProfile(body)
-        if (vpnProfile != null) {
-            vpnProfileLiveData.value = vpnProfile
-        }
-    }
-
-    fun setConnectionStatus(status: VpnStatus.ConnectionStatus) {
-        updateConnectButtonWithVpnStatus(status)
-
-        when (status) {
-            VpnStatus.ConnectionStatus.LEVEL_CONNECTED -> {
+        when (level) {
+            ConnectionLevel.CONNECTED -> {
                 if (isConnected) return
                 this.isConnected = true
             }
@@ -313,6 +322,14 @@ class DropletViewModel(
         serverConfig.set(server.getConfig())
 
         updateLanguage()
+
+        if (ServiceConnectionType.isActive()) {
+            val connectionType = ServiceConnectionType.getCurrentConnectionType()
+
+            if (this.server.id == connectionType!!.server!!.id) {
+                this.connectionType = connectionType
+            }
+        }
     }
 
     private fun getStatus(): String {
@@ -374,9 +391,9 @@ class DropletViewModel(
         return getProviderIcon(server.providerId)
     }
 
-    private fun updateConnectButtonWithVpnStatus(status: VpnStatus.ConnectionStatus) {
-        connectButtonColor.set(getConnectButtonColor(status))
-        connectButtonTitle.set(getConnectButtonTitle(status))
+    private fun updateConnectButtonWithVpnStatus(level: ConnectionLevel) {
+        connectButtonColor.set(getConnectButtonColor(level))
+        connectButtonTitle.set(getConnectButtonTitle(level))
     }
 
     private fun updateConnectButtonWithServerStatus(status: SshManager.Status) {
@@ -386,13 +403,13 @@ class DropletViewModel(
     }
 
     @DrawableRes
-    private fun getConnectButtonColor(status: VpnStatus.ConnectionStatus): Int {
-        return when(status) {
-            VpnStatus.ConnectionStatus.LEVEL_CONNECTED -> {
+    private fun getConnectButtonColor(level: ConnectionLevel): Int {
+        return when(level) {
+            ConnectionLevel.CONNECTED -> {
                 R.attr.colorError
             }
 
-            VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED -> {
+            ConnectionLevel.IDLE -> {
                 R.attr.colorPrimary
             }
 
@@ -402,13 +419,13 @@ class DropletViewModel(
         }
     }
 
-    private fun getConnectButtonTitle(serverStatus: VpnStatus.ConnectionStatus): String {
-        return when(serverStatus) {
-            VpnStatus.ConnectionStatus.LEVEL_CONNECTED -> {
+    private fun getConnectButtonTitle(level: ConnectionLevel): String {
+        return when(level) {
+            ConnectionLevel.CONNECTED -> {
                 getString(R.string.disconnect_action)
             }
 
-            VpnStatus.ConnectionStatus.LEVEL_NOTCONNECTED -> {
+            ConnectionLevel.IDLE -> {
                 getString(R.string.connect)
             }
 
@@ -455,7 +472,9 @@ class DropletViewModel(
             }
 
             SshManager.Status.READY -> {
-                if (server.typedConfig is TypedConfig.HasQrCode) {
+                val type = Type.getType(typedConfig = server.typedConfig)
+
+                if (type == null) {
                     getString(R.string.save_config)
                 } else {
                     getString(R.string.connect)
@@ -474,7 +493,6 @@ class DropletViewModel(
             else -> {
                 true
             }
-
         }
     }
 

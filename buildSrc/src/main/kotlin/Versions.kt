@@ -17,10 +17,13 @@ object Versions {
     private const val mokoResources = "0.9.0"
 
     object Plugins {
-        const val kotlin = Versions.kotlin
-        const val serialization = Versions.kotlin
-        const val androidExtensions = Versions.kotlin
-        const val mokoResources = Versions.mokoResources
+        const val android = "4.0.0"
+
+        const val kotlin = LibraryVersions.kotlin
+        const val serialization = LibraryVersions.kotlin
+        const val androidExtensions = LibraryVersions.kotlin
+        const val maven = "2.1"
+        const val sqlDelight = "1.2.2"
     }
 
     object Libs {
@@ -59,6 +62,7 @@ object Versions {
             const val sshj = "0.27.0"
             const val ktorOkHttp = "1.3.2"
             const val filemanager = "1.0.0"
+            const val wireguard = "1.0.20200407"
 
             object MerseyLibs {
                 const val version = "1.2.3"
