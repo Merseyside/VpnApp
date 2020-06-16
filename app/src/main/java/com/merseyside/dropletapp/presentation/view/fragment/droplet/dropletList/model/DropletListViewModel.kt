@@ -5,16 +5,15 @@ import android.os.Bundle
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.dropletapp.R
+import com.merseyside.dropletapp.connectionTypes.ServiceConnectionType
 import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
-import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.base.BaseVpnViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.ssh.SshManager
 import com.merseyside.merseyLib.utils.Logger
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.FlowCollector
 import ru.terrakok.cicerone.Router
 import kotlin.coroutines.CoroutineContext
 
@@ -23,6 +22,8 @@ class DropletListViewModel(
     private val getDropletsUseCase: GetDropletsInteractor,
     private val deleteDropletUseCase: DeleteDropletInteractor
 ) : BaseVpnViewModel(router), CoroutineScope {
+    override fun onConnect() {}
+
     override fun updateLanguage(context: Context) {
         noItemsHintObservableFields.set(context.getString(R.string.no_servers))
     }
@@ -53,23 +54,40 @@ class DropletListViewModel(
 
     @OptIn(InternalCoroutinesApi::class)
     private fun loadServers() {
-        launch {
-            getDropletsUseCase.observe(
-                onEmit = { value ->
-                    if (value.isEmpty()) {
-                        dropletsVisibility.set(false)
-                    } else {
-                        dropletsVisibility.set(true)
-                    }
-
-                    dropletLiveData.value = value
+        getDropletsUseCase.observe(
+            onEmit = { value ->
+                if (value.isEmpty()) {
+                    dropletsVisibility.set(false)
+                } else {
+                    dropletsVisibility.set(true)
                 }
-            )
-        }
+
+                dropletLiveData.value = value
+            }
+        )
     }
 
-    fun navigateToAuthScreen() {
+    private fun turnOffVpn() {
+        ServiceConnectionType.turnOff()
+    }
+
+    private fun navigateToAuthScreen() {
         router.navigateTo(Screens.AuthScreen())
+    }
+
+    fun onAddServerClick() {
+        if (ServiceConnectionType.isActive()) {
+            showAlertDialog(
+                messageRes = R.string.add_server_without_vpn_message,
+                positiveButtonTextRes = R.string.add_server_positive,
+                negativeButtonTextRes = R.string.add_server_negative,
+                onPositiveClick = {
+                    turnOffVpn()
+                    navigateToAuthScreen()
+                })
+        } else {
+            navigateToAuthScreen()
+        }
     }
 
     private fun navigateToDropletScreen(server: Server) {

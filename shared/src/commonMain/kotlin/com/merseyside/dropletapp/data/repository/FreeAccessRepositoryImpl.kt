@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.data.repository
 
+import com.merseyside.dropletapp.connectionTypes.Type
 import com.merseyside.dropletapp.data.exception.TrialIsOverException
 import com.merseyside.dropletapp.domain.repository.FreeAccessRepository
 import com.merseyside.dropletapp.filemanager.FileManager
@@ -16,18 +17,32 @@ class FreeAccessRepositoryImpl(
     private val settings: SettingsHelper
 ) : FreeAccessRepository {
 
-    override suspend fun getVpnConfig(typeName: String): String {
-        val config = settings.getConfig() ?: freeAccessApi.getConfig().also { settings.setConfig(it) }
+    override suspend fun getVpnConfig(type: Type): String {
 
         val configTime = settings.getConfigTime()
-        val currentTime = getCurrentTimeMillis()
 
-        val hour = Hours(1)
-
-        if (currentTime - configTime > hour.toMillisLong()) {
-            throw TrialIsOverException()
+        return if (configTime == null) {
+            getConfigFromApi(type)
         } else {
-            return config
+            val currentTime = getCurrentTimeMillis()
+
+            val hour = Hours(1)
+
+            if (currentTime - configTime > hour.toMillisLong()) {
+                throw TrialIsOverException()
+            } else {
+                val savedType = settings.getConfigType()
+
+                if (savedType != type) {
+                    getConfigFromApi(type)
+                } else {
+                    settings.getConfig()!!
+                }
+            }
         }
+    }
+
+    private suspend fun getConfigFromApi(type: Type): String {
+        return freeAccessApi.getConfig(type.getTypeForApi()).also { settings.setConfig(type, it) }
     }
 }

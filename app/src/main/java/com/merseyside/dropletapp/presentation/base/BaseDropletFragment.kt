@@ -45,11 +45,7 @@ abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel
     }
 
     protected fun goBack(): Boolean {
-        return if (hasTitleBackButton()) {
-            viewModel.goBack()
-        } else {
-            false
-        }
+        return viewModel.goBack()
     }
 
     open fun hasTitleBackButton(): Boolean {

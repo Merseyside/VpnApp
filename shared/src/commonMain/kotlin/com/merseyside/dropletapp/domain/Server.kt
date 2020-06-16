@@ -2,6 +2,7 @@ package com.merseyside.dropletapp.domain
 
 import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.ssh.SshManager
+import com.merseyside.kmpMerseyLib.utils.Logger
 import com.merseyside.kmpMerseyLib.utils.time.getCurrentTimeMillis
 import kotlinx.serialization.Serializable
 
@@ -24,6 +25,7 @@ data class Server(
 
         other as Server
 
+        Logger.log(this, "here")
         if (id != other.id) return false
         if (name != other.name) return false
         if (createdAt != other.createdAt) return false

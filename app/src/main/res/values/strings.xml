@@ -130,6 +130,9 @@
 
     <string name="digital_ocean_client_id">5ac7fe6563469c85ed75f4375779d6656a67f721442f61bdfd616955e6778bad</string>
 
+    <string name="v2ray_required">V2Ray plugin is required</string>
+    <string name="v2ray_required_msg">Current server needs V2Ray plugin to be installed. Click \"Download\" to go to the Google Play.</string>
+    <string name="download">Download</string>
     <string-array name="language_entries">
         <item>ic_english</item>
         <item>ic_russian</item>

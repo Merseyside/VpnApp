@@ -200,7 +200,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/large_spacing"
                 android:text="@string/create_server"
-                android:onClick="@{view -> viewModel.createCustomServer()}"/>
+                android:onClick="@{view -> viewModel.createCustomServer()}"
+                android:textColor="?attr/colorPrimary"/>
 
         </LinearLayout>
 

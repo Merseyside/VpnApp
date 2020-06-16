@@ -5,10 +5,10 @@ import io.ktor.client.engine.HttpClientEngine
 
 class FreeAccessApi(httpClientEngine: HttpClientEngine) {
 
-    private val responseCreator: FreeAccessResponseCreator = FreeAccessResponseCreator(httpClientEngine)
+    private val router: FreeAccessRouter = FreeAccessRouter(httpClientEngine)
 
-    suspend fun getConfig(): String {
-        val response = responseCreator.getConfig()
+    suspend fun getConfig(type: String): String {
+        val response = router.getConfig(type)
 
         if (response.code == 200) {
             return response.data.access.config
