@@ -73,7 +73,9 @@ val androidLibs = listOf(
     Deps.Libs.Android.okhttp,
     Deps.Libs.Android.okhttpInterceptor,
     Deps.Libs.Android.ktorOkHttp,
-    Deps.Libs.Android.wireguard
+    Deps.Libs.Android.wireguard,
+    Deps.Libs.Android.billing,
+    Deps.Libs.Android.billingKtx
     //Deps.Libs.Android.filemanager
 )
 
@@ -87,6 +89,7 @@ val merseyModules = listOf<MultiPlatformLibrary>(
 )
 
 val modulez = listOf(
+    LibraryModules.Android.utils,
     Modules.Android.filemanager,
     Modules.Android.openvpn
 )

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.merseyside.dropletapp.presentation.view.dialog.subscription.model.SubscriptionViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="100dp">
+
+        <com.merseyside.merseyLib.presentation.view.merseyRecyclerView.MerseyRecyclerView
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:skus="@{viewModel.skusList}"
+            bind:subscribeClick="@={viewModel.clickedSubscription}"
+            app:maxHeight="@dimen/subscription_max_size"/>
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            app:isVisibleOrGone="@{viewModel.inProgress}"
+            android:indeterminateTintMode="src_atop"
+            android:indeterminateTint="?attr/colorOnSurface"/>
+
+
+    </RelativeLayout>
+
+</layout>

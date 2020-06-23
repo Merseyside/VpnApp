@@ -6,7 +6,7 @@
     <data>
         <variable
             name="obj"
-            type="com.merseyside.dropletapp.presentation.view.fragment.free.model.CityItemViewModel" />
+            type="com.merseyside.dropletapp.presentation.view.fragment.easyAccess.model.RegionItemViewModel" />
     </data>
 
     <LinearLayout

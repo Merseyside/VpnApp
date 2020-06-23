@@ -39,7 +39,7 @@ abstract class ServiceConnectionType : CoroutineScope {
                     return getCurrentTimeMillis() - sessionTime
                 }
 
-                while (isActive) {
+                while (isActive && server != null) {
                     val total = getDelta()
 
                     callback?.onSessionTime(total)
@@ -51,6 +51,7 @@ abstract class ServiceConnectionType : CoroutineScope {
     }
 
     private fun stopTimer() {
+        server = null
         timerJob?.run {
             cancel()
         }

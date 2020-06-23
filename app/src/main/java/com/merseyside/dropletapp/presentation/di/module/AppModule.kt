@@ -5,7 +5,7 @@ import android.content.Context
 import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.utils.PrefsHelper
 import com.merseyside.merseyLib.presentation.di.qualifiers.ApplicationContext
-import com.merseyside.merseyLib.utils.PreferenceManager
+import com.merseyside.merseyLib.utils.preferences.PreferenceManager
 import dagger.Module
 import dagger.Provides
 

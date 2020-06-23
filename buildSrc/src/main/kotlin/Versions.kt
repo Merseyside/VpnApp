@@ -8,8 +8,8 @@ object Versions {
         const val targetSdk = 28
         const val minSdk = 21
 
-        const val version = "1.06"
-        const val versionCode = 106
+        const val version = "1.08"
+        const val versionCode = 108
     }
 
     const val kotlin = "1.3.72"
@@ -63,6 +63,7 @@ object Versions {
             const val ktorOkHttp = "1.3.2"
             const val filemanager = "1.0.0"
             const val wireguard = "1.0.20200407"
+            const val mahEncryptor = "1.0.1"
 
             object MerseyLibs {
                 const val version = "1.2.3"

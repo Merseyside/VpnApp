@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.merseyside.dropletapp.presentation.view.fragment.easyAccess.view.EasyAccessFragment">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.merseyside.dropletapp.presentation.view.fragment.easyAccess.model.EasyAccessViewModel" />
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/large_spacing"
+            android:paddingBottom="@dimen/large_spacing"
+            android:background="@color/free">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/world"
+                    android:scaleType="fitCenter"
+                    tools:ignore="ContentDescription" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/city_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/big_spinner_size"
+                    android:overlapAnchor="true"
+                    android:scrollbars="none"
+                    android:minWidth="@dimen/big_spinner_size"
+                    android:background="@drawable/country_spinner_background"
+                    android:backgroundTint="@color/grey_dark"
+                    android:layout_margin="@dimen/medium_spacing"
+                    android:layout_centerVertical="true"
+                    android:popupBackground="@drawable/country_spinner_dropdown_background"
+                    app:onRegionSelected="@={viewModel.currentRegion}"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:paddingStart="@dimen/large_spacing"
+                android:paddingEnd="@dimen/large_spacing">
+
+                <com.merseyside.merseyLib.presentation.view.localeViews.LocaleTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trial_msg"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                    android:layout_marginBottom="@dimen/normal_spacing"
+                    android:textColor="?attr/pendingColor"
+                    app:isVisibleOrGone="@{!viewModel.isPurchased}"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/type_container"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.merseyside.merseyLib.presentation.view.localeViews.LocaleTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/security_protocol"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/type_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/medium_spacing"
+                            app:types="@{viewModel.types}"
+                            app:onTypeSelected="@{(i, y, u) -> viewModel.onTypeChanged(i)}"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/time_container"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_centerVertical="true"
+                        android:visibility="invisible">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/time_session"
+                            android:textStyle="bold"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                            android:letterSpacing="0.25"
+                            android:textAllCaps="true" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorPrimary"
+                            android:text="@{viewModel.timer}"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/large_spacing"
+                    android:gravity="center">
+
+                    <Button
+                        android:id="@+id/connect"
+                        android:layout_width="@dimen/button_width"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewModel.connectButtonTitle}"
+                        app:attrBackgroundColor="@{viewModel.connectButtonDrawable}"
+                        android:onClick="@{view -> viewModel.onConnect()}"
+                        android:textColor="?attr/colorOnPrimary"/>
+
+                    <Button
+                        android:id="@+id/subscription"
+                        android:layout_width="@dimen/button_width"
+                        android:layout_height="wrap_content"
+                        android:text="@string/subscribe"
+                        android:textColor="?attr/colorOnPrimary"
+                        app:isVisibleOrGone="@{!viewModel.isPurchased}"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</layout>

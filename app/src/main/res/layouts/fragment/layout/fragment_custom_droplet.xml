@@ -117,7 +117,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/private_key_auth"
-                            android:textColor="?attr/mainTextColor"
+                            android:textColor="?attr/textColorMain"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                             android:trackTint="@color/grey_light"
                             android:checked="@={viewModel.isPrivateKey()}"/>
@@ -184,7 +184,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/V2Ray"
-                    android:textColor="?attr/mainTextColor"
+                    android:textColor="?attr/textColorMain"
                     android:trackTint="@color/grey_light"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                     android:layout_marginTop="@dimen/small_spacing"

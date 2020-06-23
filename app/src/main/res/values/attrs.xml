@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <attr name="mainTextColor" format="reference"/>
+    <attr name="textColorMain" format="reference"/>
+    <attr name="textColorHighlight" format="reference"/>
+    <attr name="textColorSecondary" format="reference"/>
+
     <attr name="pendingColor" format="reference"/>
     <attr name="inactiveColor" format="reference"/>
 

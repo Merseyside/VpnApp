@@ -1,6 +1,6 @@
 package com.merseyside.dropletapp.utils
 
-import com.merseyside.merseyLib.utils.PreferenceManager
+import com.merseyside.merseyLib.utils.preferences.PreferenceManager
 
 class PrefsHelper(private val preferenceManager: PreferenceManager) {
 
@@ -13,7 +13,14 @@ class PrefsHelper(private val preferenceManager: PreferenceManager) {
         return preferenceManager.getLong(TRIAL_TIME_KEY, 0L)
     }
 
+    fun isFirstLaunch(): Boolean {
+        return preferenceManager.getBool(NOT_FIRST_LAUNCH, true).also {
+            preferenceManager.put(NOT_FIRST_LAUNCH, false)
+        }
+    }
+
     companion object {
+        private const val NOT_FIRST_LAUNCH = "not_first_launch"
         private const val TRIAL_TIME_KEY = "trial_time"
     }
 }

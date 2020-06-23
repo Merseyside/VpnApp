@@ -1,6 +1,9 @@
 package com.merseyside.dropletapp.utils
 
 import com.merseyside.dropletapp.connectionTypes.Type
+import com.merseyside.dropletapp.domain.model.SubscriptionInfo
+import com.merseyside.kmpMerseyLib.utils.serialization.deserialize
+import com.merseyside.kmpMerseyLib.utils.serialization.serialize
 import com.merseyside.kmpMerseyLib.utils.time.getCurrentTimeMillis
 import com.russhwolf.settings.Settings
 
@@ -29,9 +32,36 @@ class SettingsHelper(private val settings: Settings) {
         return Type.valueOf(settings.getString(CONFIG_TYPE_KEY, ""))
     }
 
+    fun setSubscriptionInfo(info: SubscriptionInfo) {
+        val json = info.serialize()
+
+        settings.putString(TOKEN, json)
+    }
+
+    fun getSubscriptionInfo(): SubscriptionInfo? {
+        return settings.getStringOrNull(TOKEN)?.deserialize<SubscriptionInfo>()?.let {
+            if (it.token.isEmpty()) {
+                null
+            } else {
+                it
+            }
+        } //?: SubscriptionInfo("1", "1")
+    }
+
+    fun setLocale(locale: String) {
+        settings.putString(LOCALE, locale)
+    }
+
+    fun getLocale(): String {
+        return settings.getString(LOCALE, "en")
+    }
+
     companion object {
         private const val CONFIG_KEY = "config"
         private const val CONFIG_TIME_KEY = "config_time"
         private const val CONFIG_TYPE_KEY = "config_type"
+
+        private const val TOKEN = "token"
+        private const val LOCALE = "locale"
     }
 }

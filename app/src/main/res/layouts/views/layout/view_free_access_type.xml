@@ -6,7 +6,7 @@
     <data>
         <variable
             name="obj"
-            type="com.merseyside.dropletapp.presentation.view.fragment.free.model.TypeViewModel" />
+            type="com.merseyside.dropletapp.presentation.view.fragment.easyAccess.model.TypeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

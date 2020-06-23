@@ -12,6 +12,7 @@ import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.merseyLib.presentation.ext.getString
+import com.merseyside.merseyLib.utils.network.isOnline
 
 val application = VpnApplication.getInstance()
 
@@ -101,4 +102,8 @@ fun getDrawableResourceIdByName(context: Context, name: String): Int {
         name, "drawable",
         context.packageName
     )
+}
+
+fun isOnline(): Boolean {
+    return isOnline(application)
 }

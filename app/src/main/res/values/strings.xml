@@ -132,6 +132,13 @@
 
     <string name="v2ray_required">V2Ray plugin is required</string>
     <string name="v2ray_required_msg">Current server needs V2Ray plugin to be installed. Click \"Download\" to go to the Google Play.</string>
+
+    <string name="period">Subscription period</string>
+    <string name="new_words_count">New words count</string>
+    <string name="price">Price</string>
+    <string name="subscribe">Subscribe</string>
+
+
     <string name="download">Download</string>
     <string-array name="language_entries">
         <item>ic_english</item>

@@ -9,6 +9,7 @@ import com.merseyside.dropletapp.domain.repository.TokenRepository
 import com.merseyside.dropletapp.providerApi.ProviderApiFactory
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.kmpMerseyLib.utils.Logger
+import com.russhwolf.settings.Settings
 
 class TokenRepositoryImpl(
     private val tokenDao: TokenDao,
@@ -31,7 +32,6 @@ class TokenRepositoryImpl(
     override suspend fun addToken(token: Token, providerId: Long): Boolean {
         tokenDao.insert(token,Provider.getProviderById(providerId) ?: throw NoDataException("No service with passed id"))
 
-        Logger.log(this, "saved")
         return true
     }
 

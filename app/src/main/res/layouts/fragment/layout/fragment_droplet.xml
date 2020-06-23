@@ -179,7 +179,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:text="@{viewModel.serverConfig}"
-                                    android:textColor="?attr/mainTextColor"
+                                    android:textColor="?attr/textColorMain"
                                     android:editable="false"
                                     android:background="@null"
                                     android:layout_marginTop="@dimen/small_spacing"

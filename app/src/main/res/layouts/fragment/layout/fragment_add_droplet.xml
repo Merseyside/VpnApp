@@ -98,7 +98,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/V2Ray"
-                        android:textColor="?attr/mainTextColor"
+                        android:textColor="?attr/textColorMain"
                         android:trackTint="@color/grey_light"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                         android:layout_marginTop="@dimen/small_spacing"

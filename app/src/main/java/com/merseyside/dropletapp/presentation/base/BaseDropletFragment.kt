@@ -13,7 +13,7 @@ import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.view.AddDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.view.DropletFragment
-import com.merseyside.dropletapp.presentation.view.fragment.free.view.FreeAccessFragment
+import com.merseyside.dropletapp.presentation.view.fragment.easyAccess.view.EasyAccessFragment
 import com.merseyside.merseyLib.presentation.fragment.BaseVMFragment
 import com.merseyside.merseyLib.presentation.view.IFocusManager
 
@@ -78,7 +78,7 @@ abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
-        val actionsVisibility = this !is AddDropletFragment && this !is DropletFragment && this !is FreeAccessFragment
+        val actionsVisibility = this !is AddDropletFragment && this !is DropletFragment && this !is EasyAccessFragment
 
         menu.findItem(R.id.action_settings).isVisible = actionsVisibility
         menu.findItem(R.id.action_servers).isVisible = actionsVisibility

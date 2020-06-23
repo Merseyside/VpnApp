@@ -27,8 +27,6 @@ actual class ShadowSocksConnectionType actual constructor() :
     override var context: Context? = null
     private var profile: Profile? = null
 
-    var connection: ShadowsocksConnection? = null
-
     override fun start(server: Server) {
         super.start(server)
 

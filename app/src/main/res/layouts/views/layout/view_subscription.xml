@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="com.merseyside.dropletapp.R"/>
+        <variable
+            name="obj"
+            type="com.merseyside.dropletapp.presentation.view.dialog.subscription.model.SubscriptionItemViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="@drawable/rounded_ripple"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="@{view -> obj.onClick()}">
+
+        <RelativeLayout
+            android:id="@+id/main_container"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:padding="@dimen/normal_spacing">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                tools:ignore="UseCompoundDrawables"
+                android:layout_centerVertical="true">
+
+                <ImageView
+                    android:layout_width="@dimen/icon_size"
+                    android:layout_height="@dimen/icon_size"
+                    app:srcCompat="@drawable/ic_check_secondary"
+                    app:isVisibleOrGone="@{obj.active}"
+                    tools:ignore="ContentDescription"
+                    android:layout_marginEnd="@dimen/small_spacing"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/LangApp.Body1"
+                    android:text="@{obj.title}"
+                    android:clickable="false"
+                    android:focusable="false" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:layout_alignParentEnd="true"
+                android:background="@color/transparent"
+                bind:vectorDrawable="@{obj.expanded ? R.drawable.ic_arrow_down : R.drawable.ic_arrow_up}"
+                android:clickable="false"
+                android:focusable="false"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/small_spacing"
+                tools:ignore="ContentDescription" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/expandable_container"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/main_container"
+            android:paddingStart="@dimen/normal_spacing"
+            android:paddingEnd="@dimen/normal_spacing"
+            android:paddingBottom="@dimen/normal_spacing">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/LangApp.Body1"
+                android:text="@{obj.description}"
+                android:textColor="?attr/textColorHighlight"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/normal_spacing">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="5"
+                        android:textAppearance="@style/LangApp.Body2"
+                        android:text="@string/period"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:textAppearance="@style/LangApp.Body2"
+                        android:text="@{obj.period}"
+                        android:textAlignment="textEnd"
+                        android:textColor="?attr/textColorHighlight"/>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/subscribe"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{obj.price}"
+                    android:backgroundTint="?attr/colorPrimary"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:layout_marginTop="@dimen/normal_spacing"
+                    app:isVisibleOrGone="@{!obj.active}"
+                    android:onClick="@{view -> obj.onSubscribeClick()}"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorPrimaryDark"
+            app:isVisibleOrGone="@{!obj.last}"
+            app:layout_constraintTop_toBottomOf="@+id/expandable_container"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/expanded_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="expandable_container"
+            app:isVisibleOrGone="@{obj.expanded}"
+            tools:visibility="visible"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

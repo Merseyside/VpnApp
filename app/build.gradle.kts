@@ -2,8 +2,8 @@ plugins {
     plugin(LibraryDeps.Plugins.androidApplication)
     plugin(LibraryDeps.Plugins.kotlinAndroid)
     plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
-    plugin(LibraryDeps.Plugins.kotlinKapt)
     plugin(LibraryDeps.Plugins.kotlinSerialization)
+    plugin(LibraryDeps.Plugins.kotlinKapt)
 }
 
 android {
@@ -29,12 +29,25 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    signingConfigs {
+        create("release") {
+            keyAlias = project.property("RELEASE_KEY_ALIAS") as String
+            keyPassword = project.property("RELEASE_KEY_PASSWORD") as String
+            storeFile = file(project.property("RELEASE_STORE_FILE") as String)
+            storePassword = project.property("RELEASE_STORE_PASSWORD") as String
+        }
+    }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+
+            signingConfig = signingConfigs.getByName("release")
+            isDebuggable = false
         }
         getByName("debug") {
+            signingConfig = signingConfigs.getByName("debug")
             isDebuggable = true
         }
     }
@@ -66,6 +79,7 @@ android {
         res.srcDir("src/main/res/")
         res.srcDir("src/main/res/layouts/fragment")
         res.srcDir("src/main/res/layouts/activity")
+        res.srcDir("src/main/res/layouts/dialog")
         res.srcDir("src/main/res/layouts/views")
         res.srcDir("src/main/res/countries/")
         res.srcDir("src/main/res/connectBars/")
@@ -92,6 +106,7 @@ val androidLibs = listOf(
     Deps.Libs.Android.recyclerView.name,
     Deps.Libs.Android.lifecycle.name,
     Deps.Libs.Android.constraintLayout.name,
+    Deps.Libs.MultiPlatform.serialization.android!!,
 
 
     Deps.Libs.Android.dagger.name,
@@ -103,7 +118,10 @@ val androidLibs = listOf(
     Deps.Libs.Android.firebaseConfig.name,
     Deps.Libs.Android.firebaseAnalytics.name,
     Deps.Libs.Android.okhttp.name,
-    Deps.Libs.MultiPlatform.sqlDelight.android!!
+    Deps.Libs.MultiPlatform.sqlDelight.android!!,
+    Deps.Libs.Android.billing.name,
+    Deps.Libs.Android.billingKtx.name,
+    Deps.Libs.Android.mahEncryptor.name
     //Deps.Libs.Android.filemanager.name
 )
 

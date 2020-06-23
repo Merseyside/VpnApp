@@ -22,7 +22,7 @@ class DropletModule(
 ) {
 
     @Provides
-    internal fun addDropletViewModelProvider(
+    internal fun provideDropletViewModelFactory(
         router: Router,
         connectionTypeBuilder: Builder,
         getDropletsUseCase: GetDropletsInteractor,
@@ -40,7 +40,7 @@ class DropletModule(
     }
 
     @Provides
-    internal fun getConnectionTypeBuilder(): Builder {
+    internal fun provideConnectionTypeBuilder(): Builder {
         return connectionTypeBuilder!!
     }
 

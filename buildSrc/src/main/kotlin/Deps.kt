@@ -76,17 +76,11 @@ object Deps {
             val reflect = AndroidLibrary(
                 name = "org.jetbrains.kotlin:kotlin-reflect:${Versions.Libs.Android.kotlinStdLib}"
             )
-            val playCore = AndroidLibrary(
-                name = "com.google.android.play:core:${Versions.Libs.Android.playCore}"
-            )
             val billing = AndroidLibrary(
                 name = "com.android.billingclient:billing:${Versions.Libs.Android.billing}"
             )
             val billingKtx = AndroidLibrary(
                 name = "com.android.billingclient:billing-ktx:${Versions.Libs.Android.billing}"
-            )
-            val publisher = AndroidLibrary(
-                name = "com.google.apis:google-api-services-androidpublisher:${Versions.Libs.Android.publisher}"
             )
             val firebaseFirestore = AndroidLibrary(
                 name = "com.google.firebase:firebase-firestore-ktx:${Versions.Libs.Android.firebaseFirestore}"
@@ -162,6 +156,9 @@ object Deps {
 
             val wireguard = AndroidLibrary(
                 name = "com.wireguard.android:tunnel:${Versions.Libs.Android.wireguard}"
+            )
+            val mahEncryptor = AndroidLibrary(
+                name = "com.mobapphome.library:mah-encryptor-lib:${Versions.Libs.Android.mahEncryptor}"
             )
 
             object MerseyLibs {
