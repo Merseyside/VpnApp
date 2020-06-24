@@ -8,8 +8,8 @@ object Versions {
         const val targetSdk = 28
         const val minSdk = 21
 
-        const val version = "1.08"
-        const val versionCode = 108
+        const val version = "1.09"
+        const val versionCode = 109
     }
 
     const val kotlin = "1.3.72"
