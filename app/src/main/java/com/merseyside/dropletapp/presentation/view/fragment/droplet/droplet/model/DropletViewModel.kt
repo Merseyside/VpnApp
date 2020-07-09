@@ -22,9 +22,9 @@ import com.merseyside.dropletapp.utils.application
 import com.merseyside.dropletapp.utils.getLogByStatus
 import com.merseyside.dropletapp.utils.getProviderIcon
 import com.merseyside.filemanager.FileManager
-import com.merseyside.merseyLib.utils.ext.log
-import com.merseyside.merseyLib.utils.mainThread
-import com.merseyside.merseyLib.utils.mvvm.SingleLiveEvent
+import com.merseyside.utils.ext.log
+import com.merseyside.utils.mainThread
+import com.merseyside.utils.mvvm.SingleLiveEvent
 import kotlinx.coroutines.*
 import ru.terrakok.cicerone.Router
 import java.io.File

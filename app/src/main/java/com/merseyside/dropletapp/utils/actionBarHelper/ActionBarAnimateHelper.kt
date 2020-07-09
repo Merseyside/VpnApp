@@ -7,11 +7,11 @@ import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import com.merseyside.merseyLib.AnimatorList
-import com.merseyside.merseyLib.Approach
-import com.merseyside.merseyLib.animator.ColorAnimator
-import com.merseyside.merseyLib.utils.ext.setColor
-import com.merseyside.merseyLib.utils.time.TimeUnit
+import com.merseyside.animators.AnimatorList
+import com.merseyside.animators.Approach
+import com.merseyside.animators.animator.ColorAnimator
+import com.merseyside.utils.ext.setColor
+import com.merseyside.utils.time.TimeUnit
 
 class ActionBarAnimateHelper(
     toolbar: Toolbar,

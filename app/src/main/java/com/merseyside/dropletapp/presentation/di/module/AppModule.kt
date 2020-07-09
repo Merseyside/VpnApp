@@ -4,8 +4,8 @@ import android.app.Application
 import android.content.Context
 import com.merseyside.dropletapp.domain.interactor.GetProvidersInteractor
 import com.merseyside.dropletapp.utils.PrefsHelper
-import com.merseyside.merseyLib.presentation.di.qualifiers.ApplicationContext
-import com.merseyside.merseyLib.utils.preferences.PreferenceManager
+import com.merseyside.archy.di.qualifiers.ApplicationContext
+import com.merseyside.utils.preferences.PreferenceManager
 import dagger.Module
 import dagger.Provides
 

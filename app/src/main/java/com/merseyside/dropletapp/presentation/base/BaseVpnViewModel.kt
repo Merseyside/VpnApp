@@ -1,7 +1,7 @@
 package com.merseyside.dropletapp.presentation.base
 
 import com.merseyside.dropletapp.domain.Server
-import com.merseyside.merseyLib.utils.mvvm.SingleLiveEvent
+import com.merseyside.utils.mvvm.SingleLiveEvent
 import ru.terrakok.cicerone.Router
 
 abstract class BaseVpnViewModel(

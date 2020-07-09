@@ -17,10 +17,10 @@ import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.a
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
-import com.merseyside.merseyLib.presentation.view.OnBackPressedListener
-import com.merseyside.merseyLib.utils.PermissionManager
-import com.merseyside.merseyLib.utils.serialization.deserialize
-import com.merseyside.merseyLib.utils.serialization.serialize
+import com.merseyside.archy.presentation.view.OnBackPressedListener
+import com.merseyside.utils.PermissionManager
+import com.merseyside.utils.serialization.deserialize
+import com.merseyside.utils.serialization.serialize
 
 class AddDropletFragment : BaseDropletFragment<FragmentAddDropletBinding, AddDropletViewModel>(),
     OnBackPressedListener {

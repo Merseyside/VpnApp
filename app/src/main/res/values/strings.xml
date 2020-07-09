@@ -137,6 +137,17 @@
     <string name="new_words_count">New words count</string>
     <string name="price">Price</string>
     <string name="subscribe">Subscribe</string>
+    <string name="subscription_expity_date">Subscription available until %1$s</string>
+    <string name="change_region">Change region</string>
+    <string name="choose_tariff">Choose tariff</string>
+    <string name="plan_includes">Everyone tariff plan includes:</string>
+    <string name="dedicated_access">Dedicated access</string>
+    <string name="unlimited_speed">Unlimited speed</string>
+    <string name="choosing_security_protocol">Choosing security protocol</string>
+    <string name="price_with_period">%1$s for %2$s</string>
+    <string name="choose_region">Choose region</string>
+    <string name="for_month">for month</string>
+    <string name="choose_protocol">Choose protocol</string>
 
 
     <string name="download">Download</string>

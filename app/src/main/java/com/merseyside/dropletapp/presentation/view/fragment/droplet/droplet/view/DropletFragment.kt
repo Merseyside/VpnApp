@@ -21,21 +21,19 @@ import com.merseyside.dropletapp.presentation.di.component.DaggerDropletComponen
 import com.merseyside.dropletapp.presentation.di.module.DropletModule
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.model.DropletViewModel
 import com.merseyside.dropletapp.ssh.SshManager
-import com.merseyside.merseyLib.AnimatorList
-import com.merseyside.merseyLib.presentation.view.OnBackPressedListener
-import com.merseyside.merseyLib.utils.Logger
-import com.merseyside.merseyLib.Approach
-import com.merseyside.merseyLib.Axis
-import com.merseyside.merseyLib.MainPoint
-import com.merseyside.merseyLib.animator.AlphaAnimator
-import com.merseyside.merseyLib.animator.TransitionAnimator
-import com.merseyside.merseyLib.utils.PermissionManager
-import com.merseyside.merseyLib.utils.openUrl
-import com.merseyside.merseyLib.utils.serialization.deserialize
-import com.merseyside.merseyLib.utils.serialization.serialize
-import com.merseyside.merseyLib.utils.time.Millis
-import de.blinkt.openvpn.core.OpenVPNService
-import de.blinkt.openvpn.core.VpnStatus
+import com.merseyside.animators.AnimatorList
+import com.merseyside.archy.presentation.view.OnBackPressedListener
+import com.merseyside.utils.Logger
+import com.merseyside.animators.Approach
+import com.merseyside.animators.Axis
+import com.merseyside.animators.MainPoint
+import com.merseyside.animators.animator.AlphaAnimator
+import com.merseyside.animators.animator.TransitionAnimator
+import com.merseyside.utils.PermissionManager
+import com.merseyside.utils.serialization.deserialize
+import com.merseyside.utils.serialization.serialize
+import com.merseyside.utils.time.Millis
+import com.merseyside.utils.openUrl
 import java.io.File
 
 class DropletFragment : BaseVpnFragment<FragmentDropletBinding, DropletViewModel>(), OnBackPressedListener {

@@ -4,7 +4,6 @@ import com.merseyside.dropletapp.connectionTypes.Type
 import com.merseyside.dropletapp.data.exception.TrialIsOverException
 import com.merseyside.dropletapp.domain.repository.EasyAccessRepository
 import com.merseyside.dropletapp.easyAccess.EasyAccessApi
-import com.merseyside.dropletapp.easyAccess.EasyAccessRouter
 import com.merseyside.dropletapp.easyAccess.entity.point.RegionPoint
 import com.merseyside.dropletapp.utils.SettingsHelper
 import com.merseyside.kmpMerseyLib.utils.time.Hours

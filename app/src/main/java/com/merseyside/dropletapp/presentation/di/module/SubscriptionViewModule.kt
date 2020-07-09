@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.merseyside.dropletapp.domain.interactor.subscription.GetSubscriptionsInteractor
 import com.merseyside.dropletapp.presentation.view.dialog.subscription.model.SubscriptionViewModel
 import com.merseyside.dropletapp.subscriptions.SubscriptionManager
-import com.merseyside.merseyLib.presentation.model.BundleAwareViewModelFactory
+import com.merseyside.archy.model.BundleAwareViewModelFactory
 import dagger.Module
 import dagger.Provides
 

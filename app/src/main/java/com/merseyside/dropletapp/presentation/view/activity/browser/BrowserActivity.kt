@@ -9,8 +9,8 @@ import android.webkit.*
 import androidx.appcompat.widget.Toolbar
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.presentation.view.view.MyWebViewClient
-import com.merseyside.merseyLib.presentation.activity.BaseActivity
-import com.merseyside.merseyLib.utils.Logger
+import com.merseyside.archy.presentation.activity.BaseActivity
+import com.merseyside.utils.Logger
 
 
 class BrowserActivity : BaseActivity() {

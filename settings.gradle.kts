@@ -36,29 +36,14 @@ if (isLocalDependencies) {
     project(":animators").projectDir =
         File(rootDir.parent, "mersey-android-library/animators")
 
-    include(":clean-mvvm-arch")
-    project(":clean-mvvm-arch").projectDir =
-        File(rootDir.parent, "mersey-android-library/clean-mvvm-arch")
-
     include(":adapters")
     project(":adapters").projectDir =
         File(rootDir.parent, "mersey-android-library/adapters")
 
-//    include(LibraryModules.Android.animators)
-//    project(LibraryModules.Android.animators).projectDir =
-//        File(rootDir.parent, "${Modules.library}/animators")
-//
-//    include(LibraryModules.Android.cleanMvvmArch)
-//    project(LibraryModules.Android.cleanMvvmArch).projectDir =
-//        File(rootDir.parent, "${Modules.library}/clean-mvvm-arch")
-//
-//    include(LibraryModules.Android.adapters)
-//    project(LibraryModules.Android.adapters).projectDir =
-//        File(rootDir.parent, "${Modules.library}/adapters")
-//
-//    include(LibraryModules.Android.utils)
-//    project(LibraryModules.Android.utils).projectDir =
-//        File(rootDir.parent, "${Modules.library}/utils")
+    include(":archy")
+    project(":archy").projectDir =
+        File(rootDir.parent, "mersey-android-library/archy")
+
 }
 
 rootProject.name = "vpn-application-android"

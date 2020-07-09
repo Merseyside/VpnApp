@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto">
     <data>
@@ -12,16 +13,129 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="100dp">
+        android:minHeight="100dp"
+        android:padding="@dimen/medium_text_size">
 
-        <com.merseyside.merseyLib.presentation.view.merseyRecyclerView.MerseyRecyclerView
+        <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:skus="@{viewModel.skusList}"
-            bind:subscribeClick="@={viewModel.clickedSubscription}"
-            app:maxHeight="@dimen/subscription_max_size"/>
+            android:layout_height="wrap_content">
+
+            <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/VpnApp.Headline4"
+                android:textAlignment="center"
+                android:text="@string/choose_tariff"
+                android:textColor="?attr/textColorSecondary"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/normal_spacing">
+
+                <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/VpnApp.Headline6"
+                    android:text="@string/plan_includes"
+                    android:textColor="?attr/textColorSecondary"/>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/normal_spacing">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:srcCompat="@drawable/ic_connected"
+                            android:tint="?attr/colorSecondary"
+                            tools:ignore="ContentDescription" />
+
+                        <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dedicated_access"
+                            android:textAppearance="@style/VpnApp.Body1"
+                            android:layout_marginStart="@dimen/normal_spacing"
+                            android:textColor="?attr/textColorSecondary"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="@dimen/very_small_spacing">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:srcCompat="@drawable/ic_connected"
+                            android:tint="?attr/colorSecondary"
+                            tools:ignore="ContentDescription" />
+
+                        <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/unlimited_speed"
+                            android:textAppearance="@style/VpnApp.Body1"
+                            android:layout_marginStart="@dimen/normal_spacing"
+                            android:textColor="?attr/textColorSecondary"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="@dimen/very_small_spacing">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:srcCompat="@drawable/ic_connected"
+                            android:tint="?attr/colorSecondary"
+                            tools:ignore="ContentDescription" />
+
+                        <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/choosing_security_protocol"
+                            android:textAppearance="@style/VpnApp.Body1"
+                            android:layout_marginStart="@dimen/normal_spacing"
+                            android:textColor="?attr/textColorSecondary"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <com.merseyside.archy.presentation.view.merseyRecyclerView.MerseyRecyclerView
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:skus="@{viewModel.skusList}"
+                android:overScrollMode="never"
+                bind:subscribeClick="@={viewModel.clickedSubscription}"
+                app:maxHeight="@dimen/subscription_max_size"
+                android:layout_marginTop="@dimen/large_spacing"/>
+
+        </LinearLayout>
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -30,7 +144,7 @@
             android:layout_centerHorizontal="true"
             app:isVisibleOrGone="@{viewModel.inProgress}"
             android:indeterminateTintMode="src_atop"
-            android:indeterminateTint="?attr/colorOnSurface"/>
+            android:indeterminateTint="?attr/colorPrimary" />
 
 
     </RelativeLayout>

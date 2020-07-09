@@ -51,7 +51,6 @@ abstract class ServiceConnectionType : CoroutineScope {
     }
 
     private fun stopTimer() {
-        server = null
         timerJob?.run {
             cancel()
         }
@@ -73,6 +72,8 @@ abstract class ServiceConnectionType : CoroutineScope {
     }
 
     open fun stop() {
+        server = null
+
         stopTimer()
         currentConnectionType = null
 
@@ -81,6 +82,14 @@ abstract class ServiceConnectionType : CoroutineScope {
 
     companion object {
         private var currentConnectionType: ServiceConnectionType? = null
+
+        fun getCurrentStatus(): ConnectionLevel {
+            return if (isActive()) {
+                ConnectionLevel.CONNECTED
+            } else {
+                ConnectionLevel.IDLE
+            }
+        }
 
         protected fun setCurrentConnectionType(connectionType: ServiceConnectionType?) {
             if (currentConnectionType != null) {

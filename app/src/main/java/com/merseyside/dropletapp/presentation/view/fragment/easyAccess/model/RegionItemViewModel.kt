@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.databinding.Bindable
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.model.Region
-import com.merseyside.merseyLib.model.BaseAdapterViewModel
+import com.merseyside.adapters.model.BaseAdapterViewModel
 
 class RegionItemViewModel(override var obj: Region) : BaseAdapterViewModel<Region>(obj) {
 

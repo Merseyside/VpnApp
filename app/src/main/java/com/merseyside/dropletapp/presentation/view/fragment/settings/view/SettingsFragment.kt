@@ -17,7 +17,7 @@ import com.merseyside.dropletapp.presentation.view.fragment.settings.adapter.Tok
 import com.merseyside.dropletapp.presentation.view.fragment.settings.model.SettingsViewModel
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.utils.LogoutBehavior
-import com.merseyside.merseyLib.adapters.BaseAdapter
+import com.merseyside.adapters.base.BaseAdapter
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 

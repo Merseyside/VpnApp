@@ -12,7 +12,7 @@ import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.base.BaseVpnViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.ssh.SshManager
-import com.merseyside.merseyLib.utils.Logger
+import com.merseyside.utils.Logger
 import kotlinx.coroutines.*
 import ru.terrakok.cicerone.Router
 import kotlin.coroutines.CoroutineContext

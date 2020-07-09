@@ -8,9 +8,9 @@ import android.widget.BaseAdapter
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import com.merseyside.merseyLib.adapters.ItemPositionInterface
-import com.merseyside.merseyLib.model.BaseAdapterViewModel
-import com.merseyside.merseyLib.view.BaseBindingHolder
+import com.merseyside.adapters.base.ItemPositionInterface
+import com.merseyside.adapters.model.BaseAdapterViewModel
+import com.merseyside.adapters.view.BaseBindingHolder
 
 abstract class BaseSpinnerAdapter<M, T : BaseAdapterViewModel<M>>(
     context: Context,

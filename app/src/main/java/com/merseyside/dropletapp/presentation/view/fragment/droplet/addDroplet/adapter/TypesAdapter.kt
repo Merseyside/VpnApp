@@ -4,7 +4,7 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.TypeNameItemViewModel
-import com.merseyside.merseyLib.adapters.BaseSelectableAdapter
+import com.merseyside.adapters.base.BaseSelectableAdapter
 
 class TypesAdapter: BaseSelectableAdapter<String, TypeNameItemViewModel>() {
 

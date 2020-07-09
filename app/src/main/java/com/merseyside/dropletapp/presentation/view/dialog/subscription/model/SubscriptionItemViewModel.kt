@@ -1,24 +1,21 @@
 package com.merseyside.dropletapp.presentation.view.dialog.subscription.model
 
+import android.content.Context
 import androidx.databinding.Bindable
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.presentation.view.dialog.subscription.adapter.SubscriptionAdapter
 import com.merseyside.dropletapp.subscriptions.VpnSubscription
-import com.merseyside.merseyLib.model.BaseSelectableAdapterViewModel
-import com.merseyside.merseyLib.utils.Logger
-import com.merseyside.merseyLib.utils.billing.subscriptionPeriod
-import com.merseyside.merseyLib.utils.ext.trimTrailingZero
+import com.merseyside.adapters.model.BaseSelectableAdapterViewModel
+import com.merseyside.archy.interfaces.IStringHelper
+import com.merseyside.dropletapp.R
+import com.merseyside.dropletapp.utils.application
+import com.merseyside.utils.billing.subscriptionPeriod
+import com.merseyside.utils.ext.trimTrailingZero
 
 class SubscriptionItemViewModel(
     override var obj: VpnSubscription,
     private val subscribeListener: SubscriptionAdapter.SubscribeListener?
-) : BaseSelectableAdapterViewModel<VpnSubscription>(obj) {
-
-    init {
-        if (obj.isActive) {
-            Logger.log(this, obj)
-        }
-    }
+) : BaseSelectableAdapterViewModel<VpnSubscription>(obj), IStringHelper {
 
     override fun areItemsTheSame(obj: VpnSubscription): Boolean {
         return this.obj == obj
@@ -46,13 +43,35 @@ class SubscriptionItemViewModel(
     }
 
     @Bindable
+    fun getPeriodAndPrice(): String {
+        return getString(R.string.price_with_period, getPrice(), getPeriod())
+    }
+
+    @Bindable
     fun isExpanded(): Boolean {
         return isSelected()
     }
 
     @Bindable
+    fun getPricePerMonth(): String {
+        return "$42"
+    }
+
+    @Bindable
     fun getPrice(): String {
-        return "Subscribe for ${(obj.skuDetails.priceAmountMicros / 1_000_000F).trimTrailingZero()} ${obj.skuDetails!!.priceCurrencyCode}"
+        val price = (obj.skuDetails.priceAmountMicros / 1_000_000F).trimTrailingZero()
+
+        return "${formatPrice(price)} ${obj.skuDetails.priceCurrencyCode}"
+    }
+
+    private fun formatPrice(price: String): String {
+        val splits = price.split(".")
+
+        return if (splits.size == 2 && splits[1].length > 2 ) {
+            splits[0] + "." + splits[1].take(2)
+        } else {
+            price
+        }
     }
 
     @Bindable
@@ -81,4 +100,8 @@ class SubscriptionItemViewModel(
     }
 
     override fun notifySelectEnabled(isEnabled: Boolean) {}
+
+    override fun getLocaleContext(): Context {
+        return application
+    }
 }

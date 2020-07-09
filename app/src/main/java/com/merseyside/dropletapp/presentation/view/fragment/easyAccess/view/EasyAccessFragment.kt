@@ -3,7 +3,6 @@ package com.merseyside.dropletapp.presentation.view.fragment.easyAccess.view
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.merseyside.dropletapp.BR
@@ -17,12 +16,13 @@ import com.merseyside.dropletapp.presentation.view.dialog.subscription.view.Subs
 import com.merseyside.dropletapp.presentation.view.fragment.easyAccess.adapter.RegionAdapter
 import com.merseyside.dropletapp.presentation.view.fragment.easyAccess.model.EasyAccessViewModel
 import com.merseyside.dropletapp.utils.actionBarHelper.ActionBarAnimateHelper
-import com.merseyside.merseyLib.AnimatorList
-import com.merseyside.merseyLib.Approach
-import com.merseyside.merseyLib.animator.AlphaAnimator
-import com.merseyside.merseyLib.presentation.view.OnBackPressedListener
-import com.merseyside.merseyLib.utils.openUrl
-import com.merseyside.merseyLib.utils.time.Millis
+import com.merseyside.animators.AnimatorList
+import com.merseyside.animators.Approach
+import com.merseyside.animators.animator.AlphaAnimator
+import com.merseyside.archy.presentation.view.OnBackPressedListener
+import com.merseyside.utils.ext.log
+import com.merseyside.utils.openUrl
+import com.merseyside.utils.time.Millis
 
 class EasyAccessFragment : BaseVpnFragment<FragmentEasyAccessBinding, EasyAccessViewModel>(),
     OnBackPressedListener {
@@ -51,30 +51,13 @@ class EasyAccessFragment : BaseVpnFragment<FragmentEasyAccessBinding, EasyAccess
     private val regionObserver = Observer<List<Region>> {
         regionAdapter = RegionAdapter(baseActivity, it)
 
-        binding.citySpinner.apply {
+        binding.regionSpinner.apply {
             adapter = regionAdapter
-
-//            onItemSelectedListener =
-//                object : AdapterView.OnItemSelectedListener {
-//                    override fun onNothingSelected(parent: AdapterView<*>?) {}
-//
-//                    override fun onItemSelected(
-//                        parent: AdapterView<*>?,
-//                        view: View?,
-//                        position: Int,
-//                        id: Long
-//                    ) {
-//                        if (regionAdapter.getModel(position).isLocked) {
-//                            binding.citySpinner.setSelection(spinnerPosition)
-//                        } else {
-//                            spinnerPosition = position
-//                        }
-//                    }
-//                }
         }
     }
 
     override val changeConnectionObserver = Observer<Boolean> { isConnected ->
+        isConnected.log()
         if (isConnected) {
             animateConnectionChange()
         } else {
@@ -122,7 +105,7 @@ class EasyAccessFragment : BaseVpnFragment<FragmentEasyAccessBinding, EasyAccess
             Millis(200)
         )
 
-        helper.setBackgroundColorResAnimated(R.color.free)
+        helper.setBackgroundColorResAnimated(R.color.secondary_variant)
         helper.setViewsBackgroundAnimated(ContextCompat.getColor(baseActivity, R.color.free))
 
         helper.start()

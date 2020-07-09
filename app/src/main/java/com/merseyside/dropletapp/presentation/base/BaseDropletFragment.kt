@@ -10,12 +10,12 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.CallSuper
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
+import com.merseyside.archy.presentation.fragment.BaseVMFragment
+import com.merseyside.archy.presentation.view.IFocusManager
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.view.AddDropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.view.DropletFragment
 import com.merseyside.dropletapp.presentation.view.fragment.easyAccess.view.EasyAccessFragment
-import com.merseyside.merseyLib.presentation.fragment.BaseVMFragment
-import com.merseyside.merseyLib.presentation.view.IFocusManager
 
 abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel>
     : BaseVMFragment<B, M>(), HasAppComponent, IFocusManager {

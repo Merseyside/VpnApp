@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import androidx.annotation.CallSuper
+import com.merseyside.archy.presentation.fragment.BaseFragment
 import com.merseyside.dropletapp.R
-import com.merseyside.merseyLib.presentation.fragment.BaseFragment
 import net.glxn.qrgen.android.QRCode
 
 
@@ -34,7 +34,7 @@ class QrFragment : BaseFragment() {
 
         var config: String? = null
         if (arguments?.containsKey(CONFIG_KEY) == true) {
-            config = arguments!!.getString(CONFIG_KEY, "")
+            config = requireArguments().getString(CONFIG_KEY, "")
         }
 
         if (config != null) {

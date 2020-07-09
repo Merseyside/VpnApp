@@ -2,6 +2,7 @@ package com.merseyside.dropletapp.presentation.exception
 
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
+import com.merseyside.archy.interfaces.IStringHelper
 import com.merseyside.dropletapp.BuildConfig
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.VpnApplication
@@ -9,7 +10,6 @@ import com.merseyside.dropletapp.data.exception.BannedAddressException
 import com.merseyside.dropletapp.data.exception.NoDataException
 import com.merseyside.dropletapp.providerApi.exception.BadResponseCodeException
 import com.merseyside.dropletapp.providerApi.exception.InvalidTokenException
-import com.merseyside.merseyLib.presentation.interfaces.IStringHelper
 
 class ErrorMessageFactory : IStringHelper {
 

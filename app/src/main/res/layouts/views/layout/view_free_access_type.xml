@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        bind:backgroundDrawable="@{obj.itemBackground}"
+        app:backgroundDrawable="@{obj.itemBackground}"
         android:padding="@dimen/small_spacing"
         android:layout_marginEnd="@dimen/small_spacing"
         android:clickable="true"
@@ -26,10 +26,11 @@
 
         <TextView
             android:id="@+id/name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAppearance="@style/VpnApp.Body2"
             android:textAllCaps="true"
+            android:textAlignment="center"
             bind:layout_constraintStart_toStartOf="parent"
             android:textColor="?attr/vpnHeadlineTextColor"
             android:text="@{obj.name}"
@@ -38,15 +39,13 @@
         <ImageView
             android:layout_width="8dp"
             android:layout_height="8dp"
-            android:src="@drawable/lock"
+            android:src="@drawable/ic_lock"
             android:layout_alignEnd="@+id/name"
             android:layout_alignParentTop="true"
             bind:layout_constraintStart_toEndOf="@+id/name"
             bind:layout_constraintTop_toTopOf="parent"
             app:isVisibleOrGone="@{obj.locked}"
             tools:ignore="ContentDescription" />
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

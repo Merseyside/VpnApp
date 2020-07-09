@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.merseyside.dropletapp.domain.interactor.*
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel
-import com.merseyside.merseyLib.presentation.fragment.BaseFragment
-import com.merseyside.merseyLib.presentation.model.BundleAwareViewModelFactory
+import com.merseyside.archy.presentation.fragment.BaseFragment
+import com.merseyside.archy.model.BundleAwareViewModelFactory
 import dagger.Module
 import dagger.Provides
 import ru.terrakok.cicerone.Router

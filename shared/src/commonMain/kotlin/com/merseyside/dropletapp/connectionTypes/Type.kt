@@ -30,5 +30,21 @@ enum class Type {
                 else -> null
             }
         }
+
+        fun getTypeConfig(type: Type, config: String? = null): TypedConfig {
+            return when (type) {
+                OPENVPN -> {
+                    TypedConfig.OpenVpn("user")
+                }
+                WIREGUARD -> {
+                    TypedConfig.WireGuard()
+                }
+                else -> {
+                    TypedConfig.Shadowsocks("")
+                }
+            }.apply {
+                this.config = config
+            }
+        }
     }
 }

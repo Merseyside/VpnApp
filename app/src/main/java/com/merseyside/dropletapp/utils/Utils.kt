@@ -6,13 +6,13 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import com.merseyside.archy.ext.getString
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.providerApi.Provider
-import com.merseyside.merseyLib.presentation.ext.getString
-import com.merseyside.merseyLib.utils.network.isOnline
+import com.merseyside.utils.network.isOnline
 
 val application = VpnApplication.getInstance()
 

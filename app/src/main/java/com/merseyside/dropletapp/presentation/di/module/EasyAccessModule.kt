@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.merseyside.dropletapp.domain.interactor.easyAccess.GetVpnConfigInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.easyAccess.model.EasyAccessViewModel
 import com.merseyside.dropletapp.utils.PrefsHelper
-import com.merseyside.merseyLib.presentation.fragment.BaseFragment
-import com.merseyside.merseyLib.presentation.model.BundleAwareViewModelFactory
+import com.merseyside.archy.presentation.fragment.BaseFragment
+import com.merseyside.archy.model.BundleAwareViewModelFactory
 import com.merseyside.dropletapp.connectionTypes.Builder
 import com.merseyside.dropletapp.di.connectionTypeBuilder
 import com.merseyside.dropletapp.domain.interactor.GetLockedTypesInteractor

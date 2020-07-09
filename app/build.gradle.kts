@@ -83,6 +83,7 @@ android {
         res.srcDir("src/main/res/layouts/views")
         res.srcDir("src/main/res/countries/")
         res.srcDir("src/main/res/connectBars/")
+        res.srcDir("src/main/res/easyAccess/")
     }
 }
 
@@ -126,7 +127,7 @@ val androidLibs = listOf(
 )
 
 val localMerseyLibs = listOf(
-    LibraryModules.Android.cleanMvvmArch,
+    LibraryModules.Android.archy,
     LibraryModules.Android.adapters,
     LibraryModules.Android.animators,
     LibraryModules.Android.utils

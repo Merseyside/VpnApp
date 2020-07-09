@@ -7,10 +7,10 @@ import com.merseyside.dropletapp.domain.interactor.subscription.GetSubscriptions
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.subscriptions.SubscriptionManager
 import com.merseyside.dropletapp.subscriptions.VpnSubscription
-import com.merseyside.merseyLib.utils.Logger
-import com.merseyside.merseyLib.utils.mvvm.SingleEventObservableField
-import com.merseyside.merseyLib.utils.mvvm.SingleLiveEvent
-import com.merseyside.merseyLib.utils.ext.onChange
+import com.merseyside.utils.Logger
+import com.merseyside.utils.mvvm.SingleEventObservableField
+import com.merseyside.utils.mvvm.SingleLiveEvent
+import com.merseyside.utils.ext.onChange
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

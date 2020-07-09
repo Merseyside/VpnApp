@@ -30,6 +30,11 @@ object Deps {
             id = "com.squareup.sqldelight",
             module = "com.squareup.sqldelight:gradle-plugin:${Versions.Plugins.sqlDelight}"
         )
+
+        val buildKonfig = PluginDesc(
+            id = "com.codingfeline.buildkonfig",
+            module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:${Versions.Plugins.buildKonfig}"
+        )
     }
 
     object Libs {

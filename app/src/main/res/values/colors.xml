@@ -21,10 +21,8 @@
     <color name="blue_light">#9e47ff</color>
     <color name="blue_opacity">#181E88E5</color>
 
-    <color name="cyan_secondary">#03dac6</color>
-    <color name="cyan_secondary_variant">#018786</color>
-    <color name="cyan_dark">#00a896</color>
-    <color name="cyan_light">#66fff9</color>
+    <color name="orange_secondary">#EE662F</color>
+    <color name="secondary_variant">#070707</color>
 
     <color name="background_blue_theme">@color/grey</color>
 

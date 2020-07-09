@@ -7,12 +7,8 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
-import com.merseyside.dropletapp.R
-import com.merseyside.dropletapp.connectionTypes.ServiceConnectionType
 import com.merseyside.dropletapp.connectionTypes.VpnHelper
-import com.merseyside.dropletapp.connectionTypes.typeImpl.openVpn.OpenVpnConnectionType
-import com.merseyside.merseyLib.utils.Logger
-import de.blinkt.openvpn.core.VpnStatus
+import com.merseyside.utils.Logger
 
 abstract class BaseVpnFragment<B : ViewDataBinding, M : BaseVpnViewModel> : BaseDropletFragment<B, M>() {
 

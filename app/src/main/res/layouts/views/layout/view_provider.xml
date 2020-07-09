@@ -38,7 +38,7 @@
                 app:drawableRes="@{obj.icon}"
                 tools:ignore="ContentDescription" />
 
-            <com.merseyside.merseyLib.presentation.view.localeViews.LocaleTextView
+            <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

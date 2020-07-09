@@ -16,7 +16,8 @@
         android:foreground="@drawable/rounded_ripple"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="@{view -> obj.onClick()}">
+        android:onClick="@{view -> obj.onClick()}"
+        android:background="@color/transparent">
 
         <RelativeLayout
             android:id="@+id/main_container"
@@ -40,15 +41,17 @@
                     app:srcCompat="@drawable/ic_check_secondary"
                     app:isVisibleOrGone="@{obj.active}"
                     tools:ignore="ContentDescription"
-                    android:layout_marginEnd="@dimen/small_spacing"/>
+                    android:layout_marginEnd="@dimen/small_spacing"
+                    android:textColor="?attr/textColorSecondary"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/LangApp.Body1"
+                    android:textSize="@dimen/medium_text_size"
                     android:text="@{obj.title}"
                     android:clickable="false"
-                    android:focusable="false" />
+                    android:focusable="false"
+                    android:textColor="?attr/textColorSecondary"/>
 
             </LinearLayout>
 
@@ -81,7 +84,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/LangApp.Body1"
+                android:textAppearance="@style/VpnApp.Body1"
                 android:text="@{obj.description}"
                 android:textColor="?attr/textColorHighlight"/>
 
@@ -100,14 +103,15 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="5"
-                        android:textAppearance="@style/LangApp.Body2"
-                        android:text="@string/period"/>
+                        android:textAppearance="@style/VpnApp.Body2"
+                        android:text="@string/period"
+                        android:textColor="?attr/textColorSecondary"/>
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:textAppearance="@style/LangApp.Body2"
+                        android:textAppearance="@style/VpnApp.Body2"
                         android:text="@{obj.period}"
                         android:textAlignment="textEnd"
                         android:textColor="?attr/textColorHighlight"/>
@@ -119,10 +123,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{obj.price}"
-                    android:backgroundTint="?attr/colorPrimary"
                     android:textColor="?attr/colorOnPrimary"
+                    android:background="?attr/colorPrimary"
                     android:layout_marginTop="@dimen/normal_spacing"
                     app:isVisibleOrGone="@{!obj.active}"
+                    android:foreground="@drawable/spinner_ripple"
                     android:onClick="@{view -> obj.onSubscribeClick()}"/>
 
             </LinearLayout>
@@ -132,7 +137,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?attr/colorPrimaryDark"
+            android:background="?attr/colorOnBackground"
             app:isVisibleOrGone="@{!obj.last}"
             app:layout_constraintTop_toBottomOf="@+id/expandable_container"/>
 

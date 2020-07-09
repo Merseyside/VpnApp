@@ -1,6 +1,6 @@
 package com.merseyside.dropletapp.utils
 
-import com.merseyside.merseyLib.utils.preferences.PreferenceManager
+import com.merseyside.utils.preferences.PreferenceManager
 
 class PrefsHelper(private val preferenceManager: PreferenceManager) {
 

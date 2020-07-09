@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
             name="obj"
@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        bind:backgroundDrawable="@{obj.itemBackground}"
+        app:backgroundDrawable="@{obj.itemBackground}"
         android:padding="@dimen/small_spacing"
         android:layout_marginEnd="@dimen/small_spacing"
         android:clickable="true"

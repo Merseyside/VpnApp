@@ -5,7 +5,7 @@ import androidx.databinding.Bindable
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.domain.LockedType
-import com.merseyside.merseyLib.model.BaseSelectableAdapterViewModel
+import com.merseyside.adapters.model.BaseSelectableAdapterViewModel
 
 class TypeViewModel(override var obj: LockedType) : BaseSelectableAdapterViewModel<LockedType>(
     obj,

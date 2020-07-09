@@ -4,6 +4,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import com.github.shadowsocks.Core
+import com.merseyside.archy.BaseApplication
 import com.merseyside.dropletapp.connectionTypes.Builder
 import com.merseyside.dropletapp.data.db.VpnDatabase
 import com.merseyside.dropletapp.di.*
@@ -13,7 +14,6 @@ import com.merseyside.dropletapp.presentation.di.module.AppModule
 import com.merseyside.dropletapp.presentation.di.module.SubscriptionModule
 import com.merseyside.dropletapp.subscriptions.SubscriptionManager
 import com.merseyside.dropletapp.utils.AccountManagerAndroid
-import com.merseyside.merseyLib.BaseApplication
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import javax.inject.Inject
 

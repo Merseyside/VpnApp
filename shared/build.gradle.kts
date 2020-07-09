@@ -5,6 +5,27 @@ plugins {
     plugin(Deps.Plugins.kotlinSerialization)
     plugin(Deps.Plugins.sqlDelight)
     plugin(Deps.Plugins.mobileMultiplatform)
+    plugin(Deps.Plugins.buildKonfig)
+}
+
+buildkonfig {
+    packageName = "com.merseyside.dropletapp"
+
+    defaultConfigs {
+        buildConfigField(
+            type = com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            name = "host",
+            value = "https://myvpn.run/api/v1"
+        )
+    }
+
+    defaultConfigs("dev") {
+        buildConfigField(
+            type = com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            name = "host",
+            value = "http://192.168.0.1"
+        )
+    }
 }
 
 android {

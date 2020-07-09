@@ -3,9 +3,9 @@ package com.merseyside.dropletapp.presentation.di.module
 import android.content.Context
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.subscriptions.SubscriptionManager
-import com.merseyside.merseyLib.presentation.di.qualifiers.ApplicationContext
-import com.merseyside.merseyLib.utils.billing.BillingManager
-import com.merseyside.merseyLib.utils.ext.log
+import com.merseyside.archy.di.qualifiers.ApplicationContext
+import com.merseyside.utils.billing.BillingManager
+import com.merseyside.utils.ext.log
 import com.mobapphome.mahencryptorlib.MAHEncryptor
 import dagger.Module
 import dagger.Provides

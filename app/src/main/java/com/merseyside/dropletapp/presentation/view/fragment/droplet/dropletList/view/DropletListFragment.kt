@@ -13,10 +13,10 @@ import com.merseyside.dropletapp.presentation.di.component.DaggerDropletListComp
 import com.merseyside.dropletapp.presentation.di.module.DropletListModule
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.adapter.DropletAdapter
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletListViewModel
-import com.merseyside.merseyLib.adapters.BaseAdapter
-import com.merseyside.merseyLib.adapters.UpdateRequest
-import com.merseyside.merseyLib.presentation.view.OnBackPressedListener
-import com.merseyside.merseyLib.utils.Logger
+import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.base.UpdateRequest
+import com.merseyside.archy.presentation.view.OnBackPressedListener
+import com.merseyside.utils.Logger
 
 class DropletListFragment : BaseVpnFragment<FragmentDropletListBinding, DropletListViewModel>(),
     OnBackPressedListener {

@@ -11,22 +11,8 @@ allprojects {
             maven { url = uri("https://kotlin.bintray.com/kotlinx") }
             maven { url = uri("https://dl.bintray.com/icerockdev/plugins") }
         }
-
-//        dependencies {
-//            classpath("gradle.plugin.org.mozilla.rust-android-gradle:plugin:0.8.3")
-//        }
-
-//    dependencies {
-//        with(LibraryDeps.Plugins) {
-//            listOfNotNull(
-//                androidLibrary,
-//                kotlinMultiplatform,
-//                kotlinKapt,
-//                kotlinAndroid
-//            )
-//        }.let { plugins(it) }
-//    }
     }
+
     repositories {
         google()
         jcenter()

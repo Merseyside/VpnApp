@@ -2,7 +2,6 @@ package com.merseyside.dropletapp.presentation.view.fragment.droplet.addCustomSe
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import androidx.databinding.ObservableField
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.entity.TypedConfig
@@ -12,10 +11,9 @@ import com.merseyside.dropletapp.domain.interactor.GetTypedConfigNamesInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.utils.getLogByStatus
-import com.merseyside.merseyLib.utils.ext.onChange
-import com.merseyside.merseyLib.utils.isIpValid
-import com.merseyside.merseyLib.utils.mainThread
-import kotlinx.coroutines.cancel
+import com.merseyside.utils.ext.onChange
+import com.merseyside.utils.isIpValid
+import com.merseyside.utils.mainThread
 import ru.terrakok.cicerone.Router
 
 class AddCustomDropletViewModel(

@@ -13,7 +13,7 @@ import com.merseyside.dropletapp.domain.LockedType
 import com.merseyside.dropletapp.domain.model.Region
 import com.merseyside.dropletapp.presentation.view.fragment.easyAccess.adapter.RegionAdapter
 import com.merseyside.dropletapp.presentation.view.fragment.easyAccess.adapter.TypeAdapter
-import com.merseyside.merseyLib.adapters.BaseSelectableAdapter
+import com.merseyside.adapters.base.BaseSelectableAdapter
 
 @BindingAdapter("onTypeSelected")
 fun setSelectedListener(
@@ -45,7 +45,6 @@ fun setTypes(view: RecyclerView, types: List<LockedType>?) {
 private fun initTypeRecyclerView(recyclerView: RecyclerView): TypeAdapter {
     return TypeAdapter().also {
         recyclerView.adapter = it
-        recyclerView.layoutManager = StaggeredGridLayoutManager(2, GridLayoutManager.HORIZONTAL)
     }
 }
 

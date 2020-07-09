@@ -12,7 +12,7 @@
     <dimen name="small_text_size">12sp</dimen>
     <dimen name="text_size">14sp</dimen>
     <dimen name="medium_text_size">18sp</dimen>
-    <dimen name="large_text_size">28sp</dimen>
+    <dimen name="large_text_size">24sp</dimen>
     <dimen name="very_large_text_size">36sp</dimen>
 
     <dimen name="button_corner_radius">18dp</dimen>
@@ -31,8 +31,9 @@
     <dimen name="button_size">36dp</dimen>
     <dimen name="type_corner_radius">16dp</dimen>
     <dimen name="qr_size">350dp</dimen>
-    <dimen name="dialog_width_size">250dp</dimen>
+    <dimen name="dialog_width_size">350dp</dimen>
     <dimen name="button_width">250dp</dimen>
-    <dimen name="subscription_max_size">400dp</dimen>
+    <dimen name="subscription_max_size">420dp</dimen>
+    <dimen name="subscription_button_radius">24dp</dimen>
 
 </resources>

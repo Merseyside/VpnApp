@@ -9,8 +9,8 @@ import com.merseyside.dropletapp.presentation.di.module.NavigationModule
 import com.merseyside.dropletapp.presentation.di.module.SubscriptionModule
 import com.merseyside.dropletapp.subscriptions.SubscriptionManager
 import com.merseyside.dropletapp.utils.PrefsHelper
-import com.merseyside.merseyLib.presentation.di.qualifiers.ApplicationContext
-import com.merseyside.merseyLib.utils.preferences.PreferenceManager
+import com.merseyside.archy.di.qualifiers.ApplicationContext
+import com.merseyside.utils.preferences.PreferenceManager
 import dagger.Component
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router

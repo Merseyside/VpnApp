@@ -11,9 +11,9 @@ import com.merseyside.dropletapp.domain.model.OAuthProvider
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.utils.getProviderColor
 import com.merseyside.dropletapp.utils.getProviderIcon
-import com.merseyside.merseyLib.model.BaseComparableAdapterViewModel
-import com.merseyside.merseyLib.presentation.interfaces.IStringHelper
-import com.merseyside.merseyLib.utils.ext.isNotNullAndEmpty
+import com.merseyside.adapters.model.BaseComparableAdapterViewModel
+import com.merseyside.archy.interfaces.IStringHelper
+import com.merseyside.utils.ext.isNotNullAndEmpty
 
 class ProviderItemModel(override var obj: OAuthProvider)
     : BaseComparableAdapterViewModel<OAuthProvider>(obj), IStringHelper {

@@ -7,10 +7,8 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import androidx.recyclerview.widget.RecyclerView
-import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.adapter.TypesAdapter
-import com.merseyside.merseyLib.adapters.BaseAdapter
-import com.merseyside.merseyLib.adapters.BaseSelectableAdapter
+import com.merseyside.adapters.base.BaseSelectableAdapter
 
 @BindingAdapter("bind:types")
 fun setTypes(recyclerView: RecyclerView, types: List<String>?) {
@@ -50,12 +48,5 @@ fun getSelectedMembers(view: RecyclerView): String? {
         it as TypesAdapter
 
         it.getSelectedItem()
-    }
-}
-
-@BindingAdapter("bind:backgroundDrawable")
-fun setDrawableBackground(view: View, @DrawableRes res: Int?) {
-    if (res != null) {
-        view.background = ContextCompat.getDrawable(view.context, res)
     }
 }

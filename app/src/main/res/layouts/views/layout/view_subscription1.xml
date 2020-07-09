@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="obj"
+            type="com.merseyside.dropletapp.presentation.view.dialog.subscription.model.SubscriptionItemViewModel" />
+    </data>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/normal_spacing"
+        android:baselineAligned="false"
+        android:background="@drawable/background_subscription_button"
+        android:layout_margin="@dimen/small_spacing"
+        android:onClick="@{view -> obj.onSubscribeClick()}">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                android:text="@{obj.title}"
+                android:textColor="?attr/textColorSecondary"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/VpnApp.Body2"
+                android:textColor="?attr/textColorMain"
+                android:layout_marginTop="@dimen/very_small_spacing"
+                android:text="@{obj.periodAndPrice}"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/VpnApp.Headline5"
+                android:textColor="?attr/colorSecondary"
+                android:text="@{obj.pricePerMonth}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/VpnApp.Body2"
+                android:textColor="?attr/textColorMain"
+                android:text="@string/for_month"
+                android:layout_marginTop="@dimen/very_small_spacing"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

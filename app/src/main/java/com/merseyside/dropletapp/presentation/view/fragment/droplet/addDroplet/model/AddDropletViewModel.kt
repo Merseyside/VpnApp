@@ -2,9 +2,6 @@ package com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.View
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.merseyside.dropletapp.R
@@ -18,9 +15,8 @@ import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.providerApi.base.entity.point.RegionPoint
 import com.merseyside.dropletapp.utils.getLogByStatus
-import com.merseyside.merseyLib.utils.ext.onChange
-import com.merseyside.merseyLib.utils.mainThread
-import kotlinx.coroutines.cancel
+import com.merseyside.utils.ext.onChange
+import com.merseyside.utils.mainThread
 import ru.terrakok.cicerone.Router
 
 class AddDropletViewModel(

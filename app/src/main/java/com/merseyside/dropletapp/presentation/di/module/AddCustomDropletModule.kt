@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.merseyside.dropletapp.domain.interactor.CreateCustomServerInteractor
 import com.merseyside.dropletapp.domain.interactor.GetTypedConfigNamesInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addCustomServer.model.AddCustomDropletViewModel
-import com.merseyside.merseyLib.presentation.fragment.BaseFragment
-import com.merseyside.merseyLib.presentation.model.BundleAwareViewModelFactory
+import com.merseyside.archy.presentation.fragment.BaseFragment
+import com.merseyside.archy.model.BundleAwareViewModelFactory
 import dagger.Module
 import dagger.Provides
 import ru.terrakok.cicerone.Router

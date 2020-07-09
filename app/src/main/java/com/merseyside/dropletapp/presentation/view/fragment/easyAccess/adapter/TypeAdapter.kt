@@ -4,7 +4,7 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.LockedType
 import com.merseyside.dropletapp.presentation.view.fragment.easyAccess.model.TypeViewModel
-import com.merseyside.merseyLib.adapters.BaseSelectableAdapter
+import com.merseyside.adapters.base.BaseSelectableAdapter
 
 class TypeAdapter : BaseSelectableAdapter<LockedType, TypeViewModel>() {
 

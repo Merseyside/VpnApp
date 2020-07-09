@@ -119,7 +119,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.merseyside.merseyLib.presentation.view.progressBar.TextProgressBar
+        <com.merseyside.archy.presentation.view.progressBar.TextProgressBar
                 android:id="@+id/progress"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

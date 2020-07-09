@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.databinding.Bindable
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
-import com.merseyside.merseyLib.model.BaseSelectableAdapterViewModel
+import com.merseyside.adapters.model.BaseSelectableAdapterViewModel
 
 class TypeNameItemViewModel(override var obj: String) : BaseSelectableAdapterViewModel<String>(obj) {
 

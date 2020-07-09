@@ -6,7 +6,7 @@ import com.merseyside.dropletapp.domain.Server
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
-import com.merseyside.merseyLib.utils.Logger
+import com.merseyside.utils.Logger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.FlowCollector
 import ru.terrakok.cicerone.Router

@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.subscriptions
 
+import com.merseyside.dropletapp.BuildKonfig
 import com.merseyside.dropletapp.subscriptions.entity.response.SubscriptionResponse
 import com.merseyside.kmpMerseyLib.utils.ktor.KtorRouter
 import com.merseyside.kmpMerseyLib.utils.ktor.get
@@ -8,7 +9,7 @@ import kotlinx.serialization.ImplicitReflectionSerializer
 import kotlinx.serialization.builtins.ListSerializer
 
 class SubscriptionsRouter(httpClientEngine: HttpClientEngine): KtorRouter(
-    baseUrl = "https://myvpn.run/api/v1",
+    baseUrl = BuildKonfig.host,
     httpClientEngine = httpClientEngine
 ) {
 

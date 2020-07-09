@@ -6,6 +6,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.github.shadowsocks.plugin.PluginManager
+import com.merseyside.archy.presentation.view.localeViews.LocaleData
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.connectionTypes.*
 import com.merseyside.dropletapp.connectionTypes.Type
@@ -23,10 +24,14 @@ import com.merseyside.dropletapp.utils.PrefsHelper
 import com.merseyside.dropletapp.utils.application
 import com.merseyside.kmpMerseyLib.domain.coroutines.applicationContext
 import com.merseyside.kmpMerseyLib.utils.time.Hours
-import com.merseyside.merseyLib.utils.Logger
-import com.merseyside.merseyLib.utils.ext.log
-import com.merseyside.merseyLib.utils.mvvm.SingleLiveEvent
-import com.merseyside.merseyLib.utils.time.getFormattedDate
+import com.merseyside.utils.Logger
+import com.merseyside.utils.ext.isNotNullAndEmpty
+import com.merseyside.utils.ext.log
+import com.merseyside.utils.ext.onChange
+import com.merseyside.utils.mvvm.SingleLiveEvent
+import com.merseyside.utils.time.getDate
+import com.merseyside.utils.time.getFormattedDate
+import com.merseyside.utils.time.toTimeUnit
 import kotlinx.coroutines.*
 import ru.terrakok.cicerone.Router
 import kotlin.coroutines.CoroutineContext
@@ -45,59 +50,84 @@ class EasyAccessViewModel(
         get() = applicationContext
 
     var sessionTime: Long = 0
-    var currentType: LockedType? = null
+    private var currentType: LockedType? = null
 
-    val connectButtonDrawable = ObservableField<Int>()
+    val connectButtonDrawable = ObservableField<Int>(R.drawable.background_action_button_idle)
     val connectButtonTitle = ObservableField(getString(R.string.connect))
     val types = ObservableField<List<LockedType>>()
     val timer = ObservableField<String>()
 
-    val currentRegion = ObservableField<Region>()
+    val currentRegion = ObservableField<Region>().apply {
+        onChange { _, value, isInitial ->
+            if (!isInitial) {
+                isNewRegion.set(ServiceConnectionType.isActive()
+                        && (server.regionName != value?.code)
+                )
+            }
+        }
+    }
 
-    val regionLiveData = MutableLiveData<List<Region>>()
+    private val regionLiveData = MutableLiveData<List<Region>>()
     val v2RayRequireEvent = SingleLiveEvent<Any>()
+    val info = ObservableField<LocaleData>()
 
     fun getRegionLiveData(): LiveData<List<Region>> = regionLiveData
 
     val isPurchased = ObservableField(false)
+    val isNewRegion = ObservableField(false)
 
     private var connectionType: ServiceConnectionType? = null
         set(value) {
             field = value
 
-            value?.apply {
-                setConnectionCallback(object : ConnectionCallback {
-                    override fun onConnectionEvent(connectionLevel: ConnectionLevel) {
-                        setConnectionStatus(connectionLevel)
-                    }
+            async {
+                val isSubscribed = subscriptionManager.isSubscribed()
 
-                    override fun onSessionTime(timestamp: Long) {
-                        sessionTime = timestamp
+                val alreadySpendTime =  if (isSubscribed) {
+                    0L
+                } else {
+                    prefsHelper.getTrialTime()
+                }
 
-                        val alreadySpendTime = prefsHelper.getTrialTime()
+                value?.apply {
+                    setConnectionCallback(object : ConnectionCallback {
 
-                        val total = timestamp + alreadySpendTime
-                        if (total >= hour.toMillisLong()) {
-
-                            showTrialAlertDialog()
-
-                            if (isConnected) {
-                                connectionType!!.stop()
-                            }
+                        override fun onConnectionEvent(connectionLevel: ConnectionLevel) {
+                            setConnectionStatus(connectionLevel)
                         }
 
-                        val formatted = getFormattedDate(total, "HH : mm : ss")
-                        timer.set(formatted)
-                    }
-                })
+                        override fun onSessionTime(timestamp: Long) {
+                            sessionTime = timestamp
 
-                start(this@EasyAccessViewModel.server)
+                            val total = timestamp + alreadySpendTime
+
+                            if (!isSubscribed) {
+                                if (total >= hour.toMillisLong()) {
+
+                                    showTrialAlertDialog()
+
+                                    if (isConnected) {
+                                        connectionType!!.stop()
+                                    }
+                                }
+                            }
+
+                            val formatted = getFormattedDate(total, "HH : mm : ss")
+                            timer.set(formatted)
+                        }
+                    })
+
+                    if (ServiceConnectionType.isActive()) {
+                        this@EasyAccessViewModel.server = value.server!!
+                        setConnectionStatus(ServiceConnectionType.getCurrentStatus())
+                    } else {
+                        start(this@EasyAccessViewModel.server)
+                    }
+                }
             }
         }
 
     init {
-        server = Server.newDummyServer()
-
         if (ServiceConnectionType.isActive()) {
             connectionType = ServiceConnectionType.getCurrentConnectionType()
         }
@@ -107,6 +137,17 @@ class EasyAccessViewModel(
         getPurchasedSubscription()
     }
 
+    private fun setCurrentRegion() {
+        if (connectionType != null && regionLiveData.value.isNotNullAndEmpty()) {
+
+            val foundRegion = regionLiveData.value!!.find { it.code == server.regionName }
+
+            if (foundRegion != null) {
+                currentRegion.set(foundRegion)
+            }
+        }
+    }
+
     override fun dispose() {
         getVpnConfigUseCase.cancel()
         getLockedTypesUseCase.cancel()
@@ -114,7 +155,6 @@ class EasyAccessViewModel(
     }
 
     override fun readFrom(bundle: Bundle) {}
-
     override fun writeTo(bundle: Bundle) {}
 
     private fun getLockedTypes() {
@@ -124,6 +164,17 @@ class EasyAccessViewModel(
     }
 
     private fun startVpn(type: Type, config: String) {
+        createServer(type, config)
+
+        if (server.typedConfig is TypedConfig.Shadowsocks) {
+            if ((server.typedConfig as TypedConfig.Shadowsocks).isV2Ray()) {
+                if (!PluginManager.isV2RayEnabled()) {
+                    v2RayRequireEvent.call()
+                    return
+                }
+            }
+        }
+
         connectionType = connectionTypeBuilder
             .setType(type)
             .setConfig(config)
@@ -137,7 +188,7 @@ class EasyAccessViewModel(
             getVpnConfigUseCase.execute(
                 params = GetVpnConfigInteractor.Params(
                     type = type,
-                    locale = application.getLocale().language.log(),
+                    locale = application.getLocale().language,
                     region = currentRegion.get()!!
                 ),
                 onComplete = { config ->
@@ -153,11 +204,13 @@ class EasyAccessViewModel(
         }
     }
 
-    fun getRegions() {
+    private fun getRegions() {
         getRegionsUseCase.execute(
             onComplete = {
                 if (it.isNotEmpty()) {
                     regionLiveData.value = it
+
+                    setCurrentRegion()
                 }
             }, onError = {
                 showErrorMsg("Something went wrong")
@@ -176,8 +229,15 @@ class EasyAccessViewModel(
 
             else -> {
                 this.isConnected = false
-                prefsHelper.addTrialTime(sessionTime)
-                sessionTime = 0
+
+                launch {
+
+                    if (!subscriptionManager.isSubscribed()) {
+                        prefsHelper.addTrialTime(sessionTime)
+                    }
+
+                    sessionTime = 0
+                }
             }
         }
     }
@@ -197,15 +257,15 @@ class EasyAccessViewModel(
     private fun getConnectButtonDrawable(level: ConnectionLevel): Int {
         return when(level) {
             ConnectionLevel.CONNECTED -> {
-                R.attr.colorError
+                R.drawable.background_action_button_disconnect
             }
 
             ConnectionLevel.IDLE -> {
-                R.attr.colorPrimary
+                R.drawable.background_button_gradient
             }
 
             else -> {
-                R.attr.pendingColor
+                R.drawable.background_action_button_connecting
             }
         }
     }
@@ -228,21 +288,15 @@ class EasyAccessViewModel(
 
     override fun onConnect() {
         if (VpnHelper.prepare(application) == null) {
-            if (!isConnected) {
+            if (!ServiceConnectionType.isActive()) {
 
-                if (server.typedConfig is TypedConfig.Shadowsocks) {
-                    if ((server.typedConfig as TypedConfig.Shadowsocks).isV2Ray()) {
-                        if (!PluginManager.isV2RayEnabled()) {
-                            v2RayRequireEvent.call()
-                            return
-                        }
+                launch {
+                    if (subscriptionManager.isSubscribed() ||
+                        prefsHelper.getTrialTime().log() < hour.toMillisLong()) {
+                        connect()
+                    } else {
+                        showTrialAlertDialog()
                     }
-                }
-
-                if (prefsHelper.getTrialTime().log() < hour.toMillisLong()) {
-                    connect()
-                } else {
-                    showTrialAlertDialog()
                 }
             } else {
                 connectionType?.stop()
@@ -271,9 +325,29 @@ class EasyAccessViewModel(
             if (subscriptionManager.isSubscribed()) {
                 subscriptionManager.getSubscriptionInfo()?.let {
                     isPurchased.set(true)
+
+                    val expiryTime = it.expiryTime.toTimeUnit().getDate()
+                    info.set(LocaleData(R.string.subscription_expity_date, expiryTime))
                 }
+            } else {
+                info.set(LocaleData(R.string.trial_msg)).log()
             }
         }
+    }
+
+    private fun createServer(type: Type, config: String? = null) {
+        this.server = Server.newServer(
+            type = type,
+            region = currentRegion.get()!!.code,
+            config = config
+        )
+    }
+
+    fun onChangeRegion() {
+        connectionType?.stop()
+        onConnect()
+
+        isNewRegion.set(false)
     }
 
     companion object {

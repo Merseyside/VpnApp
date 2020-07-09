@@ -124,4 +124,17 @@
     <string name="v2ray_required">V2Ray плагин</string>
     <string name="v2ray_required_msg">Этому серверу необходим V2Ray плагин. Нажмите \"Загрузить\" для перехода в Google Play.</string>
     <string name="download">Загрузить</string>
+    <string name="subscribe">Подписаться</string>
+    <string name="subscription_expity_date">Подписка доступна до %1$s</string>
+
+    <string name="change_region">Поменять регион</string>
+    <string name="choose_tariff">Выберите тариф</string>
+    <string name="plan_includes">Каждый тарифный план включает:</string>
+    <string name="dedicated_access">Выделенный доступ</string>
+    <string name="unlimited_speed">Неограниченная скорость</string>
+    <string name="choosing_security_protocol">Выбор протокола безопасности</string>
+    <string name="price_with_period">%1$s за %2$s</string>
+    <string name="choose_region">Выберите регион</string>
+    <string name="for_month">за месяц</string>
+    <string name="choose_protocol">Выберите протокол</string>
 </resources>

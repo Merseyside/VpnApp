@@ -10,8 +10,7 @@ import com.merseyside.dropletapp.domain.interactor.SaveTokenInteractor
 import com.merseyside.dropletapp.presentation.base.BaseDropletViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
-import com.merseyside.merseyLib.utils.Logger
-import kotlinx.coroutines.cancel
+import com.merseyside.utils.Logger
 import ru.terrakok.cicerone.Router
 
 class AuthViewModel(

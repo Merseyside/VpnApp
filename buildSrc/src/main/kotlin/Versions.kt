@@ -17,13 +17,14 @@ object Versions {
     private const val mokoResources = "0.9.0"
 
     object Plugins {
-        const val android = "4.0.0"
+        const val android = "4.1.0-alpha01"
 
         const val kotlin = LibraryVersions.kotlin
         const val serialization = LibraryVersions.kotlin
         const val androidExtensions = LibraryVersions.kotlin
         const val maven = "2.1"
         const val sqlDelight = "1.2.2"
+        const val buildKonfig = "0.3.3"
     }
 
     object Libs {

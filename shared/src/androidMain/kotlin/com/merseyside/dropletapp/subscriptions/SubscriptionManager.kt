@@ -9,15 +9,17 @@ import com.android.billingclient.api.SkuDetails
 import com.merseyside.dropletapp.domain.model.SubscriptionInfo
 import com.merseyside.kmpMerseyLib.utils.time.getCurrentTimeMillis
 import com.merseyside.kmpMerseyLib.utils.time.toTimeUnit
-import com.merseyside.merseyLib.utils.Logger
-import com.merseyside.merseyLib.utils.billing.BillingManager
-import com.merseyside.merseyLib.utils.billing.Subscription
-import com.merseyside.merseyLib.utils.exception.NoInternetConnection
-import com.merseyside.merseyLib.utils.ext.isNotNullAndEmpty
-import com.merseyside.merseyLib.utils.network.isOnline
-import com.merseyside.merseyLib.utils.preferences.PreferenceManager
-import com.merseyside.merseyLib.utils.serialization.deserialize
-import com.merseyside.merseyLib.utils.serialization.serialize
+import com.merseyside.utils.Logger
+import com.merseyside.utils.billing.BillingManager
+import com.merseyside.utils.billing.Subscription
+import com.merseyside.utils.billing.subscriptionPeriod
+import com.merseyside.utils.exception.NoInternetConnection
+import com.merseyside.utils.ext.isNotNullAndEmpty
+import com.merseyside.utils.ext.log
+import com.merseyside.utils.network.isOnline
+import com.merseyside.utils.preferences.PreferenceManager
+import com.merseyside.utils.serialization.deserialize
+import com.merseyside.utils.serialization.serialize
 
 actual class SubscriptionManager {
 
@@ -86,7 +88,6 @@ actual class SubscriptionManager {
                         }
                     }
                 } else {
-                    Logger.log(this, "here")
                     unsubscribe()
                 }
 
@@ -128,8 +129,9 @@ actual class SubscriptionManager {
                         SubscriptionInfo(
                             skuDetails.sku,
                             purchase.purchaseToken,
-                            skuDetails.subscriptionPeriod.toTimeUnit().toMillisLong()
-                        )
+                            getCurrentTimeMillis() +
+                                    skuDetails.subscriptionPeriod().toTimeUnit().toMillisLong()
+                        ).log()
                     )
                     onPurchase.invoke(purchase)
                 }
@@ -146,8 +148,10 @@ actual class SubscriptionManager {
     }
 
     private fun isExpired(): Boolean {
+        Logger.log(this, getSubscriptionInfo()!!.expiryTime)
+        Logger.log(this, getCurrentTimeMillis() - getSubscriptionInfo()!!.expiryTime)
         return getSubscriptionInfo()?.let {
-            return getCurrentTimeMillis() <= it.expiryTime
+            return getCurrentTimeMillis() >= it.expiryTime
         } ?: false
     }
 

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import com.merseyside.archy.dialog.BaseVMDialog
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.databinding.DialogSubscriptionBinding
@@ -14,9 +15,6 @@ import com.merseyside.dropletapp.presentation.di.module.SubscriptionViewModule
 import com.merseyside.dropletapp.presentation.view.dialog.subscription.model.SubscriptionViewModel
 import com.merseyside.dropletapp.subscriptions.SubscriptionManager
 import com.merseyside.dropletapp.subscriptions.VpnSubscription
-import com.merseyside.kmpMerseyLib.utils.time.getCurrentTimeMillis
-import com.merseyside.merseyLib.presentation.dialog.BaseVMDialog
-import com.merseyside.merseyLib.utils.billing.subscriptionPeriod
 import javax.inject.Inject
 
 

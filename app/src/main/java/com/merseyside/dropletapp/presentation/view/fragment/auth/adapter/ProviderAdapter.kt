@@ -4,7 +4,7 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.model.OAuthProvider
 import com.merseyside.dropletapp.presentation.view.fragment.auth.model.ProviderItemModel
-import com.merseyside.merseyLib.adapters.BaseSortedAdapter
+import com.merseyside.adapters.base.BaseSortedAdapter
 
 class ProviderAdapter : BaseSortedAdapter<OAuthProvider, ProviderItemModel>() {
 
