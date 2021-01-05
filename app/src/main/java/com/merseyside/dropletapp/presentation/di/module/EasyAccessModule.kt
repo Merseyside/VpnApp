@@ -1,12 +1,13 @@
 package com.merseyside.dropletapp.presentation.di.module
 
+import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.merseyside.dropletapp.domain.interactor.easyAccess.GetVpnConfigInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.easyAccess.model.EasyAccessViewModel
 import com.merseyside.dropletapp.utils.PrefsHelper
 import com.merseyside.archy.presentation.fragment.BaseFragment
-import com.merseyside.archy.model.BundleAwareViewModelFactory
+import com.merseyside.archy.presentation.model.BundleAwareViewModelFactory
 import com.merseyside.dropletapp.connectionTypes.Builder
 import com.merseyside.dropletapp.di.connectionTypeBuilder
 import com.merseyside.dropletapp.domain.interactor.GetLockedTypesInteractor
@@ -24,6 +25,7 @@ class EasyAccessModule(
 
     @Provides
     internal fun getEasyAccessViewModelProvider(
+        application: Application,
         router: Router,
         prefsHelper: PrefsHelper,
         connectionTypeBuilder: Builder,
@@ -34,6 +36,7 @@ class EasyAccessModule(
     ): ViewModelProvider.Factory {
         return FreeAccessViewModelProviderFactory(
             bundle,
+            application,
             router,
             prefsHelper,
             connectionTypeBuilder,
@@ -71,6 +74,7 @@ class EasyAccessModule(
 
     class FreeAccessViewModelProviderFactory(
         bundle: Bundle?,
+        private val application: Application,
         private val router: Router,
         private val prefsHelper: PrefsHelper,
         private val connectionTypeBuilder: Builder,
@@ -82,6 +86,7 @@ class EasyAccessModule(
 
         override fun getViewModel(): EasyAccessViewModel {
             return EasyAccessViewModel(
+                application,
                 router,
                 prefsHelper,
                 connectionTypeBuilder,

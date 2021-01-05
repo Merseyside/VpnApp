@@ -12,10 +12,10 @@ import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.utils.getProviderColor
 import com.merseyside.dropletapp.utils.getProviderIcon
 import com.merseyside.adapters.model.BaseComparableAdapterViewModel
-import com.merseyside.archy.interfaces.IStringHelper
+import com.merseyside.archy.presentation.interfaces.IStringHelper
 import com.merseyside.utils.ext.isNotNullAndEmpty
 
-class ProviderItemModel(override var obj: OAuthProvider)
+class ProviderItemModel(obj: OAuthProvider)
     : BaseComparableAdapterViewModel<OAuthProvider>(obj), IStringHelper {
 
     override fun areItemsTheSame(obj: OAuthProvider): Boolean {

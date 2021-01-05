@@ -3,7 +3,7 @@ package com.merseyside.dropletapp.presentation.di.module
 import android.content.Context
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.subscriptions.SubscriptionManager
-import com.merseyside.archy.di.qualifiers.ApplicationContext
+import com.merseyside.archy.presentation.di.qualifiers.ApplicationContext
 import com.merseyside.utils.billing.BillingManager
 import com.merseyside.utils.ext.log
 import com.mobapphome.mahencryptorlib.MAHEncryptor

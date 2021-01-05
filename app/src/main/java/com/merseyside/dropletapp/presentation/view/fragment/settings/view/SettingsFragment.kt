@@ -1,11 +1,10 @@
 package com.merseyside.dropletapp.presentation.view.fragment.settings.view
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
+import com.merseyside.adapters.base.OnItemClickListener
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.data.db.token.TokenEntity
@@ -17,8 +16,6 @@ import com.merseyside.dropletapp.presentation.view.fragment.settings.adapter.Tok
 import com.merseyside.dropletapp.presentation.view.fragment.settings.model.SettingsViewModel
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.utils.LogoutBehavior
-import com.merseyside.adapters.base.BaseAdapter
-import kotlinx.android.synthetic.main.fragment_settings.*
 
 
 class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsViewModel>() {
@@ -63,7 +60,7 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
     }
 
     private fun init() {
-        adapter.setOnItemClickListener(object : BaseAdapter.OnItemClickListener<TokenEntity> {
+        adapter.setOnItemClickListener(object : OnItemClickListener<TokenEntity> {
             override fun onItemClicked(obj: TokenEntity) {
                 viewModel.deleteToken(obj)
             }
@@ -88,8 +85,8 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
     private fun doLayout() {
         binding.tokenList.adapter = adapter
 
-        language.currentEntryValue = getLanguage()
-        language.setOnValueChangeListener {
+        binding.language.currentEntryValue = getLanguage()
+        binding.language.setOnValueChangeListener {
             setLanguage(it)
         }
 
@@ -100,7 +97,7 @@ class SettingsFragment : BaseDropletFragment<FragmentSettingsBinding, SettingsVi
 
     override fun updateLanguage(context: Context) {
         super.updateLanguage(context)
-        language.updateLanguage(context)
+        binding.language.updateLanguage(context)
 
         adapter.notifyUpdateAll()
     }

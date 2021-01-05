@@ -10,13 +10,14 @@ repositories {
     maven { url = uri("https://plugins.gradle.org/m2/") }
 }
 
-val multiplatform = "0.6.1"
-val kotlin = "1.3.72"
-val gradle = "4.0.0"
+val multiplatform = "0.8.0"
+val kotlin = "1.4.21"
+val gradle = "4.1.0"
 val mavenVersion = "2.1"
-val sqldelightVersion = "1.2.2"
+val sqldelightVersion = "1.4.4"
 val googleServices = "4.3.3"
 val rustPlugin = "0.8.3"
+val resources = "0.13.1"
 val buildKonfig = "0.3.3"
 
 dependencies {
@@ -27,6 +28,7 @@ dependencies {
     implementation("com.github.dcendents:android-maven-gradle-plugin:$mavenVersion")
     implementation("com.squareup.sqldelight:gradle-plugin:$sqldelightVersion")
     implementation("com.google.gms:google-services:$googleServices")
+    implementation("dev.icerock.moko:resources-generator:$resources")
     implementation("gradle.plugin.org.mozilla.rust-android-gradle:plugin:$rustPlugin")
     implementation("com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:$buildKonfig")
 }

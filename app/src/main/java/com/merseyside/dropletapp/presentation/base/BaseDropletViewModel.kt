@@ -1,13 +1,17 @@
 package com.merseyside.dropletapp.presentation.base
 
+import android.app.Application
 import android.content.Context
-import com.merseyside.archy.model.ParcelableViewModel
+import com.merseyside.archy.presentation.model.ParcelableViewModel
 import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.presentation.exception.ErrorMessageFactory
 import com.merseyside.utils.mvvm.SingleLiveEvent
 import ru.terrakok.cicerone.Router
 
-abstract class BaseDropletViewModel(private val router: Router? = null) : ParcelableViewModel() {
+abstract class BaseDropletViewModel(
+    application: Application,
+    private val router: Router? = null
+) : ParcelableViewModel(application) {
 
     protected val errorMsgCreator = ErrorMessageFactory()
 

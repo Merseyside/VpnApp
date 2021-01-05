@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.fragment.settings.model
 
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import androidx.databinding.ObservableField
@@ -14,10 +15,11 @@ import kotlinx.coroutines.cancel
 import ru.terrakok.cicerone.Router
 
 class SettingsViewModel(
+   application: Application,
     router: Router,
     private val getAllTokensUseCase: GetAllTokensInteractor,
     private val deleteTokenUseCase: DeleteTokenInteractor
-) : BaseDropletViewModel(router) {
+) : BaseDropletViewModel(application, router) {
 
     val tokenLiveData = MutableLiveData<List<TokenEntity>>()
     val tokensVisibility = ObservableField<Boolean>()

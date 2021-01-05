@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.dialog.subscription.model
 
+import android.app.Application
 import android.os.Bundle
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
@@ -17,9 +18,10 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class SubscriptionViewModel(
+    application: Application,
     private val subscriptionManager: SubscriptionManager,
     private val getSubscriptionsUseCase: GetSubscriptionsInteractor
-) : BaseDropletViewModel(), CoroutineScope {
+) : BaseDropletViewModel(application), CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main

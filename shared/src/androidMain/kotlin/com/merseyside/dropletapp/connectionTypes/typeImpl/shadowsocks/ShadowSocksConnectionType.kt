@@ -30,7 +30,7 @@ actual class ShadowSocksConnectionType actual constructor() :
     override fun start(server: Server) {
         super.start(server)
 
-        Core.init(context!! as Application)
+        Core.init(context!! as Application, context!!.javaClass.kotlin)
         profile = prepareProfile()
 
         if (profile != null) {

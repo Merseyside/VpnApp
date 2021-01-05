@@ -1,12 +1,11 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.model
 
+import android.app.Application
 import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.databinding.ObservableField
-import com.github.shadowsocks.plugin.PluginManager
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.connectionTypes.*
-import com.merseyside.dropletapp.connectionTypes.typeImpl.openVpn.OpenVpnConnectionType
 import com.merseyside.dropletapp.data.entity.TypedConfig
 import com.merseyside.dropletapp.data.exception.BannedAddressException
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
@@ -18,7 +17,6 @@ import com.merseyside.dropletapp.presentation.base.BaseVpnViewModel
 import com.merseyside.dropletapp.presentation.navigation.Screens
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.ssh.SshManager
-import com.merseyside.dropletapp.utils.application
 import com.merseyside.dropletapp.utils.getLogByStatus
 import com.merseyside.dropletapp.utils.getProviderIcon
 import com.merseyside.filemanager.FileManager
@@ -31,12 +29,13 @@ import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 class DropletViewModel(
+    application: Application,
     private val router: Router,
     private val connectionTypeBuilder: Builder,
     private val getDropletsUseCase: GetDropletsInteractor,
     private val createServerUseCase: CreateServerInteractor,
     private val deleteServerUseCase: DeleteDropletInteractor
-) : BaseVpnViewModel(router), CoroutineScope {
+) : BaseVpnViewModel(application, router), CoroutineScope {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, _ -> }
     private val job = Job()
@@ -68,7 +67,7 @@ class DropletViewModel(
     val providerIcon = ObservableField<Int>()
     val providerTitle = ObservableField<String>()
 
-    val statusIcon = ObservableField<Int>()
+    val statusIconField = ObservableField<Int>()
     val statusColor = ObservableField<Int>()
     val status = ObservableField<String>()
 
@@ -149,7 +148,7 @@ class DropletViewModel(
                 if (!isConnected) {
                     if (server.typedConfig is TypedConfig.Shadowsocks) {
                         if ((server.typedConfig as TypedConfig.Shadowsocks).isV2Ray()) {
-                            if (!PluginManager.isV2RayEnabled()) {
+                            if (true) {
                                 v2RayRequireEvent.call()
                                 return
                             }
@@ -284,7 +283,7 @@ class DropletViewModel(
         providerIcon.set(getIcon())
         providerTitle.set(getTitle())
 
-        statusIcon.set(getStatusIcon())
+        statusIconField.set(getStatusIcon())
         statusColor.set(getStatusColor())
         status.set(getStatus())
 

@@ -4,7 +4,7 @@ import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.di.tokenComponent
 import com.merseyside.kmpMerseyLib.domain.coroutines.CoroutineUseCase
 import com.merseyside.dropletapp.domain.repository.TokenRepository
-import org.kodein.di.erased.instance
+import org.kodein.di.instance
 
 class GetTokensByProviderIdInteractor : CoroutineUseCase<List<TokenEntity>, GetTokensByProviderIdInteractor.Params>() {
 

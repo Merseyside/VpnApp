@@ -137,4 +137,8 @@
     <string name="choose_region">Выберите регион</string>
     <string name="for_month">за месяц</string>
     <string name="choose_protocol">Выберите протокол</string>
+
+    <string name="session_time">Время сессии</string>
+    <string name="protocol">Протокол</string>
+    <string name="region1">Регион</string>
 </resources>

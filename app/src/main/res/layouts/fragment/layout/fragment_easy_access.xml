@@ -30,42 +30,68 @@
                 tools:ignore="ContentDescription"
                 app:layout_constraintTop_toTopOf="parent"/>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/region_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/VpnApp.Headline4"
+                    android:text="@string/choose_region"
+                    android:layout_marginStart="@dimen/medium_spacing"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:textColor="?attr/textColorSecondary"
+                    android:fontFamily="@font/ubuntu_condenced"/>
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/region_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/big_spinner_size"
+                    android:overlapAnchor="true"
+                    android:scrollbars="none"
+                    android:minWidth="@dimen/big_spinner_size"
+                    android:background="@drawable/country_spinner_background"
+                    android:layout_margin="@dimen/medium_spacing"
+                    android:layout_centerVertical="true"
+                    android:popupBackground="@drawable/country_spinner_dropdown_background"
+                    app:onRegionSelected="@={viewModel.currentRegion}"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:textData="@{viewModel.info}"
+                    android:textAppearance="@style/VpnApp.Body1"
+                    android:layout_above="@+id/region_spinner"
+                    android:textColor="?attr/pendingColor"
+                    android:layout_marginStart="@dimen/medium_spacing"
+                    android:layout_marginEnd="@dimen/medium_spacing"
+                    android:layout_marginBottom="@dimen/small_spacing"
+                    app:layout_constraintBottom_toTopOf="@+id/region_spinner"
+                    android:fontFamily="@font/ubuntu"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
+                android:id="@+id/connected_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/VpnApp.Headline5"
-                android:text="@string/choose_region"
+                android:text="@string/connected_to_vpn"
                 android:layout_marginStart="@dimen/medium_spacing"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:textColor="?attr/textColorSecondary"/>
-
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/region_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/big_spinner_size"
-                android:overlapAnchor="true"
-                android:scrollbars="none"
-                android:minWidth="@dimen/big_spinner_size"
-                android:background="@drawable/country_spinner_background"
-                android:layout_margin="@dimen/medium_spacing"
-                android:layout_centerVertical="true"
-                android:popupBackground="@drawable/country_spinner_dropdown_background"
-                app:onRegionSelected="@={viewModel.currentRegion}"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:textData="@{viewModel.info}"
-                android:textAppearance="@style/VpnApp.Body1"
-                android:layout_above="@+id/region_spinner"
-                android:textColor="?attr/pendingColor"
-                android:layout_marginStart="@dimen/medium_spacing"
-                android:layout_marginEnd="@dimen/medium_spacing"
-                android:layout_marginBottom="@dimen/small_spacing"
-                app:layout_constraintBottom_toTopOf="@+id/region_spinner"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="?attr/textColorSecondary"
+                android:visibility="invisible"
+                android:fontFamily="@font/ubuntu_condenced"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -85,14 +111,16 @@
                     android:id="@+id/type_container"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:visibility="visible">
 
                     <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/VpnApp.Headline5"
+                        android:textAppearance="@style/VpnApp.Headline4"
                         android:textColor="?attr/textColorSecondary"
-                        android:text="@string/choose_protocol"/>
+                        android:text="@string/choose_protocol"
+                        android:fontFamily="@font/ubuntu_condenced"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/type_list"
@@ -112,27 +140,169 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_centerVertical="true"
                     android:visibility="invisible">
 
-                    <TextView
+                    <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/time_session"
-                        android:textStyle="bold"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                        android:letterSpacing="0.25"
-                        android:textAllCaps="true" />
+                        android:layout_marginBottom="@dimen/small_spacing">
 
-                    <TextView
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/small_spacing"
+                            android:paddingStart="@dimen/small_spacing"
+                            android:paddingEnd="@dimen/small_spacing"
+                            android:background="@drawable/free_type_bg">
+
+                            <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="?attr/textColorSecondary"
+                                android:text="@string/session_time"
+                                android:textAppearance="@style/VpnApp.Body1"
+                                android:fontFamily="@font/ubuntu_condenced"/>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:padding="@dimen/tiny_spacing"
+                                android:layout_marginStart="@dimen/small_spacing"
+                                android:layout_marginEnd="@dimen/small_spacing"
+                                android:background="@color/grey_dark"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/VpnApp.Body1"
+                                android:textColor="?attr/colorSecondary"
+                                android:text="@{viewModel.timer}"
+                                android:fontFamily="@font/ubuntu_condenced"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/small_spacing"
+                            android:paddingStart="@dimen/small_spacing"
+                            android:paddingEnd="@dimen/small_spacing"
+                            android:layout_marginStart="@dimen/small_spacing"
+                            android:background="@drawable/free_type_bg">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/VpnApp.Body1"
+                                android:textColor="?attr/textColorSecondary"
+                                android:text="@string/ip_address"
+                                android:fontFamily="@font/ubuntu_condenced"/>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:padding="@dimen/tiny_spacing"
+                                android:layout_marginStart="@dimen/small_spacing"
+                                android:layout_marginEnd="@dimen/small_spacing"
+                                android:background="@color/grey_dark"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/VpnApp.Body1"
+                                android:textColor="?attr/colorSecondary"
+                                android:text="@{viewModel.ipAddress}"
+                                android:fontFamily="@font/ubuntu_condenced"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorPrimary"
-                        android:text="@{viewModel.timer}"/>
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/small_spacing"
+                            android:paddingStart="@dimen/small_spacing"
+                            android:paddingEnd="@dimen/small_spacing"
+                            android:background="@drawable/free_type_bg">
+
+                            <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/VpnApp.Body1"
+                                android:textColor="?attr/textColorSecondary"
+                                android:text="@string/protocol"
+                                android:fontFamily="@font/ubuntu_condenced"/>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:padding="@dimen/tiny_spacing"
+                                android:layout_marginStart="@dimen/small_spacing"
+                                android:layout_marginEnd="@dimen/small_spacing"
+                                android:background="@color/grey_dark"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/VpnApp.Body1"
+                                android:textColor="?attr/colorSecondary"
+                                android:text="@{viewModel.protocol}"
+                                android:fontFamily="@font/ubuntu_condenced"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/small_spacing"
+                            android:paddingStart="@dimen/small_spacing"
+                            android:paddingEnd="@dimen/small_spacing"
+                            android:layout_marginStart="@dimen/small_spacing"
+                            android:background="@drawable/free_type_bg">
+
+                            <com.merseyside.archy.presentation.view.localeViews.LocaleTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/VpnApp.Body1"
+                                android:textColor="?attr/textColorSecondary"
+                                android:text="@string/region1"
+                                android:fontFamily="@font/ubuntu_condenced"/>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:padding="@dimen/tiny_spacing"
+                                android:layout_marginStart="@dimen/small_spacing"
+                                android:layout_marginEnd="@dimen/small_spacing"
+                                android:background="@color/grey_dark"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/VpnApp.Body1"
+                                android:textColor="?attr/colorSecondary"
+                                android:text="@{viewModel.region}"
+                                android:fontFamily="@font/ubuntu_condenced"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
                 </LinearLayout>
+
+
 
             </RelativeLayout>
 
@@ -143,27 +313,31 @@
                 android:layout_marginTop="@dimen/very_large_spacing"
                 android:gravity="center">
 
-                <Button
+                <com.merseyside.archy.presentation.view.localeViews.LocaleButton
                     android:id="@+id/connect"
                     android:layout_width="@dimen/button_width"
                     android:layout_height="wrap_content"
                     android:text="@{viewModel.connectButtonTitle}"
-                    app:backgroundDrawable="@{viewModel.connectButtonDrawable}"
+                    android:background="@drawable/background_action_button_idle"
                     app:backgroundTint="@null"
+                    android:letterSpacing="0.13"
                     android:onClick="@{view -> viewModel.onConnect()}"
-                    android:textColor="?attr/colorOnPrimary" />
+                    android:textColor="?attr/colorOnPrimary"
+                    android:fontFamily="@font/ubuntu"/>
 
                 <com.merseyside.archy.presentation.view.localeViews.LocaleButton
                     android:id="@+id/subscription"
                     android:layout_width="@dimen/button_width"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small_spacing"
+                    android:layout_marginBottom="@dimen/small_spacing"
+                    android:background="@drawable/background_action_button_idle"
+                    android:letterSpacing="0.13"
                     android:text="@string/subscribe"
                     android:textColor="?attr/colorOnPrimary"
-                    android:background="@drawable/background_action_button_idle"
                     app:backgroundTint="@null"
-                    android:letterSpacing="0.13"
-                    android:layout_marginTop="@dimen/small_spacing"
-                    app:isVisibleOrGone="@{!viewModel.isPurchased}"/>
+                    app:isVisibleOrGone="@{!viewModel.isPurchased}"
+                    android:fontFamily="@font/ubuntu"/>
 
                 <com.merseyside.archy.presentation.view.localeViews.LocaleButton
                     android:id="@+id/change_region"
@@ -174,7 +348,8 @@
                     app:isVisibleOrGone="@{viewModel.isNewRegion}"
                     android:letterSpacing="0.13"
                     android:background="@drawable/background_action_button_idle"
-                    android:onClick="@{view -> viewModel.onChangeRegion()}"/>
+                    android:onClick="@{view -> viewModel.onChangeRegion()}"
+                    android:fontFamily="@font/ubuntu"/>
 
             </LinearLayout>
 

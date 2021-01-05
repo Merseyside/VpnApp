@@ -3,7 +3,6 @@ object Deps {
         val androidApplication = PluginDesc(id = "com.android.application")
         val kotlinKapt = PluginDesc(id = "kotlin-kapt")
         val kotlinAndroid = PluginDesc(id = "kotlin-android")
-        val kotlinAndroidExtensions = PluginDesc(id = "kotlin-android-extensions")
         val mobileMultiplatform = PluginDesc(id = "dev.icerock.mobile.multiplatform")
 
         val androidLibrary = PluginDesc(
@@ -165,12 +164,18 @@ object Deps {
             val mahEncryptor = AndroidLibrary(
                 name = "com.mobapphome.library:mah-encryptor-lib:${Versions.Libs.Android.mahEncryptor}"
             )
+            val calligraphy = AndroidLibrary(
+                name = "io.github.inflationx:calligraphy3:${Versions.Libs.Android.calligraphy}"
+            )
+            val viewPump = AndroidLibrary(
+                name = "io.github.inflationx:viewpump:${Versions.Libs.Android.viewPump}"
+            )
 
             object MerseyLibs {
                 private val base = "com.github.Merseyside.mersey-android-library"
 
-                val cleanMvvmArch = AndroidLibrary(
-                    name = "$base:clean-mvvm-arch:${Versions.Libs.Android.MerseyLibs.version}:standart@aar"
+                val archy = AndroidLibrary(
+                    name = "$base:archy:${Versions.Libs.Android.MerseyLibs.version}"
                 )
 
                 val adapters = AndroidLibrary(
@@ -194,13 +199,13 @@ object Deps {
             )
             val coroutines = MultiPlatformLibrary(
                 android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.Libs.MultiPlatform.coroutines}",
-                common = "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${Versions.Libs.MultiPlatform.coroutines}",
+                common = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Libs.MultiPlatform.coroutines}",
                 ios = "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:${Versions.Libs.MultiPlatform.coroutines}"
             )
             val serialization = MultiPlatformLibrary(
-                android = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:${Versions.Libs.MultiPlatform.serialization}",
-                common = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:${Versions.Libs.MultiPlatform.serialization}",
-                ios = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:${Versions.Libs.MultiPlatform.serialization}"
+                android = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.Libs.MultiPlatform.serialization}",
+                common = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.Libs.MultiPlatform.serialization}",
+                ios = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.Libs.MultiPlatform.serialization}"
             )
             val ktorClient = MultiPlatformLibrary(
                 android = "io.ktor:ktor-client-android:${Versions.Libs.MultiPlatform.ktorClient}",
@@ -224,12 +229,8 @@ object Deps {
                 iosArm64 = "dev.icerock.moko:resources-iosarm64:${Versions.Libs.MultiPlatform.mokoResources}"
             )
             val kodein = MultiPlatformLibrary(
-                common = "org.kodein.di:kodein-di-core:${Versions.Libs.MultiPlatform.kodein}"
+                common = "org.kodein.di:kodein-di:${Versions.Libs.MultiPlatform.kodein}"
             )
-            val kodeinErased = MultiPlatformLibrary(
-                common = "org.kodein.di:kodein-di-erased:${Versions.Libs.MultiPlatform.kodein}"
-            )
-
             val sqlDelight = MultiPlatformLibrary(
                 common = "com.squareup.sqldelight:runtime:${Versions.Libs.MultiPlatform.sqlDelight}",
                 android = "com.squareup.sqldelight:android-driver:${Versions.Libs.MultiPlatform.sqlDelight}"
@@ -245,6 +246,20 @@ object Deps {
                 common = "com.russhwolf:multiplatform-settings-no-arg:${Versions.Libs.MultiPlatform.settings}"
                 //android = "com.github.florent37:multiplatform-preferences-android:${Versions.Libs.MultiPlatform.preferences}"
             )
+
+            object MerseyLibs {
+                private val base = "com.merseyside.merseyLib"
+
+                val archy = MultiPlatformLibrary(
+                    common = "$base:kmp-clean-mvvm-arch:${Versions.Libs.Android.MerseyLibs.version}",
+                    android = "$base:kmp-clean-mvvm-arch-android:${Versions.Libs.Android.MerseyLibs.version}"
+                )
+
+                val utils =  MultiPlatformLibrary(
+                    common = "$base:kmp-utils:${Versions.Libs.Android.MerseyLibs.version}",
+                    android = "$base:kmp-utils-android:${Versions.Libs.Android.MerseyLibs.version}"
+                )
+            }
         }
     }
 }

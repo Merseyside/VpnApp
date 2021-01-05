@@ -6,31 +6,30 @@ object Versions {
     object Android {
         const val compileSdk = 28
         const val targetSdk = 28
-        const val minSdk = 21
+        const val minSdk = 22
 
         const val version = "1.09"
         const val versionCode = 109
     }
 
-    const val kotlin = "1.3.72"
+    const val kotlin = "1.4.21"
 
     private const val mokoResources = "0.9.0"
 
     object Plugins {
-        const val android = "4.1.0-alpha01"
+        const val android = "4.1.0"
 
         const val kotlin = LibraryVersions.kotlin
         const val serialization = LibraryVersions.kotlin
-        const val androidExtensions = LibraryVersions.kotlin
         const val maven = "2.1"
-        const val sqlDelight = "1.2.2"
+        const val sqlDelight = "1.4.2"
         const val buildKonfig = "0.3.3"
     }
 
     object Libs {
         object Android {
             const val kotlinStdLib = Versions.kotlin
-            const val coroutines = "1.3.7"
+            const val coroutines = "1.3.8"
             const val appCompat = "1.1.0"
             const val material = "1.2.0-alpha06"
             const val fragment = "1.2.4"
@@ -65,24 +64,26 @@ object Versions {
             const val filemanager = "1.0.0"
             const val wireguard = "1.0.20200407"
             const val mahEncryptor = "1.0.1"
+            const val calligraphy = "3.1.1"
+            const val viewPump = "2.0.3"
 
             object MerseyLibs {
-                const val version = "1.2.3"
+                const val version = "1.3.0"
             }
         }
 
         object MultiPlatform {
             const val kotlinStdLib = Versions.kotlin
 
-            const val coroutines = "1.3.5"
-            const val serialization = "0.20.0"
-            const val ktorClient = "1.3.2"
+            const val coroutines = "1.3.8"
+            const val serialization = "1.0.1"
+            const val ktorClient = "1.5.0"
             const val ktorClientLogging = ktorClient
 
             const val mokoMvvm = "0.6.0"
             const val mokoResources = Versions.mokoResources
 
-            const val kodein = "6.5.5"
+            const val kodein = "7.1.0"
             const val sqlDelight = "1.3.0"
             const val klock = "1.10.0"
             const val preferences = "1.0.0"

@@ -5,11 +5,10 @@ import com.merseyside.dropletapp.di.easyAccessComponent
 import com.merseyside.dropletapp.di.subscriptionComponent
 import com.merseyside.dropletapp.domain.model.Region
 import com.merseyside.dropletapp.domain.repository.EasyAccessRepository
-import com.merseyside.dropletapp.domain.repository.SubscriptionRepository
 import com.merseyside.dropletapp.easyAccess.exception.InvalidTokenException
 import com.merseyside.dropletapp.subscriptions.SubscriptionManager
 import com.merseyside.kmpMerseyLib.domain.coroutines.CoroutineUseCase
-import org.kodein.di.erased.instance
+import org.kodein.di.instance
 
 class GetRegionsInteractor : CoroutineUseCase<List<Region>, Any>() {
 

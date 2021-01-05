@@ -73,8 +73,6 @@ class MainActivity : BaseDropletActivity<ActivityMainBinding, MainViewModel>() {
         super.onCreate(savedInstanceState)
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-
-
     }
 
     override fun onResumeFragments() {

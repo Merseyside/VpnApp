@@ -5,15 +5,15 @@ import com.merseyside.dropletapp.di.appComponent
 import com.merseyside.dropletapp.di.easyAccessComponent
 import com.merseyside.dropletapp.di.subscriptionComponent
 import com.merseyside.dropletapp.domain.model.Region
+import com.merseyside.dropletapp.domain.model.Tunnel
 import com.merseyside.dropletapp.domain.repository.EasyAccessRepository
-import com.merseyside.dropletapp.domain.repository.SubscriptionRepository
 import com.merseyside.dropletapp.easyAccess.exception.InvalidTokenException
 import com.merseyside.dropletapp.subscriptions.SubscriptionManager
 import com.merseyside.dropletapp.utils.SettingsHelper
 import com.merseyside.kmpMerseyLib.domain.coroutines.CoroutineUseCase
-import org.kodein.di.erased.instance
+import org.kodein.di.instance
 
-class GetVpnConfigInteractor : CoroutineUseCase<String, GetVpnConfigInteractor.Params>() {
+class GetVpnConfigInteractor : CoroutineUseCase<Tunnel, GetVpnConfigInteractor.Params>() {
 
     private val repository: EasyAccessRepository by easyAccessComponent.instance()
     private val settingsHelper: SettingsHelper by appComponent.instance()
@@ -25,7 +25,7 @@ class GetVpnConfigInteractor : CoroutineUseCase<String, GetVpnConfigInteractor.P
         val region: Region
     )
 
-    override suspend fun executeOnBackground(params: Params?): String {
+    override suspend fun executeOnBackground(params: Params?): Tunnel {
         settingsHelper.setLocale(params!!.locale)
 
         return try {

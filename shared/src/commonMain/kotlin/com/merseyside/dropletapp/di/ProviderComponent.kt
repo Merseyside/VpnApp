@@ -7,13 +7,9 @@ import com.merseyside.dropletapp.data.db.key.KeyDao
 import com.merseyside.dropletapp.data.db.server.ServerDao
 import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
-import org.kodein.di.Kodein
-import org.kodein.di.erased.bind
-import org.kodein.di.erased.instance
-import org.kodein.di.erased.singleton
-import org.kodein.di.erased.with
+import org.kodein.di.*
 
-private val providerModule = Kodein.Module("providerName") {
+private val providerModule = DI.Module("providerName") {
 
     bind<ProviderRepository>() with singleton { ProviderRepositoryImpl(
         instance(), instance(), instance(), instance(), instance(), instance(), instance(), instance())
@@ -32,7 +28,7 @@ private val providerModule = Kodein.Module("providerName") {
     constant("sshTimeout") with 3000
 }
 
-internal val providerComponent = Kodein {
+internal val providerComponent = DI {
     extend(appComponent)
     import(providerModule)
     import(tokenModule)

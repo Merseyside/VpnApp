@@ -2,7 +2,7 @@ package com.merseyside.dropletapp.presentation.exception
 
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
-import com.merseyside.archy.interfaces.IStringHelper
+import com.merseyside.archy.presentation.interfaces.IStringHelper
 import com.merseyside.dropletapp.BuildConfig
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.VpnApplication

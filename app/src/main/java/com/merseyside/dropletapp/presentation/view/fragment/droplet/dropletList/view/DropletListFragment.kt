@@ -14,6 +14,8 @@ import com.merseyside.dropletapp.presentation.di.module.DropletListModule
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.adapter.DropletAdapter
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model.DropletListViewModel
 import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.base.HasOnItemClickListener
+import com.merseyside.adapters.base.OnItemClickListener
 import com.merseyside.adapters.base.UpdateRequest
 import com.merseyside.archy.presentation.view.OnBackPressedListener
 import com.merseyside.utils.Logger
@@ -99,7 +101,7 @@ class DropletListFragment : BaseVpnFragment<FragmentDropletListBinding, DropletL
         binding.dropletList.adapter = adapter
     }
 
-    private val onServerClickListener = object: BaseAdapter.OnItemClickListener<Server> {
+    private val onServerClickListener = object: OnItemClickListener<Server> {
         override fun onItemClicked(obj: Server) {
             viewModel.onServerClick(obj)
         }

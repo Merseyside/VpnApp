@@ -16,6 +16,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
 
         maven { url = uri("https://kotlin.bintray.com/kotlinx")}
         maven { url = uri("https://dl.bintray.com/kotlin/ktor")}
@@ -29,6 +30,7 @@ allprojects {
         maven { url = uri("https://jetbrains.bintray.com/kotlin-native-dependencies") }
         maven { url = uri("https://maven.fabric.io/public") }
         maven { url = uri("https://dl.bintray.com/icerockdev/plugins") }
+        maven { url = uri("https://dl.bintray.com/merseysoft/mersey-library") }
 
     }
 }

@@ -1,7 +1,9 @@
+import Modules.isLocalDependencies
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     plugin(LibraryDeps.Plugins.androidApplication)
     plugin(LibraryDeps.Plugins.kotlinAndroid)
-    plugin(LibraryDeps.Plugins.kotlinAndroidExtensions)
     plugin(LibraryDeps.Plugins.kotlinSerialization)
     plugin(LibraryDeps.Plugins.kotlinKapt)
 }
@@ -87,7 +89,7 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -108,8 +110,6 @@ val androidLibs = listOf(
     Deps.Libs.Android.lifecycle.name,
     Deps.Libs.Android.constraintLayout.name,
     Deps.Libs.MultiPlatform.serialization.android!!,
-
-
     Deps.Libs.Android.dagger.name,
     Deps.Libs.Android.preferences.name,
     Deps.Libs.Android.cicerone.name,
@@ -122,7 +122,9 @@ val androidLibs = listOf(
     Deps.Libs.MultiPlatform.sqlDelight.android!!,
     Deps.Libs.Android.billing.name,
     Deps.Libs.Android.billingKtx.name,
-    Deps.Libs.Android.mahEncryptor.name
+    Deps.Libs.Android.mahEncryptor.name,
+    Deps.Libs.Android.calligraphy.name,
+    Deps.Libs.Android.viewPump.name
     //Deps.Libs.Android.filemanager.name
 )
 
@@ -134,7 +136,7 @@ val localMerseyLibs = listOf(
 )
 
 val merseyLibs = listOf(
-    Deps.Libs.Android.MerseyLibs.cleanMvvmArch.name,
+    Deps.Libs.Android.MerseyLibs.archy.name,
     Deps.Libs.Android.MerseyLibs.adapters.name,
     Deps.Libs.Android.MerseyLibs.animators.name,
     Deps.Libs.Android.MerseyLibs.utils.name
@@ -143,7 +145,7 @@ val merseyLibs = listOf(
 dependencies {
     androidLibs.forEach { lib -> implementation(lib) }
 
-    if (Modules.isLocalDependencies) {
+    if (isLocalDependencies()) {
         localMerseyLibs.forEach { lib -> implementation(project(lib)) }
     } else {
         merseyLibs.forEach { lib -> implementation(lib) }

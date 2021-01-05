@@ -44,8 +44,8 @@ abstract class BaseDropletFragment<B : ViewDataBinding, M : BaseDropletViewModel
         inputMethodManager.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
-    protected fun goBack(): Boolean {
-        return viewModel.goBack()
+    override fun goBack() {
+        viewModel.goBack()
     }
 
     open fun hasTitleBackButton(): Boolean {

@@ -5,7 +5,6 @@ import com.merseyside.dropletapp.subscriptions.entity.response.SubscriptionRespo
 import com.merseyside.kmpMerseyLib.utils.ktor.KtorRouter
 import com.merseyside.kmpMerseyLib.utils.ktor.get
 import io.ktor.client.engine.HttpClientEngine
-import kotlinx.serialization.ImplicitReflectionSerializer
 import kotlinx.serialization.builtins.ListSerializer
 
 class SubscriptionsRouter(httpClientEngine: HttpClientEngine): KtorRouter(
@@ -13,7 +12,6 @@ class SubscriptionsRouter(httpClientEngine: HttpClientEngine): KtorRouter(
     httpClientEngine = httpClientEngine
 ) {
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getSubscriptions(): List<SubscriptionResponse> {
         return get(method = "tariffs", deserializationStrategy = ListSerializer(SubscriptionResponse.serializer()))
     }

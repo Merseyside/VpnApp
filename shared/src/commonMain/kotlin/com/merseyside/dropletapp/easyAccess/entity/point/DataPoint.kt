@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DataPoint(
-    val access: AccessPoint
+    val access: AccessPoint,
+    val network: Network
 )

@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.dropletList.model
 
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import androidx.databinding.ObservableField
@@ -18,10 +19,11 @@ import ru.terrakok.cicerone.Router
 import kotlin.coroutines.CoroutineContext
 
 class DropletListViewModel(
+    application: Application,
     private val router: Router,
     private val getDropletsUseCase: GetDropletsInteractor,
     private val deleteDropletUseCase: DeleteDropletInteractor
-) : BaseVpnViewModel(router), CoroutineScope {
+) : BaseVpnViewModel(application, router), CoroutineScope {
     override fun onConnect() {}
 
     override fun updateLanguage(context: Context) {

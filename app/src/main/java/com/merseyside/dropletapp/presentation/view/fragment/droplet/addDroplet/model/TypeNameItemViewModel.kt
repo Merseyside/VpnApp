@@ -6,7 +6,7 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.R
 import com.merseyside.adapters.model.BaseSelectableAdapterViewModel
 
-class TypeNameItemViewModel(override var obj: String) : BaseSelectableAdapterViewModel<String>(obj) {
+class TypeNameItemViewModel(obj: String) : BaseSelectableAdapterViewModel<String>(obj) {
 
     override fun areItemsTheSame(obj: String): Boolean {
         return this.obj == obj

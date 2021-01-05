@@ -23,17 +23,14 @@ import io.ktor.client.statement.HttpStatement
 import io.ktor.client.statement.readText
 import io.ktor.http.ContentType
 import io.ktor.http.takeFrom
-import kotlinx.serialization.ImplicitReflectionSerializer
-import kotlinx.serialization.UnstableDefault
-import kotlinx.serialization.builtins.list
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.parse
 
 class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
-    @OptIn(UnstableDefault::class)
     private val json = Json {
         isLenient = true
         ignoreUnknownKeys = true
@@ -57,10 +54,9 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
     }
 
     private fun getAuthHeader(token: String): String {
-        return "$token"
+        return token
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getAccountInfo(token: String): CryptoIsTokenValidResponse {
         val apiMethod = "account"
 
@@ -70,7 +66,7 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
             header(AUTHORIZATION_KEY, getAuthHeader(token))
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 
     suspend fun getRegions(token: String): List<RegionPoint> {
@@ -86,14 +82,13 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
             if (response.status.value > 300) {
                 throw IllegalResponseCode(
                     response.status.value,
-                    json.parse(ErrorResponse.serializer(), response.readText()).error)
+                    json.decodeFromString(ErrorResponse.serializer(), response.readText()).error)
             } else {
-                json.parse(RegionPoint.serializer().list, response.readText())
+                json.decodeFromString(ListSerializer(RegionPoint.serializer()), response.readText())
             }
         }
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun createKey(token: String, publicKey: String): CryptoCreateSshKeyResponse {
         val apiMethod = "ssh/create"
 
@@ -109,10 +104,9 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
             body = obj.jsonContent()
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun createDroplet(
         token: String,
         regionSlut: String,
@@ -136,10 +130,9 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
         }
 
         Logger.log(this, call)
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getDroplet(token: String, dropletId: Long): CryptoDropletInfoPoint {
         val apiMethod = "droplet/check/$dropletId"
 
@@ -149,7 +142,7 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
             header(AUTHORIZATION_KEY, getAuthHeader(token))
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 
     suspend fun deleteDroplet(token: String, dropletId: Long) {
@@ -184,6 +177,6 @@ class CryptoServersResponseCreator(private val httpClientEngine: HttpClientEngin
             header(AUTHORIZATION_KEY, getAuthHeader(token))
         }
 
-        return json.parse(CryptoServerPoint.serializer().list, call)
+        return json.decodeFromString(ListSerializer(CryptoServerPoint.serializer()), call)
     }
 }

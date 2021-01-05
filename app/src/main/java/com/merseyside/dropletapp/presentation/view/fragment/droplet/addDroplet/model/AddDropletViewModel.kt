@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model
 
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import androidx.databinding.ObservableField
@@ -20,11 +21,12 @@ import com.merseyside.utils.mainThread
 import ru.terrakok.cicerone.Router
 
 class AddDropletViewModel(
+    application: Application,
     private val router: Router,
     private val getRegionsByProviderUseCase: GetRegionsByProviderInteractor,
     private val createServerUseCase: CreateServerInteractor,
     private val getTypedConfigNamesUseCase: GetTypedConfigNamesInteractor
-) : BaseDropletViewModel(router) {
+) : BaseDropletViewModel(application, router) {
 
     val vpnTypeObservableField = ObservableField(getString(R.string.vpn_type))
     val regionHintObservableField = ObservableField(getString(R.string.hint_region_summary))

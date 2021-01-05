@@ -6,14 +6,14 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.presentation.view.dialog.subscription.adapter.SubscriptionAdapter
 import com.merseyside.dropletapp.subscriptions.VpnSubscription
 import com.merseyside.adapters.model.BaseSelectableAdapterViewModel
-import com.merseyside.archy.interfaces.IStringHelper
+import com.merseyside.archy.presentation.interfaces.IStringHelper
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.utils.application
 import com.merseyside.utils.billing.subscriptionPeriod
 import com.merseyside.utils.ext.trimTrailingZero
 
 class SubscriptionItemViewModel(
-    override var obj: VpnSubscription,
+    obj: VpnSubscription,
     private val subscribeListener: SubscriptionAdapter.SubscribeListener?
 ) : BaseSelectableAdapterViewModel<VpnSubscription>(obj), IStringHelper {
 

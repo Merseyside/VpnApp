@@ -1,6 +1,6 @@
 object Modules {
 
-    const val isLocalDependencies = true
+    const val isLocalDependencies = false
     const val library = "mersey-android-library"
 
     object MultiPlatform {

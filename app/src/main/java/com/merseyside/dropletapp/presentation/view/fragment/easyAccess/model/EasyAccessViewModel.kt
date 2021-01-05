@@ -1,11 +1,13 @@
 package com.merseyside.dropletapp.presentation.view.fragment.easyAccess.model
 
+import android.app.Application
 import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.github.shadowsocks.plugin.PluginManager
+import com.merseyside.archy.BaseApplication
 import com.merseyside.archy.presentation.view.localeViews.LocaleData
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.connectionTypes.*
@@ -18,10 +20,10 @@ import com.merseyside.dropletapp.domain.interactor.GetLockedTypesInteractor
 import com.merseyside.dropletapp.domain.interactor.easyAccess.GetRegionsInteractor
 import com.merseyside.dropletapp.domain.interactor.easyAccess.GetVpnConfigInteractor
 import com.merseyside.dropletapp.domain.model.Region
+import com.merseyside.dropletapp.domain.model.Tunnel
 import com.merseyside.dropletapp.presentation.base.BaseVpnViewModel
 import com.merseyside.dropletapp.subscriptions.SubscriptionManager
 import com.merseyside.dropletapp.utils.PrefsHelper
-import com.merseyside.dropletapp.utils.application
 import com.merseyside.kmpMerseyLib.domain.coroutines.applicationContext
 import com.merseyside.kmpMerseyLib.utils.time.Hours
 import com.merseyside.utils.Logger
@@ -37,14 +39,15 @@ import ru.terrakok.cicerone.Router
 import kotlin.coroutines.CoroutineContext
 
 class EasyAccessViewModel(
-    private val router: Router,
+    application: Application,
+    router: Router,
     private val prefsHelper: PrefsHelper,
     private val connectionTypeBuilder: Builder,
     private val getVpnConfigUseCase: GetVpnConfigInteractor,
     private val getLockedTypesUseCase: GetLockedTypesInteractor,
     private val getRegionsUseCase: GetRegionsInteractor,
     private val subscriptionManager: SubscriptionManager
-) : BaseVpnViewModel(router), CoroutineScope {
+) : BaseVpnViewModel(application, router), CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = applicationContext
@@ -56,6 +59,9 @@ class EasyAccessViewModel(
     val connectButtonTitle = ObservableField(getString(R.string.connect))
     val types = ObservableField<List<LockedType>>()
     val timer = ObservableField<String>()
+    val ipAddress = ObservableField<String>()
+    val region = ObservableField<String>()
+    val protocol = ObservableField<String>()
 
     val currentRegion = ObservableField<Region>().apply {
         onChange { _, value, isInitial ->
@@ -112,7 +118,7 @@ class EasyAccessViewModel(
                                 }
                             }
 
-                            val formatted = getFormattedDate(total, "HH : mm : ss")
+                            val formatted = getFormattedDate(total, "HH:mm:ss")
                             timer.set(formatted)
                         }
                     })
@@ -120,8 +126,10 @@ class EasyAccessViewModel(
                     if (ServiceConnectionType.isActive()) {
                         this@EasyAccessViewModel.server = value.server!!
                         setConnectionStatus(ServiceConnectionType.getCurrentStatus())
+                        renderServerInfo()
                     } else {
                         start(this@EasyAccessViewModel.server)
+                        renderServerInfo()
                     }
                 }
             }
@@ -163,12 +171,12 @@ class EasyAccessViewModel(
         )
     }
 
-    private fun startVpn(type: Type, config: String) {
-        createServer(type, config)
+    private fun startVpn(type: Type, tunnel: Tunnel) {
+        createServer(type, tunnel)
 
         if (server.typedConfig is TypedConfig.Shadowsocks) {
             if ((server.typedConfig as TypedConfig.Shadowsocks).isV2Ray()) {
-                if (!PluginManager.isV2RayEnabled()) {
+                if (true) {
                     v2RayRequireEvent.call()
                     return
                 }
@@ -177,8 +185,14 @@ class EasyAccessViewModel(
 
         connectionType = connectionTypeBuilder
             .setType(type)
-            .setConfig(config)
+            .setConfig(tunnel.config)
             .build()
+    }
+
+    private fun renderServerInfo() {
+        ipAddress.set(server.address)
+        region.set(server.regionName)
+        protocol.set(server.typedConfig.getName())
     }
 
     private fun connect() {
@@ -188,11 +202,11 @@ class EasyAccessViewModel(
             getVpnConfigUseCase.execute(
                 params = GetVpnConfigInteractor.Params(
                     type = type,
-                    locale = application.getLocale().language,
+                    locale = (application as BaseApplication).getLocale().language,
                     region = currentRegion.get()!!
                 ),
-                onComplete = { config ->
-                    startVpn(type, config)
+                onComplete = { tunnel ->
+                    startVpn(type, tunnel)
                 }, onError = {
                     if (it is TrialIsOverException) {
                         showTrialAlertDialog()
@@ -326,8 +340,8 @@ class EasyAccessViewModel(
                 subscriptionManager.getSubscriptionInfo()?.let {
                     isPurchased.set(true)
 
-                    val expiryTime = it.expiryTime.toTimeUnit().getDate()
-                    info.set(LocaleData(R.string.subscription_expity_date, expiryTime))
+                    val expiryTime = getDate(it.expiryTime.toTimeUnit())
+                    info.set(LocaleData(R.string.subscription_expity_date, arrayOf(expiryTime)))
                 }
             } else {
                 info.set(LocaleData(R.string.trial_msg)).log()
@@ -335,11 +349,12 @@ class EasyAccessViewModel(
         }
     }
 
-    private fun createServer(type: Type, config: String? = null) {
+    private fun createServer(type: Type, tunnel: Tunnel) {
         this.server = Server.newServer(
             type = type,
-            region = currentRegion.get()!!.code,
-            config = config
+            region = currentRegion.get()!!.name,
+            config = tunnel.config,
+            address = tunnel.address
         )
     }
 

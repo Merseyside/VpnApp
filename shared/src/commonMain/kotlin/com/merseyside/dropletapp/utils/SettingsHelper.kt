@@ -56,10 +56,19 @@ class SettingsHelper(private val settings: Settings) {
         return settings.getString(LOCALE, "en")
     }
 
+    fun setIpAddress(address: String) {
+        settings.putString(IP_ADDRESS_KEY, address)
+    }
+
+    fun getIpAddress(): String {
+        return settings.getString(IP_ADDRESS_KEY, "")
+    }
+
     companion object {
         private const val CONFIG_KEY = "config"
         private const val CONFIG_TIME_KEY = "config_time"
         private const val CONFIG_TYPE_KEY = "config_type"
+        private const val IP_ADDRESS_KEY = "address"
 
         private const val TOKEN = "token"
         private const val LOCALE = "locale"

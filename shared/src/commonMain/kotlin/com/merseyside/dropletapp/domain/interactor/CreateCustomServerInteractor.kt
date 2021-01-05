@@ -4,7 +4,7 @@ import com.merseyside.dropletapp.data.repository.ProviderRepositoryImpl
 import com.merseyside.dropletapp.di.providerComponent
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
 import com.merseyside.kmpMerseyLib.domain.coroutines.CoroutineUseCase
-import org.kodein.di.erased.instance
+import org.kodein.di.instance
 
 class CreateCustomServerInteractor : CoroutineUseCase<Boolean, CreateCustomServerInteractor.Params>() {
 

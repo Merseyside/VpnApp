@@ -7,7 +7,7 @@ import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.domain.LockedType
 import com.merseyside.adapters.model.BaseSelectableAdapterViewModel
 
-class TypeViewModel(override var obj: LockedType) : BaseSelectableAdapterViewModel<LockedType>(
+class TypeViewModel(obj: LockedType) : BaseSelectableAdapterViewModel<LockedType>(
     obj,
     isSelectable = !obj.isLocked
 ) {

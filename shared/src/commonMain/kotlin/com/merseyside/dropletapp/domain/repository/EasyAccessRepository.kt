@@ -1,6 +1,7 @@
 package com.merseyside.dropletapp.domain.repository
 
 import com.merseyside.dropletapp.connectionTypes.Type
+import com.merseyside.dropletapp.domain.model.Tunnel
 import com.merseyside.dropletapp.easyAccess.entity.point.RegionPoint
 
 interface EasyAccessRepository {
@@ -8,9 +9,9 @@ interface EasyAccessRepository {
     suspend fun getVpnConfig(
         type: Type,
         regionId: String
-    ): String
+    ): Tunnel
 
-    suspend fun getFreeVpnConfig(type: Type, regionId: String): String
+    suspend fun getFreeVpnConfig(type: Type, regionId: String): Tunnel
 
     suspend fun getRegions(): List<RegionPoint>
 }

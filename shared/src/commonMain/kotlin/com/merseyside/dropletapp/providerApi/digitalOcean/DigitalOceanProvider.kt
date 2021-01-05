@@ -92,9 +92,10 @@ class DigitalOceanProvider private constructor(httpClientEngine: HttpClientEngin
 
                     networkPoints.forEach { networkPoint ->
                         networkList.add(NetworkPoint(
-                            ipAddress = networkPoint.ipAsddress,
+                            ipAddress = networkPoint.ipAddress,
                             netmask = networkPoint.netmask,
-                            gateway = networkPoint.gateway
+                            gateway = networkPoint.gateway,
+                            type = networkPoint.type
                         ))
                     }
 

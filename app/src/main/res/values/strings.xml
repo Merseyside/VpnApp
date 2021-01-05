@@ -110,7 +110,7 @@
     <string name="security_protocol">Security protocol:</string>
     <string name="time_session">Time session</string>
     <string name="custom_server">Other server</string>
-    <string name="ip_address">IP Address</string>
+    <string name="ip_address">IP</string>
     <string name="username">Username</string>
     <string name="port">Port</string>
     <string name="setup_ssh_connection">Setup SSH connection</string>
@@ -148,7 +148,10 @@
     <string name="choose_region">Choose region</string>
     <string name="for_month">for month</string>
     <string name="choose_protocol">Choose protocol</string>
-
+    <string name="session_time">Session time</string>
+    <string name="protocol">Protocol</string>
+    <string name="region1">Region</string>
+    <string name="connected_to_vpn">You are connected to VPN</string>
 
     <string name="download">Download</string>
     <string-array name="language_entries">

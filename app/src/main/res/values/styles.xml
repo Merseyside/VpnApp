@@ -132,7 +132,9 @@
     <!--  Text styles  -->
 
     <style name="VpnApp.Headline4" parent="TextAppearance.MaterialComponents.Headline4">
-        <item name="android:textSize">@dimen/very_large_text_size</item>
+        <item name="android:textSize">30sp</item>
+        <item name="fontStyle">normal</item>
+        <item name="android:letterSpacing">0.01</item>
     </style>
 
     <style name="VpnApp.Headline5" parent="TextAppearance.MaterialComponents.Headline5">

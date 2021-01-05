@@ -1,13 +1,13 @@
 package com.merseyside.dropletapp.presentation.di.module
 
+import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.merseyside.dropletapp.domain.interactor.DeleteTokenInteractor
 import com.merseyside.dropletapp.domain.interactor.GetAllTokensInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.settings.model.SettingsViewModel
 import com.merseyside.archy.presentation.fragment.BaseFragment
-import com.merseyside.archy.model.BundleAwareViewModelFactory
+import com.merseyside.archy.presentation.model.BundleAwareViewModelFactory
 import dagger.Module
 import dagger.Provides
 import ru.terrakok.cicerone.Router
@@ -28,27 +28,29 @@ class SettingsModule(private val fragment: BaseFragment,
 
     @Provides
     internal fun provideSettingsFragmentViewModelProvider(
+        application: Application,
         router: Router,
         getAllTokensUseCase: GetAllTokensInteractor,
         deleteTokenUseCase: DeleteTokenInteractor
     ): ViewModelProvider.Factory {
-        return SettingsFragmentViewModelProviderFactory(bundle, router, getAllTokensUseCase, deleteTokenUseCase)
+        return SettingsFragmentViewModelProviderFactory(bundle, application, router, getAllTokensUseCase, deleteTokenUseCase)
     }
 
     @Provides
     internal fun provideSettingsFragmentViewModel(factory: ViewModelProvider.Factory): SettingsViewModel {
-        return ViewModelProviders.of(fragment, factory).get(SettingsViewModel::class.java)
+        return ViewModelProvider(fragment, factory).get(SettingsViewModel::class.java)
     }
 
     class SettingsFragmentViewModelProviderFactory(
         bundle: Bundle?,
+        private val application: Application,
         private val router: Router,
         private val getAllTokensUseCase: GetAllTokensInteractor,
         private val deleteTokenUseCase: DeleteTokenInteractor
     ): BundleAwareViewModelFactory<SettingsViewModel>(bundle) {
 
         override fun getViewModel(): SettingsViewModel {
-            return SettingsViewModel(router, getAllTokensUseCase, deleteTokenUseCase)
+            return SettingsViewModel(application, router, getAllTokensUseCase, deleteTokenUseCase)
         }
     }
 }

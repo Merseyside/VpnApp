@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.activity.main.model
 
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import com.merseyside.dropletapp.domain.Server
@@ -14,9 +15,10 @@ import kotlin.coroutines.CoroutineContext
 
 @OptIn(InternalCoroutinesApi::class)
 class MainViewModel(
+    application: Application,
     private val router: Router,
     private val getDropletsUseCase: GetDropletsInteractor
-) : BaseDropletViewModel(router), CoroutineScope {
+) : BaseDropletViewModel(application, router), CoroutineScope {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, _ -> }
     private val job = Job()

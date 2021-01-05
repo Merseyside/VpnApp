@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp
 
+import android.content.Context
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
@@ -15,6 +16,10 @@ import com.merseyside.dropletapp.presentation.di.module.SubscriptionModule
 import com.merseyside.dropletapp.subscriptions.SubscriptionManager
 import com.merseyside.dropletapp.utils.AccountManagerAndroid
 import com.squareup.sqldelight.android.AndroidSqliteDriver
+import io.github.inflationx.calligraphy3.CalligraphyConfig
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor
+import io.github.inflationx.viewpump.ViewPump
+import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import javax.inject.Inject
 
 class VpnApplication : BaseApplication() {
@@ -36,13 +41,14 @@ class VpnApplication : BaseApplication() {
         appComponent = buildComponent()
         appComponent.inject(this)
 
+        initCalligraphy()
         initDB()
         initAccountManager()
         initConnectionTypeBuilder()
         initSubscriptionManager()
         appContext = this
 
-        Core.init(this)
+        Core.init(this, context.javaClass.kotlin)
     }
 
     private fun buildComponent() =
@@ -80,6 +86,20 @@ class VpnApplication : BaseApplication() {
 
     private fun initAccountManager() {
         accountManager = AccountManagerAndroid(this)
+    }
+
+    private fun initCalligraphy() {
+        ViewPump.init(
+            ViewPump.builder()
+                .addInterceptor(
+                    CalligraphyInterceptor(
+                        CalligraphyConfig.Builder()
+                            .setDefaultFontPath("fonts/ubuntu_condenced.ttf")
+                            .setFontAttrId(R.attr.fontPath)
+                            .build()
+                    )
+                ).build()
+        )
     }
 
     companion object {

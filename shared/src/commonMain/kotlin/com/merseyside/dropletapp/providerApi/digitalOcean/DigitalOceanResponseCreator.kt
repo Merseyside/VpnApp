@@ -10,17 +10,14 @@ import io.ktor.client.features.defaultRequest
 import io.ktor.client.request.*
 import io.ktor.http.ContentType
 import io.ktor.http.takeFrom
-import kotlinx.serialization.ImplicitReflectionSerializer
-import kotlinx.serialization.UnstableDefault
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.parse
 
 class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
-    @OptIn(UnstableDefault::class)
     private val json = Json {
         isLenient = false
         ignoreUnknownKeys = true
@@ -42,7 +39,6 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
         return "$baseUrl/$method"
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getAccountInfo(token: String): IsTokenValidResponse {
         val apiMethod = "account"
 
@@ -52,10 +48,9 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
             header(AUTHORIZATION_KEY, getAuthHeader(token))
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getRegions(token: String): RegionResponse {
         val apiMethod = "regions"
 
@@ -65,14 +60,13 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
             header(AUTHORIZATION_KEY, getAuthHeader(token))
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 
     private fun getAuthHeader(token: String): String {
         return "Bearer $token"
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun createKey(token: String, name: String, publicKey: String): CreateSshKeyDigitalOceanResponse {
         val apiMethod = "account/keys"
 
@@ -89,10 +83,9 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
             body = obj.jsonContent()
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun createDroplet(
         token: String,
         name: String,
@@ -115,7 +108,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
                     JsonPrimitive(sshKeyId)
                 )),
                 IMAGE_KEY to JsonPrimitive("debian-9-x64"),
-                SIZE_KEY to JsonPrimitive("1gb"),
+                SIZE_KEY to JsonPrimitive("s-1vcpu-1gb"),
                 BACKUPS_KEY to JsonPrimitive(false),
                 TAG_KEY to JsonArray(listOf(
                     JsonPrimitive(tag)
@@ -128,10 +121,9 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
             body = obj.jsonContent()
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getDropletInfo(token: String, dropletId: Long): DigitalOceanDropletInfoResponse {
         val apiMethod = "droplets/$dropletId"
 
@@ -141,7 +133,7 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
             header(AUTHORIZATION_KEY, getAuthHeader(token))
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 
     suspend fun deleteDroplet(token: String, dropletId: Long) {
@@ -154,7 +146,6 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
         }
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun addFloatingAddress(token: String, dropletId: Long): FloatingAddressResponse {
         val apiMethod = "floating_ips"
 
@@ -170,6 +161,6 @@ class DigitalOceanResponseCreator(private val httpClientEngine: HttpClientEngine
             body = obj.jsonContent()
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 }

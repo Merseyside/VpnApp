@@ -26,7 +26,6 @@ data class Server(
 
         other as Server
 
-        Logger.log(this, "here")
         if (id != other.id) return false
         if (name != other.name) return false
         if (createdAt != other.createdAt) return false
@@ -69,7 +68,8 @@ data class Server(
         fun newServer(
             type: Type,
             region: String,
-            config: String? = null): Server {
+            config: String? = null,
+            address: String = "Dummy address"): Server {
             return Server(
                 id = 0,
                 name = "Dummy server",
@@ -78,7 +78,7 @@ data class Server(
                 providerName = "Dummy provider",
                 providerId = 0,
                 serverStatus = "Dummy status",
-                address = "Dummy address",
+                address = address,
                 typedConfig = Type.getTypeConfig(type, config),
                 environmentStatus = SshManager.Status.READY
             )

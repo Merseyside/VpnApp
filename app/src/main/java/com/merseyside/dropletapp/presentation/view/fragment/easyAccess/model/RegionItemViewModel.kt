@@ -6,7 +6,7 @@ import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.domain.model.Region
 import com.merseyside.adapters.model.BaseAdapterViewModel
 
-class RegionItemViewModel(override var obj: Region) : BaseAdapterViewModel<Region>(obj) {
+class RegionItemViewModel(obj: Region) : BaseAdapterViewModel<Region>(obj) {
 
     override fun areItemsTheSame(obj: Region): Boolean {
         return obj.name == this.obj.name

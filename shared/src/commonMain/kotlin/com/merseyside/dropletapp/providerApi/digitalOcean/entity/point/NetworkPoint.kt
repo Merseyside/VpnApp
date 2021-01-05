@@ -7,11 +7,14 @@ import kotlinx.serialization.Serializable
 data class NetworkPoint(
 
     @SerialName("ip_address")
-    val ipAsddress: String,
+    val ipAddress: String,
 
     @SerialName("netmask")
     val netmask: String,
 
     @SerialName("gateway")
-    val gateway: String
+    val gateway: String,
+
+    @SerialName("type")
+    val type: String
 )

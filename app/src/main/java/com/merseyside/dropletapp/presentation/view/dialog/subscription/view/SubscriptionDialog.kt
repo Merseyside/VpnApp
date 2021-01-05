@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import com.merseyside.archy.dialog.BaseVMDialog
+import com.merseyside.archy.presentation.dialog.BaseVMDialog
 import com.merseyside.dropletapp.R
 import com.merseyside.dropletapp.BR
 import com.merseyside.dropletapp.databinding.DialogSubscriptionBinding

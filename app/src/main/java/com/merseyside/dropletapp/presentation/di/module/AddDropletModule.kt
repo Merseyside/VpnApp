@@ -1,11 +1,12 @@
 package com.merseyside.dropletapp.presentation.di.module
 
+import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.merseyside.dropletapp.domain.interactor.*
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.addDroplet.model.AddDropletViewModel
 import com.merseyside.archy.presentation.fragment.BaseFragment
-import com.merseyside.archy.model.BundleAwareViewModelFactory
+import com.merseyside.archy.presentation.model.BundleAwareViewModelFactory
 import dagger.Module
 import dagger.Provides
 import ru.terrakok.cicerone.Router
@@ -38,6 +39,7 @@ class AddDropletModule(
 
     @Provides
     internal fun provideAddProviderFragmentViewModelProvider(
+        application: Application,
         router: Router,
         getRegionsByProviderUseCase: GetRegionsByProviderInteractor,
         createServerUseCase: CreateServerInteractor,
@@ -45,6 +47,7 @@ class AddDropletModule(
     ): ViewModelProvider.Factory {
         return AddProviderFragmentViewModelProviderFactory(
             bundle,
+            application,
             router,
             getRegionsByProviderUseCase,
             createServerUseCase,
@@ -54,6 +57,7 @@ class AddDropletModule(
 
     class AddProviderFragmentViewModelProviderFactory(
         bundle: Bundle?,
+        private val application: Application,
         private val router: Router,
         private val getRegionsByProviderUseCase: GetRegionsByProviderInteractor,
         private val createServerUseCase: CreateServerInteractor,
@@ -62,6 +66,7 @@ class AddDropletModule(
 
         override fun getViewModel(): AddDropletViewModel {
             return AddDropletViewModel(
+                application,
                 router,
                 getRegionsByProviderUseCase,
                 createServerUseCase,

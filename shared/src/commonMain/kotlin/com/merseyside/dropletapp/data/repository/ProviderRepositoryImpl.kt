@@ -307,7 +307,7 @@ class ProviderRepositoryImpl(
 
         if (isDropletValid(createDropletResponse)) {
 
-            val address = createDropletResponse.networks.first().ipAddress
+            val address = createDropletResponse.networks.find { it.type == "public" }?.ipAddress ?: throw IllegalArgumentException()
 
             createDropletResponse.let { info ->
                 serverDao.insert(

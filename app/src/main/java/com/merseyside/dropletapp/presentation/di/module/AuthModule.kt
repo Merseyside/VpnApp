@@ -1,13 +1,13 @@
 package com.merseyside.dropletapp.presentation.di.module
 
+import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.merseyside.dropletapp.domain.interactor.GetOAuthProvidersInteractor
 import com.merseyside.dropletapp.domain.interactor.SaveTokenInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.auth.model.AuthViewModel
 import com.merseyside.archy.presentation.fragment.BaseFragment
-import com.merseyside.archy.model.BundleAwareViewModelFactory
+import com.merseyside.archy.presentation.model.BundleAwareViewModelFactory
 import dagger.Module
 import dagger.Provides
 import ru.terrakok.cicerone.Router
@@ -30,27 +30,29 @@ class AuthModule(
 
     @Provides
     internal fun provideAuthViewModelProvider(
+        application: Application,
         router: Router,
         getOAuthProvidersUseCase: GetOAuthProvidersInteractor,
         saveTokenInteractor: SaveTokenInteractor
     ): ViewModelProvider.Factory {
-        return AuthViewModelProviderFactory(bundle, router, getOAuthProvidersUseCase, saveTokenInteractor)
+        return AuthViewModelProviderFactory(bundle, application, router, getOAuthProvidersUseCase, saveTokenInteractor)
     }
 
     @Provides
     internal fun provideAuthViewModel(factory: ViewModelProvider.Factory): AuthViewModel {
-        return ViewModelProviders.of(fragment, factory).get(AuthViewModel::class.java)
+        return ViewModelProvider(fragment, factory).get(AuthViewModel::class.java)
     }
 
     class AuthViewModelProviderFactory(
         bundle: Bundle?,
+        private val application: Application,
         private val router: Router,
         private val getOAuthProvidersUseCase: GetOAuthProvidersInteractor,
         private val saveTokenInteractor: SaveTokenInteractor
     ): BundleAwareViewModelFactory<AuthViewModel>(bundle) {
 
         override fun getViewModel(): AuthViewModel {
-            return AuthViewModel(router, getOAuthProvidersUseCase, saveTokenInteractor)
+            return AuthViewModel(application, router, getOAuthProvidersUseCase, saveTokenInteractor)
         }
     }
 }

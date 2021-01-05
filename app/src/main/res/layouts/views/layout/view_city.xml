@@ -30,8 +30,7 @@
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 app:drawableName="@{obj.countryImage}"
-                bind:ignore="ContentDescription"
-                tools:src="@drawable/in"/>
+                bind:ignore="ContentDescription" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -41,7 +40,8 @@
                 android:textAllCaps="true"
                 android:text="@{obj.name}"
                 android:textColor="?attr/vpnHeadlineTextColor"
-                android:layout_marginStart="@dimen/normal_spacing"/>
+                android:layout_marginStart="@dimen/normal_spacing"
+                android:fontFamily="@font/ubuntu"/>
 
         </LinearLayout>
 

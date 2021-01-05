@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.merseyside.adapters.base.ItemPositionInterface
 import com.merseyside.adapters.model.BaseAdapterViewModel
-import com.merseyside.adapters.view.BaseBindingHolder
+import com.merseyside.adapters.view.TypedBindingHolder
 
 abstract class BaseSpinnerAdapter<M, T : BaseAdapterViewModel<M>>(
     context: Context,
@@ -38,7 +38,7 @@ abstract class BaseSpinnerAdapter<M, T : BaseAdapterViewModel<M>>(
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val holder: BaseBindingHolder<T>
+        val holder: TypedBindingHolder<T>
 
         if (convertView == null) {
             val itemBinding: ViewDataBinding = DataBindingUtil.inflate(
@@ -48,11 +48,10 @@ abstract class BaseSpinnerAdapter<M, T : BaseAdapterViewModel<M>>(
                 false
             )
 
-            holder = BaseBindingHolder(itemBinding)
+            holder = TypedBindingHolder(itemBinding)
             itemBinding.root.tag = holder
-            //itemBinding.executePendingBindings()
         } else {
-            holder = convertView.tag as BaseBindingHolder<T>
+            holder = convertView.tag as TypedBindingHolder<T>
         }
 
         holder.binding.setVariable(getBindingVariable(), getItem(position))
@@ -75,6 +74,10 @@ abstract class BaseSpinnerAdapter<M, T : BaseAdapterViewModel<M>>(
         return list.size
     }
 
+    override fun getItemCount(): Int {
+        return list.size
+    }
+
     @Throws(IllegalArgumentException::class)
     open fun getPositionOfModel(model: T): Int {
         list.forEachIndexed { index, t ->
@@ -88,11 +91,11 @@ abstract class BaseSpinnerAdapter<M, T : BaseAdapterViewModel<M>>(
         return getPositionOfModel(model as T)
     }
 
-    override fun isLast(model: BaseAdapterViewModel<M>): Boolean {
+    fun isLast(model: BaseAdapterViewModel<M>): Boolean {
         return getPosition(model) == count - 1
     }
 
-    override fun isFirst(model: BaseAdapterViewModel<M>): Boolean {
+    fun isFirst(model: BaseAdapterViewModel<M>): Boolean {
         return getPosition(model) == 0
     }
 }

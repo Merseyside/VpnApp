@@ -29,7 +29,7 @@
     <dimen name="provider_icon_size_large">48dp</dimen>
     <dimen name="provider_icon_size_very_large">64dp</dimen>
     <dimen name="button_size">36dp</dimen>
-    <dimen name="type_corner_radius">16dp</dimen>
+    <dimen name="type_corner_radius">18dp</dimen>
     <dimen name="qr_size">350dp</dimen>
     <dimen name="dialog_width_size">350dp</dimen>
     <dimen name="button_width">250dp</dimen>

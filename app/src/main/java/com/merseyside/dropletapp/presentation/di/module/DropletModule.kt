@@ -1,8 +1,8 @@
 package com.merseyside.dropletapp.presentation.di.module
 
+import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.merseyside.dropletapp.connectionTypes.Builder
 import com.merseyside.dropletapp.di.connectionTypeBuilder
 import com.merseyside.dropletapp.domain.interactor.CreateServerInteractor
@@ -10,7 +10,7 @@ import com.merseyside.dropletapp.domain.interactor.DeleteDropletInteractor
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.view.fragment.droplet.droplet.model.DropletViewModel
 import com.merseyside.archy.presentation.fragment.BaseFragment
-import com.merseyside.archy.model.BundleAwareViewModelFactory
+import com.merseyside.archy.presentation.model.BundleAwareViewModelFactory
 import dagger.Module
 import dagger.Provides
 import ru.terrakok.cicerone.Router
@@ -23,6 +23,7 @@ class DropletModule(
 
     @Provides
     internal fun provideDropletViewModelFactory(
+        application: Application,
         router: Router,
         connectionTypeBuilder: Builder,
         getDropletsUseCase: GetDropletsInteractor,
@@ -31,6 +32,7 @@ class DropletModule(
     ): ViewModelProvider.Factory {
         return DropletViewModelProviderFactory(
             bundle,
+            application,
             router,
             connectionTypeBuilder,
             getDropletsUseCase,
@@ -56,7 +58,7 @@ class DropletModule(
 
     @Provides
     internal fun provideDropletViewModel(factory: ViewModelProvider.Factory): DropletViewModel {
-        return ViewModelProviders.of(fragment, factory).get(DropletViewModel::class.java)
+        return ViewModelProvider(fragment, factory).get(DropletViewModel::class.java)
     }
 
     @Provides
@@ -66,6 +68,7 @@ class DropletModule(
 
     class DropletViewModelProviderFactory(
         bundle: Bundle?,
+        private val application: Application,
         private val router: Router,
         private val connectionTypeBuilder: Builder,
         private val getDropletsUseCase: GetDropletsInteractor,
@@ -74,7 +77,7 @@ class DropletModule(
     ): BundleAwareViewModelFactory<DropletViewModel>(bundle) {
 
         override fun getViewModel(): DropletViewModel {
-            return DropletViewModel(router, connectionTypeBuilder, getDropletsUseCase, createServerUseCase, deleteServerUseCase)
+            return DropletViewModel(application, router, connectionTypeBuilder, getDropletsUseCase, createServerUseCase, deleteServerUseCase)
         }
     }
 }

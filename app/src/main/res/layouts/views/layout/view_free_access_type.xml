@@ -19,8 +19,8 @@
         android:clickable="true"
         android:focusable="true"
         android:paddingStart="@dimen/normal_spacing"
-        android:paddingTop="@dimen/very_small_spacing"
-        android:paddingBottom="@dimen/very_small_spacing"
+        android:paddingTop="@dimen/small_spacing"
+        android:paddingBottom="@dimen/small_spacing"
         android:onClick="@{view -> obj.onClick()}"
         android:layout_margin="@dimen/very_small_spacing">
 
@@ -28,13 +28,14 @@
             android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textAppearance="@style/VpnApp.Body2"
+            android:textAppearance="@style/VpnApp.Body1"
             android:textAllCaps="true"
             android:textAlignment="center"
             bind:layout_constraintStart_toStartOf="parent"
             android:textColor="?attr/vpnHeadlineTextColor"
             android:text="@{obj.name}"
-            android:paddingEnd="@dimen/small_spacing"/>
+            android:paddingEnd="@dimen/small_spacing"
+            android:fontFamily="@font/ubuntu_condenced"/>
 
         <ImageView
             android:layout_width="8dp"

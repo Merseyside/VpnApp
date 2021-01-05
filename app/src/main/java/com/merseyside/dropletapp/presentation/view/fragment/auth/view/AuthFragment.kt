@@ -20,6 +20,7 @@ import com.merseyside.dropletapp.presentation.view.fragment.auth.model.AuthViewM
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.dropletapp.utils.OAuthBehaviour
 import com.merseyside.adapters.base.BaseAdapter
+import com.merseyside.adapters.base.OnItemClickListener
 import com.merseyside.utils.Logger
 
 class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(){
@@ -61,7 +62,7 @@ class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(){
             binding.providerList.adapter = adapter
         }
 
-        adapter!!.setOnItemClickListener(object: BaseAdapter.OnItemClickListener<OAuthProvider> {
+        adapter!!.setOnItemClickListener(object: OnItemClickListener<OAuthProvider> {
             override fun onItemClicked(obj: OAuthProvider) {
                 if (obj.provider is Provider.Custom) {
                     viewModel.navigateToServerCreationScreen(obj.provider)
@@ -80,7 +81,6 @@ class AuthFragment : BaseDropletFragment<FragmentAuthBinding, AuthViewModel>(){
     }
 
     private fun startAuthFlow(oAuthConfig: OAuthConfig) {
-        Log.d(TAG, "$oAuthConfig")
 
         val manager = OAuthBehaviour.Builder(baseActivity, this, REQUEST_CODE).apply {
             setOAuthConfig(oAuthConfig)

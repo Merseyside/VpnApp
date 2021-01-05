@@ -2,6 +2,7 @@ package com.merseyside.dropletapp.data.repository
 
 import com.merseyside.dropletapp.connectionTypes.Type
 import com.merseyside.dropletapp.data.exception.TrialIsOverException
+import com.merseyside.dropletapp.domain.model.Tunnel
 import com.merseyside.dropletapp.domain.repository.EasyAccessRepository
 import com.merseyside.dropletapp.easyAccess.EasyAccessApi
 import com.merseyside.dropletapp.easyAccess.entity.point.RegionPoint
@@ -14,7 +15,7 @@ class EasyAccessRepositoryImpl(
     private val settings: SettingsHelper
 ) : EasyAccessRepository {
 
-    override suspend fun getFreeVpnConfig(type: Type, regionId: String): String {
+    override suspend fun getFreeVpnConfig(type: Type, regionId: String): Tunnel {
         val configTime = settings.getConfigTime()
 
         return if (configTime == null) {
@@ -32,7 +33,7 @@ class EasyAccessRepositoryImpl(
                 if (savedType != type) {
                     getConfigFromApi(type, regionId)
                 } else {
-                    settings.getConfig()!!
+                    getStoredTunnel()
                 }
             }
         }
@@ -41,7 +42,7 @@ class EasyAccessRepositoryImpl(
     override suspend fun getVpnConfig(
         type: Type,
         regionId: String
-    ): String {
+    ): Tunnel {
         return getConfigFromApi(type, regionId)
     }
 
@@ -52,10 +53,19 @@ class EasyAccessRepositoryImpl(
     private suspend fun getConfigFromApi(
         type: Type,
         regionId: String
-    ): String {
-        return easyAccessApi.getConfig(type.getTypeForApi(), regionId)
-            .also {
-                settings.setConfig(type, it)
+    ): Tunnel {
+        return easyAccessApi.getTunnel(type.getTypeForApi(), regionId)
+            .let { tunnel ->
+                settings.apply {
+                    setConfig(type, tunnel.data.access.config)
+                    setIpAddress(tunnel.data.network.ip)
+                }
+
+                getStoredTunnel()
             }
+    }
+
+    private fun getStoredTunnel(): Tunnel {
+        return Tunnel(settings.getConfig()!!, settings.getIpAddress())
     }
 }

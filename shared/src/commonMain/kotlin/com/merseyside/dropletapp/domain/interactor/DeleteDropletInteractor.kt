@@ -1,10 +1,9 @@
 package com.merseyside.dropletapp.domain.interactor
 
-import com.merseyside.dropletapp.data.entity.Token
 import com.merseyside.dropletapp.di.providerComponent
 import com.merseyside.kmpMerseyLib.domain.coroutines.CoroutineUseCase
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
-import org.kodein.di.erased.instance
+import org.kodein.di.instance
 
 class DeleteDropletInteractor : CoroutineUseCase<Boolean, DeleteDropletInteractor.Params>() {
 

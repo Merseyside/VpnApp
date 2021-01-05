@@ -7,19 +7,16 @@ import com.merseyside.dropletapp.easyAccess.EasyAccessRouter
 import com.merseyside.dropletapp.subscriptions.SubscriptionManager
 import com.merseyside.dropletapp.utils.SettingsHelper
 import com.merseyside.kmpMerseyLib.utils.ktor.addHeader
-import com.russhwolf.settings.Settings
-import com.russhwolf.settings.invoke
-import io.ktor.client.HttpClient
-import io.ktor.client.features.defaultRequest
-import io.ktor.client.request.accept
-import io.ktor.http.ContentType
-import org.kodein.di.Kodein
-import org.kodein.di.erased.bind
-import org.kodein.di.erased.instance
-import org.kodein.di.erased.singleton
-import kotlin.reflect.KProperty
+import io.ktor.client.*
+import io.ktor.client.features.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.singleton
 
-private val easyAccessModule = Kodein.Module("easy_access") {
+private val easyAccessModule = DI.Module("easy_access") {
 
     bind<HttpClient>() with singleton {
 
@@ -49,7 +46,7 @@ private val easyAccessModule = Kodein.Module("easy_access") {
     bind<EasyAccessRepository>() with singleton { EasyAccessRepositoryImpl(instance(), instance()) }
 }
 
-internal val easyAccessComponent = Kodein {
+internal val easyAccessComponent = DI {
 
     extend(appComponent)
 

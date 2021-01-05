@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.fragment.auth.model
 
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import androidx.databinding.ObservableField
@@ -14,14 +15,15 @@ import com.merseyside.utils.Logger
 import ru.terrakok.cicerone.Router
 
 class AuthViewModel(
+    application: Application,
     private val router: Router,
     private val getOAuthProvidersUseCase: GetOAuthProvidersInteractor,
     private val saveTokenInteractor: SaveTokenInteractor
-) : BaseDropletViewModel(router) {
+) : BaseDropletViewModel(application, router) {
 
     private var provider: OAuthProvider? = null
 
-    val oAuthProviders = ObservableField<List<OAuthProvider>>()
+    val oAuthProvidersField = ObservableField<List<OAuthProvider>>()
     val providersHint = ObservableField(getString(R.string.choose_provider_hint))
 
     override fun dispose() {
@@ -41,7 +43,7 @@ class AuthViewModel(
         getOAuthProvidersUseCase.execute(
             onComplete = {
                 Logger.log(this, it)
-                oAuthProviders.set(it)
+                oAuthProvidersField.set(it)
             }, onError = {
                 showErrorMsg(errorMsgCreator.createErrorMsg(it))
             }

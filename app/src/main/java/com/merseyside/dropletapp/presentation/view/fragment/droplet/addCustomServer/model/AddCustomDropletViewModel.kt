@@ -1,5 +1,6 @@
 package com.merseyside.dropletapp.presentation.view.fragment.droplet.addCustomServer.model
 
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import androidx.databinding.ObservableField
@@ -17,10 +18,11 @@ import com.merseyside.utils.mainThread
 import ru.terrakok.cicerone.Router
 
 class AddCustomDropletViewModel(
+    application: Application,
     private val router: Router,
     private val createCustomServerUseCase: CreateCustomServerInteractor,
     private val getTypedConfigNamesUseCase: GetTypedConfigNamesInteractor
-) : BaseDropletViewModel(router) {
+) : BaseDropletViewModel(application, router) {
 
     val isPrivateKey = ObservableField(false)
     val authFieldHint = ObservableField<String>()

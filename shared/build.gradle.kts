@@ -1,7 +1,6 @@
 plugins {
     plugin(Deps.Plugins.kotlinMultiplatform)
     plugin(Deps.Plugins.androidLibrary)
-    plugin(Deps.Plugins.kotlinAndroidExtensions)
     plugin(Deps.Plugins.kotlinSerialization)
     plugin(Deps.Plugins.sqlDelight)
     plugin(Deps.Plugins.mobileMultiplatform)
@@ -34,10 +33,6 @@ android {
     defaultConfig {
         minSdkVersion(Versions.Android.minSdk)
         targetSdkVersion(Versions.Android.targetSdk)
-    }
-
-    androidExtensions {
-        isExperimental = true
     }
 
     packagingOptions {
@@ -77,9 +72,8 @@ val mppLibs = listOf(
     Deps.Libs.MultiPlatform.coroutines,
     Deps.Libs.MultiPlatform.serialization,
     Deps.Libs.MultiPlatform.ktorClient,
-    Deps.Libs.MultiPlatform.ktorClientLogging,
+    //Deps.Libs.MultiPlatform.ktorClientLogging,
     Deps.Libs.MultiPlatform.kodein,
-    Deps.Libs.MultiPlatform.kodeinErased,
     Deps.Libs.MultiPlatform.sqlDelight,
     Deps.Libs.MultiPlatform.klock,
     Deps.Libs.MultiPlatform.preferences,
@@ -90,14 +84,13 @@ val mppLibs = listOf(
 val androidLibs = listOf(
     Deps.Libs.Android.lifecycle,
     Deps.Libs.Android.sshj,
-    Deps.Libs.Android.json,
+    //Deps.Libs.Android.json,
     Deps.Libs.Android.okhttp,
     Deps.Libs.Android.okhttpInterceptor,
     Deps.Libs.Android.ktorOkHttp,
     Deps.Libs.Android.wireguard,
     Deps.Libs.Android.billing,
     Deps.Libs.Android.billingKtx
-    //Deps.Libs.Android.filemanager
 )
 
 val localMerseyModules = listOf(
@@ -105,18 +98,22 @@ val localMerseyModules = listOf(
     LibraryModules.MultiPlatform.utils
 )
 
-val merseyModules = listOf<MultiPlatformLibrary>(
-
+val merseyModules = listOf(
+    Deps.Libs.MultiPlatform.MerseyLibs.archy,
+    Deps.Libs.MultiPlatform.MerseyLibs.utils
 )
 
 val modulez = listOf(
-    LibraryModules.Android.utils,
     Modules.Android.filemanager,
     Modules.Android.openvpn
 )
 
-setupFramework(
-    exports = mppLibs
+val merseyAndroidModules = listOf(
+    LibraryModules.Android.utils
+)
+
+val merseyAndroidLibs = listOf(
+    Deps.Libs.Android.MerseyLibs.utils
 )
 
 dependencies {
@@ -125,13 +122,15 @@ dependencies {
 
     api(project(Modules.Android.shadowsocks))
 
-    modulez.forEach { module -> implementation(project(module))}
     androidLibs.forEach { lib -> androidLibrary(lib)}
     mppLibs.forEach { mppLibrary(it) }
+    modulez.forEach { module -> implementation(project(module))}
 
-    if (Modules.isLocalDependencies) {
+    if (isLocalDependencies()) {
+        merseyAndroidModules.forEach { module -> implementation(project(module)) }
         localMerseyModules.forEach { mppModule(it) }
     } else {
+        merseyAndroidLibs.forEach { library -> androidLibrary(library) }
         merseyModules.forEach { library -> mppLibrary(library) }
     }
 }

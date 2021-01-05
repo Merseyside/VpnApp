@@ -140,20 +140,46 @@ class EasyAccessFragment : BaseVpnFragment<FragmentEasyAccessBinding, EasyAccess
 
     private fun animateConnectionChange() {
         if (animatorList == null) {
-            animatorList = AnimatorList(Approach.SEQUENTIALLY).apply {
+            val hideAnimatorList = AnimatorList(Approach.TOGETHER).apply {
                 addAnimator(AlphaAnimator(AlphaAnimator.Builder(
                     view = binding.typeContainer,
                     duration = DURATION
                 ).apply {
                     values(1f, 0f)
-                }))
+                })
+                )
 
+
+                addAnimator(AlphaAnimator(AlphaAnimator.Builder(
+                    view = binding.regionContainer,
+                    duration = DURATION
+                ).apply {
+                    values(1f, 0f)
+                })
+                )
+            }
+
+            val showAnimatorList = AnimatorList(Approach.TOGETHER).apply {
                 addAnimator(AlphaAnimator(AlphaAnimator.Builder(
                     view = binding.timeContainer,
                     duration = DURATION
                 ).apply {
                     values(0f, 1f)
-                }))
+                })
+                )
+
+                addAnimator(AlphaAnimator(AlphaAnimator.Builder(
+                    view = binding.connectedTitle,
+                    duration = DURATION
+                ).apply {
+                    values(0f, 1f)
+                })
+                )
+            }
+
+            animatorList = AnimatorList(Approach.SEQUENTIALLY).apply {
+                addAnimator(hideAnimatorList)
+                addAnimator(showAnimatorList)
             }
         }
 

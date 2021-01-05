@@ -4,7 +4,7 @@ import com.merseyside.dropletapp.di.providerComponent
 import com.merseyside.kmpMerseyLib.domain.coroutines.CoroutineUseCase
 import com.merseyside.dropletapp.domain.repository.ProviderRepository
 import com.merseyside.dropletapp.providerApi.Provider
-import org.kodein.di.erased.instance
+import org.kodein.di.instance
 
 class GetProvidersWithTokenInteractor : CoroutineUseCase<List<Provider>, Any>() {
 

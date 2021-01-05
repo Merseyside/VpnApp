@@ -12,13 +12,10 @@ import io.ktor.http.contentLength
 import io.ktor.http.takeFrom
 import io.ktor.network.sockets.SocketTimeoutException
 import io.ktor.utils.io.readUTF8Line
-import kotlinx.serialization.ImplicitReflectionSerializer
-import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
 
 class AgentResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
-    @OptIn(UnstableDefault::class)
     private val json = Json {
         isLenient = false
         ignoreUnknownKeys = true
@@ -36,7 +33,6 @@ class AgentResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
 
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun makeAgentRequest(
         ip: String,
         port: String

@@ -1,12 +1,12 @@
 package com.merseyside.dropletapp.presentation.di.module
 
+import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.merseyside.dropletapp.domain.interactor.GetDropletsInteractor
 import com.merseyside.dropletapp.presentation.view.activity.main.model.MainViewModel
 import com.merseyside.archy.presentation.activity.BaseActivity
-import com.merseyside.archy.model.BundleAwareViewModelFactory
+import com.merseyside.archy.presentation.model.BundleAwareViewModelFactory
 import dagger.Module
 import dagger.Provides
 import ru.terrakok.cicerone.Router
@@ -19,10 +19,11 @@ class MainModule(
 
     @Provides
     internal fun addMainActivityViewModelProvider(
+        application: Application,
         router: Router,
         getDropletsUseCase: GetDropletsInteractor
     ): ViewModelProvider.Factory {
-        return MainActivityViewModelProviderFactory(bundle, router, getDropletsUseCase)
+        return MainActivityViewModelProviderFactory(bundle, application, router, getDropletsUseCase)
     }
 
     @Provides
@@ -32,17 +33,18 @@ class MainModule(
 
     @Provides
     internal fun provideMainActivityViewModel(factory: ViewModelProvider.Factory): MainViewModel {
-        return ViewModelProviders.of(activity, factory).get(MainViewModel::class.java)
+        return ViewModelProvider(activity, factory).get(MainViewModel::class.java)
     }
 
     class MainActivityViewModelProviderFactory(
         bundle: Bundle?,
+        private val application: Application,
         private val router: Router,
         private val getDropletsUseCase: GetDropletsInteractor
     ): BundleAwareViewModelFactory<MainViewModel>(bundle) {
 
         override fun getViewModel(): MainViewModel {
-            return MainViewModel(router, getDropletsUseCase)
+            return MainViewModel(application, router, getDropletsUseCase)
         }
     }
 }

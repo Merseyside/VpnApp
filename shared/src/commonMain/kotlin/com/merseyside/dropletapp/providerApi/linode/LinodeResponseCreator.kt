@@ -12,17 +12,14 @@ import io.ktor.client.features.defaultRequest
 import io.ktor.client.request.*
 import io.ktor.http.ContentType
 import io.ktor.http.takeFrom
-import kotlinx.serialization.ImplicitReflectionSerializer
-import kotlinx.serialization.UnstableDefault
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.parse
 
 class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
 
-    @OptIn(UnstableDefault::class)
     private val json = Json {
         isLenient = true
         ignoreUnknownKeys = true
@@ -48,7 +45,6 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
         }
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getAccountInfo(token: String): LinodeAccountResponse {
 
         val apiMethod = "account"
@@ -59,10 +55,9 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
             header(AUTHORIZATION_KEY, getAuthHeader(token))
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getRegions(): LinodeRegionsResponse {
 
         val apiMethod = "regions"
@@ -71,11 +66,10 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
             url.takeFrom(getRoute(apiMethod))
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
 
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun importSshKey(token: String, label: String, publicKey: String): LinodeImportKeyResponse {
         val apiMethod = "profile/sshkeys"
 
@@ -92,10 +86,9 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
             body = json.jsonContent()
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun createLinode(
         token: String,
         label: String,
@@ -124,11 +117,10 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
             body = json.jsonContent()
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
 
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
     suspend fun getLinode(
         token: String,
         linodeId: Long
@@ -141,7 +133,7 @@ class LinodeResponseCreator(private val httpClientEngine: HttpClientEngine) {
             header(AUTHORIZATION_KEY, getAuthHeader(token))
         }
 
-        return json.parse(call)
+        return json.decodeFromString(call)
     }
 
     suspend fun deleteLinode(token: String, linodeId: Long) {

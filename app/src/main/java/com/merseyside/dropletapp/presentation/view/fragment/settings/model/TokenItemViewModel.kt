@@ -8,9 +8,9 @@ import com.merseyside.dropletapp.VpnApplication
 import com.merseyside.dropletapp.data.db.token.TokenEntity
 import com.merseyside.dropletapp.providerApi.Provider
 import com.merseyside.adapters.model.BaseAdapterViewModel
-import com.merseyside.archy.interfaces.IStringHelper
+import com.merseyside.archy.presentation.interfaces.IStringHelper
 
-class TokenItemViewModel(override var obj: TokenEntity) : BaseAdapterViewModel<TokenEntity>(obj), IStringHelper {
+class TokenItemViewModel(obj: TokenEntity) : BaseAdapterViewModel<TokenEntity>(obj), IStringHelper {
 
     @Bindable
     fun getProviderName(): String {
